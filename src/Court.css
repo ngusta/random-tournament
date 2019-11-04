@@ -1,0 +1,185 @@
+.court {
+	position: relative;
+	background: url('smallerCourt.png') no-repeat;
+	height: 651px;
+	width: 313px;
+	float: left;
+}
+
+.circle {
+	border-radius: 50%;
+	width: 60px;
+	height: 60px; 
+	background-color: #22aa22;
+	opacity: 0.6;
+	line-height: 60px;
+	text-align: center;
+	font-size: 1.7em;
+	font-weight: bold;
+}
+
+.circle.color0 {
+	background-color: #e6194b;
+}
+
+.circle.color1 {
+	background-color: #f58231;
+}
+
+.circle.color2 {
+	background-color: #ffe119;
+}
+
+.circle.color3 {
+	background-color: #bcf60c;
+}
+
+.circle.color4 {
+	background-color: #4cb44b;
+}
+
+.circle.color5 {
+	background-color: #46f0f0;
+}
+
+.circle.color6 {
+	background-color: #4363d8;
+}
+
+.circle.color7 {
+	background-color: #911eb4;
+}
+
+.circle.color8 {
+	background-color: #f032e6;
+}
+
+.circle.color9 {
+	background-color: #808080;
+}
+
+.circle.color10 {
+	background-color: #fabebe;
+}
+
+.circle.color11 {
+	background-color: #ffd8b1;
+}
+
+.circle.color12 {
+	background-color: #fffac8;
+}
+
+.circle.color13 {
+	background-color: #aaffc3;
+}
+
+.court div {
+	position: absolute;
+}
+
+.court .courtName {
+	position: absolute;
+	top: 1%;
+	width: 100%;
+	text-align: center;
+	margin-top: 0;
+	
+}
+
+.tot2.t0,
+.tot3.t0
+ {
+	top: 22%;
+}
+
+.tot2.t1,
+.tot3.t1 {
+	bottom: 22%;
+}
+
+.tot2.p0,
+.tot3.p0,
+.tot4.t0.p0,
+.tot4.t0.p2,
+.tot4.t1.p0,
+.tot4.t1.p2 {
+	left: 25%;
+}
+
+.tot2.p1,
+.tot3.p1,
+.tot4.p1,
+.tot4.p3 {
+	right: 25%;
+}
+
+.tot3.t0.p2 {
+	top: 35%;
+	left: 41%;
+}
+
+.tot3.t1.p2 {
+	bottom: 35%;
+	left: 41%;
+}
+
+.tot4.t0.p0,
+.tot4.t0.p1
+{
+	top: 19%;
+}
+
+.tot4.t0.p2,
+.tot4.t0.p3 {
+	top: 34%;
+}
+
+.tot4.t1.p0,
+.tot4.t1.p1
+{
+	bottom: 19%;
+}
+
+.tot4.t1.p2,
+.tot4.t1.p3 {
+	bottom: 34%;
+}
+
+.tot2.t0,
+.tot3.t0
+ {
+	top: 22%;
+}
+
+.t2 {
+	bottom: 1%;
+}
+
+.tot3.t2.p0 {
+	left: 18%;
+}
+
+.tot3.t2.p1 {
+	left: 41%;
+}
+
+.tot3.t2.p2 {
+	right: 18%;
+}
+
+.tot4.t2.p0 {
+	left: 11%;
+}
+
+.tot4.t2.p1 {
+	left: 31%;
+}
+
+.tot4.t2.p2 {
+	right: 31%;
+}
+
+.tot4.t2.p3 {
+	right: 11%;
+}
