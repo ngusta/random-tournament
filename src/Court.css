@@ -87,6 +87,7 @@
 	
 }
 
+/* Teams on the court */
 .tot2.t0,
 .tot3.t0
  {
@@ -103,14 +104,18 @@
 .tot4.t0.p0,
 .tot4.t0.p2,
 .tot4.t1.p0,
-.tot4.t1.p2 {
+.tot4.t1.p2,
+.tot5.t0.p0,
+.tot5.t1.p0 {
 	left: 25%;
 }
 
 .tot2.p1,
 .tot3.p1,
 .tot4.p1,
-.tot4.p3 {
+.tot4.p3,
+.tot5.t0.p1,
+.tot5.t1.p1 {
 	right: 25%;
 }
 
@@ -125,24 +130,46 @@
 }
 
 .tot4.t0.p0,
-.tot4.t0.p1
+.tot4.t0.p1,
+.tot5.t0.p0,
+.tot5.t0.p1,
+.tot6.t0.p0,
+.tot6.t0.p1,
+.tot6.t0.p2
 {
 	top: 19%;
 }
 
 .tot4.t0.p2,
-.tot4.t0.p3 {
+.tot4.t0.p3,
+.tot5.t0.p2,
+.tot5.t0.p3,
+.tot5.t0.p4,
+.tot6.t0.p3,
+.tot6.t0.p4,
+.tot6.t0.p5 {
 	top: 34%;
 }
 
 .tot4.t1.p0,
-.tot4.t1.p1
+.tot4.t1.p1,
+.tot5.t1.p0,
+.tot5.t1.p1,
+.tot6.t1.p0,
+.tot6.t1.p1,
+.tot6.t1.p2
 {
 	bottom: 19%;
 }
 
 .tot4.t1.p2,
-.tot4.t1.p3 {
+.tot4.t1.p3,
+.tot5.t1.p2,
+.tot5.t1.p3,
+.tot5.t1.p4,
+.tot6.t1.p3,
+.tot6.t1.p4,
+.tot6.t1.p5 {
 	bottom: 34%;
 }
 
@@ -152,6 +179,34 @@
 	top: 22%;
 }
 
+.tot5.t0.p2,
+.tot5.t1.p2,
+.tot6.t0.p0,
+.tot6.t0.p3,
+.tot6.t1.p0,
+.tot6.t1.p3 {
+	left: 15%
+}
+
+.tot5.t0.p3,
+.tot5.t1.p3,
+.tot6.t0.p1,
+.tot6.t0.p4,
+.tot6.t1.p1,
+.tot6.t1.p4 {
+	left: 41%
+}
+
+.tot5.t0.p4,
+.tot5.t1.p4,
+.tot6.t0.p2,
+.tot6.t0.p5,
+.tot6.t1.p2,
+.tot6.t1.p5 {
+	right: 15%
+}
+
+/* Teams outside the court */
 .t2 {
 	bottom: 1%;
 }
@@ -182,4 +237,48 @@
 
 .tot4.t2.p3 {
 	right: 11%;
+}
+
+.tot5.t2.p0 {
+	left: 2%;
+}
+
+.tot5.t2.p1 {
+	left: 21%;
+}
+
+.tot5.t2.p2 {
+	left: 41%;
+}
+
+.tot5.t2.p3 {
+	right: 21%;
+}
+
+.tot5.t2.p4 {
+	right: 2%;
+}
+
+.tot6.t2.p0 {
+	left: 2%;
+}
+
+.tot6.t2.p1 {
+	left: 17%;
+}
+
+.tot6.t2.p2 {
+	left: 33%;
+}
+
+.tot6.t2.p3 {
+	right: 33%;
+}
+
+.tot6.t2.p4 {
+	right: 17%;
+}
+
+.tot6.t2.p5 {
+	right: 2%;
 }

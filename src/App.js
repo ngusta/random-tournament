@@ -3,6 +3,7 @@ import './App.css';
 import Settings from './Settings';
 import Round from './Round';
 import ls from 'local-storage'
+import { Link } from 'react-router-dom';
 
 class App extends React.Component {
 	constructor(props) {
@@ -16,12 +17,11 @@ class App extends React.Component {
 			errors: ls.get("errors") || [],
 			rounds: ls.get("rounds") || []
 		}
-		console.log("nu då?:" + this.state.availablePlayers.length);
 	}
 	
 	onSettingChange = (name, value) => {
 		if (name === "noPlayers") {
-			if (value > 500) {
+			if (value > 300) {
 				return;
 			}
 			const commonNoPlayers = Math.min(Number(value), this.state.availablePlayers.length);
@@ -73,6 +73,7 @@ class App extends React.Component {
 				ls.set("rounds", newRounds);
 			}
 		});
+		ls.set("updatePresentation", true);
 	}
 	
 	createRound(dryRun = false) {
@@ -83,7 +84,8 @@ class App extends React.Component {
 			this.state.playersPerTeam,
 			this.state.useAllPlayers,
 			dryRun ? (error) => {} : this.logError,
-			dryRun);
+			dryRun,
+			this.state.rounds);
 	}
 	
 	getAllAvailablePlayers() {
@@ -108,6 +110,7 @@ class App extends React.Component {
 		if (dryRunRoundDraw) {
 			dryRunRound = <Round courts={dryRunRoundDraw} roundName="Example round" />;
 		}
+		
 		const rounds = this.state.rounds.map((round, index) =>
 			<Round courts={round} 
 				key={index} 
@@ -115,6 +118,7 @@ class App extends React.Component {
 				roundIndex={index}
 				onDeleteRound={this.onDeleteRound} />
 		);
+		
 		const errors = this.state.errors.map((message, index) =>
 			<li className="error" key={index}>{message}</li>
 		);
@@ -130,6 +134,7 @@ class App extends React.Component {
 					onPlayersChange={this.onPlayersChange}
 					onSubmit={this.draw}
 					onResetState={this.onResetState} />
+				<Link to="/presentation">Presentation</Link>
 				<ul>
 					{errors}
 				</ul>
