@@ -34,7 +34,7 @@ class Round extends React.Component {
 			let nextPlayer = 0;
 			nextPlayer = Round.addTwoTeamsOfTwoPlayers(nextPlayer, noCourts, players, round);
 			nextPlayer = Round.addExtraTeams(nextPlayer, noCourts, teamsPerCourt, players, round);
-			Round.addExtraPlayersInTeams(nextPlayer, noCourts, teamsPerCourt, players, round);
+			Round.addExtraPlayersInTeams(nextPlayer, noCourts, teamsPerCourt, players, round, useAllPlayers, playersPerTeam);
 			
 			const points = dryRun ? 0 : Round.evaulateRound(round);
 			if (points < bestPoints) {
@@ -56,11 +56,11 @@ class Round extends React.Component {
 			if (i === 299) {
 				diff300 = bestPoints;
 			}
-			if (i === 399) {
+			if (i === 499) {
 				diff500 = bestPoints;
 			}
 		}
-		!dryRun && console.log("Diff 10, 50, 100, 300, 500, 1000: " + diff10 + ", " + diff50 + ", " + diff100 + ", " + diff300 + ", " + diff500 + ", " + bestPoints);
+		!dryRun && console.log("Best after 10, 50, 100, 300, 500, 1000: " + diff10 + ", " + diff50 + ", " + diff100 + ", " + diff300 + ", " + diff500 + ", " + bestPoints);
 		if (!dryRun) {
 			Round.updatePlayerStats(bestRound);
 		}
@@ -123,10 +123,13 @@ class Round extends React.Component {
 		return nextPlayer;
 	}
 	
-	static addExtraPlayersInTeams(nextPlayer, noCourts, teamsPerCourt, players, round) {
+	static addExtraPlayersInTeams(nextPlayer, noCourts, teamsPerCourt, players, round, useAllPlayers, playersPerTeam) {
 		let court = 0;
 		let team = 0;
 		for (let p = nextPlayer; p < players.length; p++) {
+			if (!useAllPlayers && round[court][team].length === playersPerTeam) {
+				continue;
+			}
 			round[court][team] = [...round[court][team], players[p]];
 			
 			if (team === teamsPerCourt - 1 || round[court].length === team + 1) {
@@ -159,8 +162,10 @@ class Round extends React.Component {
 						//console.log("Points2: " + points);
 						opponents.forEach((opponent) => points += 1*Round.countOccurences(opponent, playerStats[player].partners));
 						//console.log("Points3: " + points);
-						opponents.forEach((opponent) => points += 1*Round.countOccurences(opponent, playerStats[player].opponents));
-						//console.log("Points4: " + points);
+						opponents.forEach((opponent) => points += 7*Round.countOccurences(opponent, playerStats[player].opponents));
+						console.log("Points4: " + points);
+						points += 1*Round.countOccurences(c, playerStats[player].courts);
+						console.log("Points4: " + points);
 					}
 				}
 			}
@@ -197,13 +202,15 @@ class Round extends React.Component {
 				for (let p = 0; p < round[c][t].length; p++) {
 					const player = round[c][t][p];
 					if (!playerStats[player]) {
-						playerStats[player] = {partners: [], opponents: []};
+						playerStats[player] = {partners: [], opponents: [], courts: []};
 					}
 					const newPartners = Round.partners(round, c, t, p);
 					playerStats[player].partners = [...playerStats[player].partners, ...newPartners].sort();
 					
 					const newOpponents = Round.opponents(round, c, t);
 					playerStats[player].opponents = [...playerStats[player].opponents, ...newOpponents].sort();
+					
+					playerStats[player].courts.push(c);
 				}
 			}
 		}
@@ -219,12 +226,12 @@ class Round extends React.Component {
 	
 	render() {
 		const courts = this.props.courts.map((team, index) =>
-			<Court teams={team} key={index} courtNumber={index+1} />
+			<Court teams={team} key={index} courtNumber={index+1} courtClass={this.props.courtClass} />
 		);
 	
 		return (
 			<div className="round">
-				<h1>{this.props.roundName}</h1>
+				{this.props.roundName && <h1>{this.props.roundName}</h1>}
 				{
 					this.props.onDeleteRound && 
 					<button className="delete-round-button" onClick =
@@ -235,7 +242,9 @@ class Round extends React.Component {
 						Delete round
 					</button>
 				}
-				{courts}
+				<div className="courts">
+					{courts}
+				</div>
 			</div>
 		);
 	}

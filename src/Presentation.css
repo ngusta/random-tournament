@@ -1,0 +1,17 @@
+h1 {
+	text-align: center;
+}
+
+#presentation {
+	position: absolute;
+    top: 0px;
+    bottom: 0px;
+    width: 100%;
+	background: url('thebeach.jpg') no-repeat;
+	background-size: cover;
+}
+
+.round {
+	height: 100%;
+}
+

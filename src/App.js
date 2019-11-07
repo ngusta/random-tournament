@@ -47,6 +47,7 @@ class App extends React.Component {
 		const roundsCopy = [...this.state.rounds];
 		roundsCopy.splice(roundIndex, 1);
 		this.setState({rounds: roundsCopy});
+		ls.set("updatePresentation", true);
 		ls.set("rounds", roundsCopy);
 	}
 	
@@ -108,7 +109,7 @@ class App extends React.Component {
 		let dryRunRound;
 		const dryRunRoundDraw = this.createRound(true);
 		if (dryRunRoundDraw) {
-			dryRunRound = <Round courts={dryRunRoundDraw} roundName="Example round" />;
+			dryRunRound = <Round courts={dryRunRoundDraw} roundName="Example round" courtClass="courtSize3" />;
 		}
 		
 		const rounds = this.state.rounds.map((round, index) =>
@@ -116,7 +117,8 @@ class App extends React.Component {
 				key={index} 
 				roundName={`Round ${this.state.rounds.length-index}`}
 				roundIndex={index}
-				onDeleteRound={this.onDeleteRound} />
+				onDeleteRound={this.onDeleteRound}
+				courtClass="courtSize1"	/>
 		);
 		
 		const errors = this.state.errors.map((message, index) =>
@@ -124,7 +126,8 @@ class App extends React.Component {
 		);
 		
 		return (
-			<div>
+			<React.Fragment>
+			<div className="app">
 				<Settings noCourts={this.state.noCourts} 
 					teamsPerCourt={this.state.teamsPerCourt} 
 					playersPerTeam={this.state.playersPerTeam}
@@ -138,10 +141,13 @@ class App extends React.Component {
 				<ul>
 					{errors}
 				</ul>
+			</div>
+			<div>
 				{dryRunRound}
 				{!dryRunRound && <p>The example run couldn't be generated. Check your input values or try generate the round for more detailed errors.</p>}
 				{rounds}
 			</div>
+			</React.Fragment>
 		);
 	}
 }
