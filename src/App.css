@@ -1,16 +1,41 @@
-.app {
+body {
+	font-family: Helvetica;
+}
+
+#config {
 	background-color: #ffffff;
 	opacity: 0.85;
-}	
+}
 
 .error {
 	color: red;
 }
 
-.round {
+#app .round {
 	clear: both;
+	display: inline-block;
+	margin-right: 20px;
 }
 
-.delete-round-button {
-	display: block;
+#app .dryRun {
+		display: block;
+}
+
+.delete {
+	height: 0.7em;
+	margin-left: 0.4em;
+	cursor: pointer;
+}
+
+.star {
+	height: 0.7em;
+	margin-right: 0.4em;
+	cursor: pointer;
+}
+
+#app .courts {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	height: 100%;
 }

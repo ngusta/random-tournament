@@ -6,9 +6,11 @@ class Court extends React.Component {
 		
 		const teamRows = [];
 		this.props.teams.forEach((team, teamIndex) => {
-			const noPlayersRow1 = team.length === 6 ? 3 : 2;
+			let noPlayersRow1 = 2;
+			if (team.length > 3) {
+				noPlayersRow1 = Math.floor(team.length / 2);
+			}
 			const noPlayersRow2 = team.length - noPlayersRow1;
-			
 			const noOfPlayersToFitClass = Math.max(noPlayersRow1, noPlayersRow2);
 			const oneRowClass = noPlayersRow2 === 0 ? " oneRow" : "";
 			let playersInRow = team.slice(0, noPlayersRow1).map((player) =>

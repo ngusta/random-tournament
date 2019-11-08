@@ -1,10 +1,14 @@
 import React from 'react';
 import Court from './Court';
 import ls from 'local-storage';
+import deleteIcon from './img/delete.png';
+import emptyStar from './img/star_empty.png';
+import filledStar from './img/star_filled.png';
 
 class Round extends React.Component {
 	
 	static createRound(allAvailablePlayers, noCourts, teamsPerCourt, playersPerTeam, useAllPlayers, onError, dryRun, earlierRounds) {
+		const startTime = performance.now();
 		let players = [...allAvailablePlayers];
 		if (!useAllPlayers) {
 			players.splice(noCourts*teamsPerCourt*playersPerTeam);
@@ -63,8 +67,9 @@ class Round extends React.Component {
 		!dryRun && console.log("Best after 10, 50, 100, 300, 500, 1000: " + diff10 + ", " + diff50 + ", " + diff100 + ", " + diff300 + ", " + diff500 + ", " + bestPoints);
 		if (!dryRun) {
 			Round.updatePlayerStats(bestRound);
+			const stopTime = performance.now();
+			console.log("CreateRound took " + Math.round(stopTime - startTime) + " ms.");
 		}
-		
 		return bestRound;
 	}
 	
@@ -162,10 +167,10 @@ class Round extends React.Component {
 						//console.log("Points2: " + points);
 						opponents.forEach((opponent) => points += 1*Round.countOccurences(opponent, playerStats[player].partners));
 						//console.log("Points3: " + points);
-						opponents.forEach((opponent) => points += 7*Round.countOccurences(opponent, playerStats[player].opponents));
-						console.log("Points4: " + points);
+						opponents.forEach((opponent) => points += 1*Round.countOccurences(opponent, playerStats[player].opponents));
+						//console.log("Points4: " + points);
 						points += 1*Round.countOccurences(c, playerStats[player].courts);
-						console.log("Points4: " + points);
+						//console.log("Points5: " + points);
 					}
 				}
 			}
@@ -224,23 +229,32 @@ class Round extends React.Component {
 		e.preventDefault();
 	}
 	
+	onShowOnPresentation = (e) => {
+		e.preventDefault();
+		this.props.onShowOnPresentation(this.props.roundIndex);
+	}
+	
 	render() {
 		const courts = this.props.courts.map((team, index) =>
 			<Court teams={team} key={index} courtNumber={index+1} courtClass={this.props.courtClass} />
 		);
+		
+		const starImg = this.props.isShown ? filledStar : emptyStar;
+		
+		const presentationImg = <img className="star" src={starImg} 
+			onClick={e => this.props.onShowOnPresentation && this.onShowOnPresentation(e)} />
+		
+		const deleteImg = <img className="delete" src={deleteIcon} 
+			onClick={e => window.confirm("Are you sure you want to delete this round?") && this.onDeleteRound(e)} />
 	
 		return (
-			<div className="round">
-				{this.props.roundName && <h1>{this.props.roundName}</h1>}
-				{
-					this.props.onDeleteRound && 
-					<button className="delete-round-button" onClick =
-						{e =>
-							window.confirm("Are you sure you want to delete this round?") &&
-							this.onDeleteRound(e)
-						}> 
-						Delete round
-					</button>
+			<div className={`round ${this.props.className}`}>
+				{this.props.roundName && 
+					<h1>
+						{this.props.onShowOnPresentation && presentationImg}
+						{this.props.roundName}
+						{this.props.onDeleteRound && deleteImg}
+					</h1>
 				}
 				<div className="courts">
 					{courts}

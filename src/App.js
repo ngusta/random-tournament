@@ -15,7 +15,8 @@ class App extends React.Component {
 			availablePlayers: ls.get("availablePlayers") || new Array(13).fill(true),
 			useAllPlayers: ls.get("useAllPlayers") === null ? true : ls.get("useAllPlayers"),
 			errors: ls.get("errors") || [],
-			rounds: ls.get("rounds") || []
+			rounds: ls.get("rounds") || [],
+			presentationRoundIndex: ls.get("presentationRoundIndex") || -1
 		}
 	}
 	
@@ -51,6 +52,15 @@ class App extends React.Component {
 		ls.set("rounds", roundsCopy);
 	}
 	
+	onShowOnPresentation = (roundIndex) => {
+		if (this.state.presentationRoundIndex === roundIndex) {
+			roundIndex = -1;
+		}
+		this.setState({presentationRoundIndex: roundIndex});
+		ls.set("presentationRoundIndex", roundIndex);
+		console.log("pressIndex: " + roundIndex);
+	}
+	
 	onResetState = () => {
 		ls.clear();
 		this.setState({
@@ -69,12 +79,11 @@ class App extends React.Component {
 			ls.set("errors", []);
 			const round = this.createRound();
 			if (round) {
-				const newRounds = [round, ...this.state.rounds]
+				const newRounds = [...this.state.rounds, round]
 				this.setState({rounds: newRounds});
 				ls.set("rounds", newRounds);
 			}
 		});
-		ls.set("updatePresentation", true);
 	}
 	
 	createRound(dryRun = false) {
@@ -109,45 +118,50 @@ class App extends React.Component {
 		let dryRunRound;
 		const dryRunRoundDraw = this.createRound(true);
 		if (dryRunRoundDraw) {
-			dryRunRound = <Round courts={dryRunRoundDraw} roundName="Example round" courtClass="courtSize3" />;
+			dryRunRound = <Round courts={dryRunRoundDraw} roundName="Example round" courtClass="courtSize3" className="dryRun" />;
 		}
 		
-		const rounds = this.state.rounds.map((round, index) =>
-			<Round courts={round} 
-				key={index} 
-				roundName={`Round ${this.state.rounds.length-index}`}
-				roundIndex={index}
-				onDeleteRound={this.onDeleteRound}
-				courtClass="courtSize1"	/>
-		);
+		const rounds = [];
+		for (let index = this.state.rounds.length - 1; index >= 0; index--) {
+			rounds.push(
+				<Round courts={this.state.rounds[index]} 
+					key={index} 
+					roundName={`Round ${index + 1}`}
+					roundIndex={index}
+					onDeleteRound={this.onDeleteRound}
+					onShowOnPresentation={this.onShowOnPresentation}
+					isShown={this.state.presentationRoundIndex === index}
+					courtClass="courtSize1"	/>
+			);
+		}
 		
 		const errors = this.state.errors.map((message, index) =>
 			<li className="error" key={index}>{message}</li>
 		);
 		
 		return (
-			<React.Fragment>
-			<div className="app">
-				<Settings noCourts={this.state.noCourts} 
-					teamsPerCourt={this.state.teamsPerCourt} 
-					playersPerTeam={this.state.playersPerTeam}
-					useAllPlayers={this.state.useAllPlayers}
-					players={this.state.availablePlayers}
-					onSettingChange={this.onSettingChange}
-					onPlayersChange={this.onPlayersChange}
-					onSubmit={this.draw}
-					onResetState={this.onResetState} />
-				<Link to="/presentation">Presentation</Link>
-				<ul>
-					{errors}
-				</ul>
+			<div id="app">
+				<div id="config">
+					<Settings noCourts={this.state.noCourts} 
+						teamsPerCourt={this.state.teamsPerCourt} 
+						playersPerTeam={this.state.playersPerTeam}
+						useAllPlayers={this.state.useAllPlayers}
+						players={this.state.availablePlayers}
+						onSettingChange={this.onSettingChange}
+						onPlayersChange={this.onPlayersChange}
+						onSubmit={this.draw}
+						onResetState={this.onResetState} />
+					<Link to="/presentation">Presentation</Link>
+					<ul>
+						{errors}
+					</ul>
+				</div>
+				<div>
+					{dryRunRound}
+					{!dryRunRound && <p>The example run couldn't be generated. Check your input values or try generate the round for more detailed errors.</p>}
+					{rounds}
+				</div>
 			</div>
-			<div>
-				{dryRunRound}
-				{!dryRunRound && <p>The example run couldn't be generated. Check your input values or try generate the round for more detailed errors.</p>}
-				{rounds}
-			</div>
-			</React.Fragment>
 		);
 	}
 }

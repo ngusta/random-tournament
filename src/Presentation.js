@@ -7,18 +7,29 @@ class Presentation extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			rounds: ls.get("rounds") || [],
-			width: 0, 
+			roundToShow: ls.get("roundToShow") || null,
+			roundToShowIndex: ls.get("roundToShowIndex") || -1,
+			width: 0,
 			height: 0
 		}
+		console.log("rts: " + this.state.roundToShow);
+		console.log("rtsi: " + this.state.roundToShowIndex);
 		setInterval(this.checkUpdate, 1000);
 	}
 	
 	checkUpdate = () => {
-		console.log("Checking. Update: " + ls.get("updatePresentation"));
-		if (ls.get("updatePresentation")) {
+		console.log("rts: " + this.state.roundToShow);
+		console.log("rtsi: " + this.state.roundToShowIndex);
+		const presentationRoundIndex = ls.get("presentationRoundIndex");
+		console.log("Checking. Round to show: " + presentationRoundIndex);
+		if (this.state.roundToShowIndex != presentationRoundIndex || ls.get("updatePresentation")) {
 			ls.set("updatePresentation", false);
-			this.setState({rounds: ls.get("rounds") || []});
+			if (presentationRoundIndex === -1 || ls.get("rounds") === null || (presentationRoundIndex < 0 && presentationRoundIndex >= ls.get("rounds").length)) {
+				this.setState({roundToShow: null});
+			} else {
+				this.setState({roundToShowIndex: presentationRoundIndex,
+					roundToShow: ls.get("rounds")[presentationRoundIndex]});
+			}
 		}
 	}
 	
@@ -36,10 +47,10 @@ class Presentation extends React.Component {
 	}
 	
 	getCourtClass() {
-		if (this.state.rounds.length === 0) {
+		if (!this.state.roundToShow) {
 			return;
 		}
-		const noCourts = this.state.rounds[0].length;
+		const noCourts = this.state.roundToShow.length;
 		const availableCourtWidths =  [50,  100, 150, 200, 300, 400, 500,  600,  700,  800,  900,  1000];
 		const availableCourtHeights = [103, 207, 311, 415, 623, 831, 1039, 1247, 1455, 1663, 1871, 2079];
 		
@@ -51,10 +62,8 @@ class Presentation extends React.Component {
 	}
 	
 	render() {
-		
-		const noRounds = this.state.rounds.length;
-		const currentRound = noRounds > 0 &&
-			<Round courts={this.state.rounds[0]} courtClass={this.getCourtClass()} />
+		const currentRound = this.state.roundToShow && this.state.roundToShowIndex > -1 &&
+			<Round courts={this.state.roundToShow} courtClass={this.getCourtClass()} />
 			
 		return (
 			<div id="presentation">
