@@ -163,7 +163,7 @@ class App extends React.Component {
 						onResetState={this.onResetState}
 						autoPesentNewRound={this.state.autoPresentNewRound}
 						onAutoPresentNewRoundChange={this.onAutoPresentNewRoundChange} />
-					<ul>
+					<ul className="clear">
 						{errors}
 					</ul>
 				</div>

@@ -7,6 +7,9 @@ body {
 	opacity: 0.85;
 }
 
+#config ul {
+	clear: both;
+}
 .error {
 	color: red;
 }
@@ -18,7 +21,7 @@ body {
 }
 
 #app .dryRun {
-		display: block;
+	display: block;
 }
 
 .delete {

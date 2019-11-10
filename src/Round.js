@@ -10,10 +10,14 @@ class Round extends React.Component {
 	static createRound(allAvailablePlayers, noCourts, teamsPerCourt, playersPerTeam, useAllPlayers, onError, dryRun, earlierRounds, lastPlayerOfPreviousRound) {
 		const startTime = performance.now();
 		
-		const lastPlayerInPreviousRound = ls.get("lastPlayerInPreviousRound") || 0;
+		const lastPlayerInPreviousRound = !isNaN(ls.get("lastPlayerInPreviousRound")) || 0 ;
 		let players = [...allAvailablePlayers.filter(player => player > lastPlayerInPreviousRound), ...allAvailablePlayers.filter(player => player <= lastPlayerInPreviousRound)];
 		if (!useAllPlayers) {
-			players.splice(noCourts*teamsPerCourt*playersPerTeam);
+			let useableCourts = noCourts;
+			while (players.length < 4*useableCourts) {
+				useableCourts--;
+			}
+			players.splice(useableCourts*teamsPerCourt*playersPerTeam);
 		}
 		
 		if (!dryRun) {
@@ -35,16 +39,17 @@ class Round extends React.Component {
 		let diff300 = 0;
 		let diff500 = 0;
 		const noTries = dryRun ? 1 : 200;
+		let nextPlayer = 0;
 		for (let i = 0; i < noTries; i++) {
 			if (!dryRun) {
 				Round.shuffle(players);
 			}
 					
 			const round = [];
-			let nextPlayer = 0;
+			nextPlayer = 0;
 			nextPlayer = Round.addTwoTeamsOfTwoPlayers(nextPlayer, noCourts, players, round);
 			nextPlayer = Round.addExtraTeams(nextPlayer, noCourts, teamsPerCourt, players, round);
-			Round.addExtraPlayersInTeams(nextPlayer, noCourts, teamsPerCourt, players, round, useAllPlayers, playersPerTeam);
+			nextPlayer = Round.addExtraPlayersInTeams(nextPlayer, noCourts, teamsPerCourt, players, round, useAllPlayers, playersPerTeam);
 			
 			const points = dryRun ? 0 : Round.evaulateRound(round);
 			if (points < bestPoints) {
@@ -137,11 +142,12 @@ class Round extends React.Component {
 	static addExtraPlayersInTeams(nextPlayer, noCourts, teamsPerCourt, players, round, useAllPlayers, playersPerTeam) {
 		let court = 0;
 		let team = 0;
-		for (let p = nextPlayer; p < players.length; p++) {
+		while (nextPlayer < players.length) {
 			if (!useAllPlayers && round[court][team].length === playersPerTeam) {
+				nextPlayer++;
 				continue;
 			}
-			round[court][team] = [...round[court][team], players[p]];
+			round[court][team] = [...round[court][team], players[nextPlayer]];
 			
 			if (team === teamsPerCourt - 1 || round[court].length === team + 1) {
 				team = 0;
@@ -149,7 +155,9 @@ class Round extends React.Component {
 			} else {
 				team++;
 			}
+			nextPlayer++;
 		}
+		return nextPlayer;
 	}
 	
 	static evaulateRound(round) {
@@ -291,7 +299,7 @@ class Round extends React.Component {
 						{this.props.onDeleteRound && deleteImg}
 					</h1>
 				}
-				<span className="ranges">{ranges} plays</span>
+				{ranges.length > 0 && <span className="ranges">{ranges} plays</span>}
 				<div className="courts">
 					{courts}
 				</div>
