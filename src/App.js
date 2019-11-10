@@ -56,6 +56,10 @@ class App extends React.Component {
 		ls.set("updatePresentation", true);
 		ls.set("rounds", roundsCopy);
 		ls.set("presentationRoundIndex", pressIndex);
+		
+		ls.set("playerStats", {});
+		roundsCopy.forEach(round => Round.updatePlayerStats(round));
+		
 	}
 	
 	onShowOnPresentation = (roundIndex) => {
