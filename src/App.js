@@ -1,23 +1,24 @@
-import React from 'react';
+import React, {Suspense} from 'react';
 import './App.css';
 import Settings from './Settings';
 import Round from './Round';
 import ls from 'local-storage'
-import { Link } from 'react-router-dom';
 
 class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			noCourts: ls.get("noCourts") || 3,
+			noCourts: ls.get("noCourts") || 2,
 			teamsPerCourt: ls.get("teamsPerCourt") || 2,
 			playersPerTeam: ls.get("playersPerTeam") || 2,
-			availablePlayers: ls.get("availablePlayers") || new Array(13).fill(true),
+			availablePlayers: ls.get("availablePlayers") || new Array(8).fill(true),
 			useAllPlayers: ls.get("useAllPlayers") === null ? true : ls.get("useAllPlayers"),
 			errors: ls.get("errors") || [],
 			rounds: ls.get("rounds") || [],
-			presentationRoundIndex: ls.get("presentationRoundIndex") || -1
+			presentationRoundIndex: ls.get("presentationRoundIndex") || -1,
+			autoPresentNewRound: ls.get("autoPresentNewRound") || true
 		}
+		ls.set("updatePresentation", true);
 	}
 	
 	onSettingChange = (name, value) => {
@@ -47,9 +48,14 @@ class App extends React.Component {
 	onDeleteRound = (roundIndex) => {
 		const roundsCopy = [...this.state.rounds];
 		roundsCopy.splice(roundIndex, 1);
-		this.setState({rounds: roundsCopy});
+		let pressIndex = this.state.presentationRoundIndex;
+		if (pressIndex >= roundsCopy.length) {
+			pressIndex = pressIndex >= 0 ? pressIndex - 1 : -1;
+		}
+		this.setState({rounds: roundsCopy, presentationRoundIndex: pressIndex});
 		ls.set("updatePresentation", true);
 		ls.set("rounds", roundsCopy);
+		ls.set("presentationRoundIndex", pressIndex);
 	}
 	
 	onShowOnPresentation = (roundIndex) => {
@@ -58,20 +64,15 @@ class App extends React.Component {
 		}
 		this.setState({presentationRoundIndex: roundIndex});
 		ls.set("presentationRoundIndex", roundIndex);
-		console.log("pressIndex: " + roundIndex);
 	}
 	
 	onResetState = () => {
 		ls.clear();
-		this.setState({
-			noCourts: 3,
-			teamsPerCourt: 2,
-			playersPerTeam: 2,
-			availablePlayers: new Array(13).fill(true),
-			useAllPlayers: true,
-			errors: [],
-			rounds: []
-		});
+		window.location.reload();
+	}
+	
+	onAutoPresentNewRoundChange = (value) => {
+		this.setState({autoPresentNewRound: value});
 	}
 	
 	draw = () => {
@@ -80,8 +81,14 @@ class App extends React.Component {
 			const round = this.createRound();
 			if (round) {
 				const newRounds = [...this.state.rounds, round]
-				this.setState({rounds: newRounds});
+				let pressIndex = this.state.presentationRoundIndex;
+				if (this.state.autoPresentNewRound) {
+					pressIndex = newRounds.length-1;
+				}
+				
+				this.setState({rounds: newRounds, presentationRoundIndex: pressIndex});
 				ls.set("rounds", newRounds);
+				ls.set("presentationRoundIndex", pressIndex);
 			}
 		});
 	}
@@ -115,6 +122,7 @@ class App extends React.Component {
 	}
 	
 	render() {
+		const { t } = this.props;
 		let dryRunRound;
 		const dryRunRoundDraw = this.createRound(true);
 		if (dryRunRoundDraw) {
@@ -141,6 +149,7 @@ class App extends React.Component {
 		
 		return (
 			<div id="app">
+				<h1>Random partner tournament</h1>
 				<div id="config">
 					<Settings noCourts={this.state.noCourts} 
 						teamsPerCourt={this.state.teamsPerCourt} 
@@ -150,8 +159,9 @@ class App extends React.Component {
 						onSettingChange={this.onSettingChange}
 						onPlayersChange={this.onPlayersChange}
 						onSubmit={this.draw}
-						onResetState={this.onResetState} />
-					<Link to="/presentation">Presentation</Link>
+						onResetState={this.onResetState}
+						autoPesentNewRound={this.state.autoPresentNewRound}
+						onAutoPresentNewRoundChange={this.onAutoPresentNewRoundChange} />
 					<ul>
 						{errors}
 					</ul>

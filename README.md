@@ -1,8 +1,11 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Install dependencies
-npm install local-storage
-npm install react-router-dom
+npm install --savereact-scripts
+npm install --savelocal-storage
+npm install --savereact-router-dom  
+npm install --save i18next
+npm install --save react-i18next
 
 ## Available Scripts
 

@@ -39,3 +39,63 @@ body {
 	align-items: center;
 	height: 100%;
 }
+
+.tournamentSettings,
+.presentationSettings {
+	display: inline-block;
+	float: left;
+	margin: 1em;
+	max-width: 50%;
+	line-height: 1.5;
+}
+
+label {
+	display: block;
+}
+
+.players label {
+	display: inline-block;
+}
+
+.players lab {
+	list-style-type: none;
+}
+
+.noRoundMessageSetting label {
+	margin-left: 10px;
+}
+
+button, input[type=submit] {
+	font-size: 1.2em;
+}
+
+.clearData {
+	float: right;
+}
+
+button img {
+	background-image: url('/img/delete.png');
+	width: 15px;
+	margin-right: 2px;
+}
+
+#config .players span {
+	display: block;
+}
+
+#config .player {
+	width: 25px;
+	height: 25px;
+	line-height: 25px;
+	font-size: inherit;
+	margin-right: 2px;
+	cursor: pointer;
+}
+
+#config .player.checked {
+	opacity: 0.3;
+}
+
+#config .player input {
+	display: none;
+}

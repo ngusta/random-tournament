@@ -36,7 +36,7 @@ class Court extends React.Component {
 		});
 		return (
 			<div className={`court ${this.props.courtClass}`}>
-				<h1 className="courtName">Bana {this.props.courtNumber}</h1>
+				<h1 className="courtName">{this.props.courtNumber}</h1>
 				{teamRows}
 			</div>
 		)

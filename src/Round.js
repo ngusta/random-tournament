@@ -219,8 +219,6 @@ class Round extends React.Component {
 				}
 			}
 		}
-		console.log("eval 1");
-		console.log(playerStats[1]);
 		ls.set("playerStats", playerStats);
 	}
 	
@@ -241,11 +239,11 @@ class Round extends React.Component {
 		
 		const starImg = this.props.isShown ? filledStar : emptyStar;
 		
-		const presentationImg = <img className="star" src={starImg} 
+		const presentationImg = <img className="star" alt="Present this round" src={starImg} 
 			onClick={e => this.props.onShowOnPresentation && this.onShowOnPresentation(e)} />
 		
-		const deleteImg = <img className="delete" src={deleteIcon} 
-			onClick={e => window.confirm("Are you sure you want to delete this round?") && this.onDeleteRound(e)} />
+		const deleteImg = <img className="delete" alt="Delete this round" src={deleteIcon} 
+			onClick={e => this.onDeleteRound(e)} />
 	
 		return (
 			<div className={`round ${this.props.className}`}>
