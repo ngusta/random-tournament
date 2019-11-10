@@ -31,6 +31,36 @@ class Settings extends React.Component {
 		this.props.onSettingChange("noPlayers", this.props.players.length - 1);
 	}
 	
+	addCourt = (e) => {
+		e.preventDefault();
+		this.props.onSettingChange("noCourts", this.props.noCourts + 1);
+	}
+	
+	removeCourt = (e) => {
+		e.preventDefault();
+		this.props.onSettingChange("noCourts", this.props.noCourts - 1);
+	}
+	
+	addTeamPerCourt = (e) => {
+		e.preventDefault();
+		this.props.onSettingChange("teamsPerCourt", this.props.teamsPerCourt + 1);
+	}
+	
+	removeTeamPerCourt = (e) => {
+		e.preventDefault();
+		this.props.onSettingChange("teamsPerCourt", this.props.teamsPerCourt - 1);
+	}
+	
+	addPlayerPerTeam = (e) => {
+		e.preventDefault();
+		this.props.onSettingChange("playersPerTeam", this.props.playersPerTeam + 1);
+	}
+	
+	removePlayerPerTeam = (e) => {
+		e.preventDefault();
+		this.props.onSettingChange("playersPerTeam", this.props.playersPerTeam - 1);
+	}
+	
 	handleSubmit = (e) => {
 		this.props.onSubmit();
 		e.preventDefault();
@@ -96,28 +126,34 @@ class Settings extends React.Component {
 						<fieldset className="tournamentSettings">
 							<legend>Tournament settings</legend>
 							<label>
-								Number of players:
+								<span>Number of players</span>
 								<input type="text" name="noPlayers" value={this.props.players.length === 0 ? "" : this.props.players.length} onChange={this.handleChange}  />
-								<button onClick={e => this.addPlayer(e)}>+</button>
 								<button onClick={e => this.removePlayer(e)}>-</button>
+								<button onClick={e => this.addPlayer(e)}>+</button>
 							</label>
 							<label>
-								Number of courts:
+								<span>Number of courts</span>
 								<input type="text" name="noCourts" value={this.props.noCourts === 0 ? "" : this.props.noCourts} onChange={this.handleChange} />
+								<button onClick={e => this.removeCourt(e)}>-</button>
+								<button onClick={e => this.addCourt(e)}>+</button>
 							</label>
 							<label>
-								Number of teams per court:
+								<span>Number of teams per court</span>
 								<input type="text" name="teamsPerCourt" value={this.props.teamsPerCourt === 0 ? "" : this.props.teamsPerCourt} onChange={this.handleChange}  />
+								<button onClick={e => this.removeTeamPerCourt(e)}>-</button>
+								<button onClick={e => this.addTeamPerCourt(e)}>+</button>
 							</label>
 							
 							<label>
-								Let all players play every round: 	
+								<span>Let all players play every round</span>
 								<input type="checkbox" name="useAllPlayers" checked={this.props.useAllPlayers} onChange={this.handleChange} />
 							</label>
 							{!this.props.useAllPlayers && 
 									<label>
-										Number of players per team:
+										<span>Number of players per team</span>
 										<input type="text" name="playersPerTeam" value={this.props.playersPerTeam === 0 ? "" : this.props.playersPerTeam} onChange={this.handleChange}  />
+										<button onClick={e => this.removePlayerPerTeam(e)}>-</button>
+										<button onClick={e => this.addPlayerPerTeam(e)}>+</button>
 									</label>
 							}
 							
@@ -140,15 +176,15 @@ class Settings extends React.Component {
 						<fieldset className="presentationSettings">
 							<legend>Presentation settings</legend>
 							<label>
-								Automatically present new round on creation:
+								<span>Automatically present new round on creation</span>
 								<input type="checkbox" checked={this.props.autoPesentNewRound} onChange={this.onAutoPresentNewRoundChange} />
 							</label>
 							<label>
-								Show round name:
+								<span>Show round name</span>
 								<input type="checkbox" checked={this.state.showRoundName} onChange={this.onShowRoundName} />
 							</label>
 							<div className="noRoundMessageSetting">
-								<span>Show message when no round is presented:</span>
+								<span>Show message when no round is presented</span>
 								<label>
 									<input type="radio" name="goodGameEn" checked={this.state.selectedNoRoundMessage === "goodGameEn"} onChange={this.onNoRoundMessageChange} />
 									Good game!

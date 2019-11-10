@@ -20,7 +20,7 @@ class App extends React.Component {
 		}
 		ls.set("updatePresentation", true);
 	}
-	
+
 	onSettingChange = (name, value) => {
 		if (name === "noPlayers") {
 			if (value > 300) {
@@ -92,9 +92,9 @@ class App extends React.Component {
 			}
 		});
 	}
-	
+
 	createRound(dryRun = false) {
-		return Round.createRound(
+		const round = Round.createRound(
 			this.getAllAvailablePlayers(),
 			this.state.noCourts, 
 			this.state.teamsPerCourt, 
@@ -102,9 +102,11 @@ class App extends React.Component {
 			this.state.useAllPlayers,
 			dryRun ? (error) => {} : this.logError,
 			dryRun,
-			this.state.rounds);
+			this.state.rounds
+		);
+		return round;
 	}
-	
+
 	getAllAvailablePlayers() {
 		let allAvailablePlayers = [];
 		this.state.availablePlayers.forEach((checked, index) => {
@@ -122,7 +124,6 @@ class App extends React.Component {
 	}
 	
 	render() {
-		const { t } = this.props;
 		let dryRunRound;
 		const dryRunRoundDraw = this.createRound(true);
 		if (dryRunRoundDraw) {
@@ -168,7 +169,7 @@ class App extends React.Component {
 				</div>
 				<div>
 					{dryRunRound}
-					{!dryRunRound && <p>The example run couldn't be generated. Check your input values or try generate the round for more detailed errors.</p>}
+					{!dryRunRound && <p className="exampleRoundError">The example run couldn't be generated. Check your input values or try generate the round for more detailed errors.</p>}
 					{rounds}
 				</div>
 			</div>

@@ -7,11 +7,17 @@ import filledStar from './img/star_filled.png';
 
 class Round extends React.Component {
 	
-	static createRound(allAvailablePlayers, noCourts, teamsPerCourt, playersPerTeam, useAllPlayers, onError, dryRun, earlierRounds) {
+	static createRound(allAvailablePlayers, noCourts, teamsPerCourt, playersPerTeam, useAllPlayers, onError, dryRun, earlierRounds, lastPlayerOfPreviousRound) {
 		const startTime = performance.now();
-		let players = [...allAvailablePlayers];
+		
+		const lastPlayerInPreviousRound = ls.get("lastPlayerInPreviousRound") || 0;
+		let players = [...allAvailablePlayers.filter(player => player > lastPlayerInPreviousRound), ...allAvailablePlayers.filter(player => player <= lastPlayerInPreviousRound)];
 		if (!useAllPlayers) {
 			players.splice(noCourts*teamsPerCourt*playersPerTeam);
+		}
+		
+		if (!dryRun) {
+			ls.set("lastPlayerInPreviousRound", players[players.length-1]);
 		}
 		
 		const error = Round.validateInput(players, noCourts, teamsPerCourt, playersPerTeam);
@@ -222,13 +228,19 @@ class Round extends React.Component {
 		ls.set("playerStats", playerStats);
 	}
 	
-	getRangeOfPlayers() {
+	static getPlayersOfRound(round) {
 		const players = [];
-		this.props.courts.map(court => 
+		round.map(court => 
 			court.map(team => 
 				team.map(player => players.push(player))
 			)
 		);
+		players.sort(function(a, b){return a-b});
+		return players;
+	}
+	
+	getRangeOfPlayers() {
+		const players = Round.getPlayersOfRound(this.props.courts);
 		const ranges = [];
 		players.sort(function(a, b){return a-b});
 		let firstPlayerInRange = players[0];

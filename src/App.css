@@ -12,8 +12,8 @@ body {
 }
 
 #app .round {
-	clear: both;
 	display: inline-block;
+	clear: both;
 	margin-right: 20px;
 }
 
@@ -47,6 +47,7 @@ body {
 	margin: 1em;
 	max-width: 50%;
 	line-height: 1.5;
+	font-size: 1.2em;
 }
 
 label {
@@ -57,23 +58,19 @@ label {
 	display: inline-block;
 }
 
-.players lab {
-	list-style-type: none;
-}
-
 .noRoundMessageSetting label {
 	margin-left: 10px;
 }
 
-button, input[type=submit] {
-	font-size: 1.2em;
+.players {
+	margin-bottom: 10px;
 }
 
 .clearData {
 	float: right;
 }
 
-button img {
+#config button.clearData img {
 	background-image: url('/img/delete.png');
 	width: 15px;
 	margin-right: 2px;
@@ -93,9 +90,27 @@ button img {
 }
 
 #config .player.checked {
-	opacity: 0.3;
+	opacity: 0.1;
 }
 
 #config .player input {
 	display: none;
+}
+
+#config input[type=text] {
+	width: 2em;
+}
+
+#config .noRoundMessageSetting input[type=text] {
+	width: 20em;
+}
+
+#config label span {
+	display: inline-block;
+	width: 21em;
+}
+
+.exampleRoundError {
+	float: left;
+	color: red;
 }
