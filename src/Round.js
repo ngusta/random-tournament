@@ -222,6 +222,30 @@ class Round extends React.Component {
 		ls.set("playerStats", playerStats);
 	}
 	
+	getRangeOfPlayers() {
+		const players = [];
+		this.props.courts.map(court => 
+			court.map(team => 
+				team.map(player => players.push(player))
+			)
+		);
+		const ranges = [];
+		players.sort(function(a, b){return a-b});
+		let firstPlayerInRange = players[0];
+		let previousPlayer = players[0];
+		for (let i = 1; i < players.length; i++) {
+			if ((players[i] - previousPlayer) > 1) {
+				ranges.push([firstPlayerInRange, previousPlayer]);
+				firstPlayerInRange = players[i];
+			}
+			if (i === (players.length-1)) {
+				ranges.push([firstPlayerInRange, players[i]]);
+			}
+			previousPlayer = players[i];
+		}
+		return ranges.map(range => range[0] === range[1] ? range[0] : range[0] + "-" + range[1]).join(", ");
+	}
+	
 	onDeleteRound = (e) => {
 		this.props.onDeleteRound(this.props.roundIndex);
 		e.preventDefault();
@@ -233,6 +257,7 @@ class Round extends React.Component {
 	}
 	
 	render() {
+		const ranges = this.getRangeOfPlayers();
 		const courts = this.props.courts.map((team, index) =>
 			<Court teams={team} key={index} courtNumber={index+1} courtClass={this.props.courtClass} />
 		);
@@ -254,6 +279,7 @@ class Round extends React.Component {
 						{this.props.onDeleteRound && deleteImg}
 					</h1>
 				}
+				<span className="ranges">{ranges} plays</span>
 				<div className="courts">
 					{courts}
 				</div>
