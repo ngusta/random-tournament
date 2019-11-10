@@ -10,7 +10,7 @@ class Round extends React.Component {
 	static createRound(allAvailablePlayers, noCourts, teamsPerCourt, playersPerTeam, useAllPlayers, onError, dryRun, earlierRounds, lastPlayerOfPreviousRound) {
 		const startTime = performance.now();
 		
-		const lastPlayerInPreviousRound = !isNaN(ls.get("lastPlayerInPreviousRound")) || 0 ;
+		const lastPlayerInPreviousRound = isNaN(ls.get("lastPlayerInPreviousRound")) ? 0 : ls.get("lastPlayerInPreviousRound");
 		let players = [...allAvailablePlayers.filter(player => player > lastPlayerInPreviousRound), ...allAvailablePlayers.filter(player => player <= lastPlayerInPreviousRound)];
 		if (!useAllPlayers) {
 			let useableCourts = noCourts;
