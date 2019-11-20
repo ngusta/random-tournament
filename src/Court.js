@@ -14,7 +14,7 @@ class Court extends React.Component {
 			const noOfPlayersToFitClass = Math.max(noPlayersRow1, noPlayersRow2);
 			const oneRowClass = noPlayersRow2 === 0 ? " oneRow" : "";
 			let playersInRow = team.slice(0, noPlayersRow1).map((player) =>
-				<div className={`player fit${noOfPlayersToFitClass} color${player % 10}`} key={player}>
+				<div className={`player fit${noOfPlayersToFitClass} color${player % 10} digits${player.toString().length}`} key={player}>
 					{player}
 				</div>
 			);
@@ -24,7 +24,7 @@ class Court extends React.Component {
 				</div>
 			);
 			playersInRow = team.slice(noPlayersRow1, team.length).map((player, playerIndex) =>
-				<div className={`player fit${noOfPlayersToFitClass} color${player % 10}`} key={player}>
+				<div className={`player fit${noOfPlayersToFitClass} color${player % 10} digits${player.toString().length}`} key={player}>
 					{player}
 				</div>
 			);

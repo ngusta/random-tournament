@@ -15,14 +15,15 @@ class Presentation extends React.Component {
 			height: 0
 		}
 		setInterval(this.checkUpdate, 100);
+		this.containerRef = React.createRef();
 	}
 	
 	checkUpdate = () => {
-		console.log("\nrts: " + this.state.roundToShow);
-		console.log("rtsi: " + this.state.roundToShowIndex);
+		//console.log("\nrts: " + this.state.roundToShow);
+		//console.log("rtsi: " + this.state.roundToShowIndex);
 		const presentationRoundIndex = Number(ls.get("presentationRoundIndex") === null ? -1 : ls.get("presentationRoundIndex"));
-		console.log("ls rtsi: " + presentationRoundIndex);
-		console.log("ls rts: " + ((presentationRoundIndex >= 0) ? ls.get("rounds")[presentationRoundIndex] : "ogitligt index"));
+		//console.log("ls rtsi: " + presentationRoundIndex);
+		//console.log("ls rts: " + ((presentationRoundIndex >= 0) ? ls.get("rounds")[presentationRoundIndex] : "ogitligt index"));
 		if (this.state.roundToShowIndex !== presentationRoundIndex || ls.get("updatePresentation")) {
 			ls.set("updatePresentation", false);
 			if (presentationRoundIndex === -1 || ls.get("rounds") === null || presentationRoundIndex >= ls.get("rounds").length) {
@@ -47,7 +48,13 @@ class Presentation extends React.Component {
 	}
 
 	updateWindowDimensions = () => {
-		this.setState({ width: window.innerWidth, height: window.innerHeight });
+		if (this.containerRef.current) {
+			const boundingClient = this.containerRef.current.getBoundingClientRect();
+			console.log("W: " + boundingClient.width + " H: " + boundingClient.height);
+			this.setState({ width: boundingClient.width, height: boundingClient.height });
+		} else {
+			this.setState({ width: window.innerWidth, height: window.innerHeight });
+		}
 	}
 	
 	getCourtClass() {
@@ -55,13 +62,14 @@ class Presentation extends React.Component {
 			return;
 		}
 		const noCourts = this.state.roundToShow.length;
-		const availableCourtWidths =  [50,  100, 150, 200, 300, 400, 500,  600,  700,  800,  900,  1000];
-		const availableCourtHeights = [103, 207, 311, 415, 623, 831, 1039, 1247, 1455, 1663, 1871, 2079];
+		const availableCourtWidths =  [50, 100, 150, 200, 220, 300, 400, 500];
+		const availableCourtHeights = [82, 166, 248, 332, 365, 498, 663, 830];
 		
 		let i = availableCourtWidths.length - 1;
 		while (i > 0 && (availableCourtWidths[i] > (this.state.width/noCourts) || availableCourtHeights[i] > this.state.height)) {
 			i--;
 		}
+		console.log("cS" + i);
 		return "courtSize" + i;
 	}
 	
@@ -70,7 +78,8 @@ class Presentation extends React.Component {
 			<div id="presentation">
 				{!this.state.roundToShow && <p className="noRoundMessage">{this.state.noRoundMessage}</p>}
 				{this.state.roundToShow && 
-					<Round 
+					<Round
+						reff={this.containerRef}
 						courts={this.state.roundToShow} 
 						courtClass={this.getCourtClass()} 
 						roundName={this.state.showRoundName && `Round ${this.state.roundToShowIndex+1}`} 

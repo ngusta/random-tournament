@@ -154,7 +154,6 @@ class App extends React.Component {
 		
 		return (
 			<div id="app">
-				<h1>Random partner tournament</h1>
 				<div id="config">
 					<Settings noCourts={this.state.noCourts} 
 						teamsPerCourt={this.state.teamsPerCourt} 

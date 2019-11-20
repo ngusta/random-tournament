@@ -114,7 +114,7 @@ class Settings extends React.Component {
 	
 	render() {
 		const players = this.props.players.map((playing, index) =>
-			<label key={index} className={`player color${(index+1)%10} ${playing ? '' : 'checked'}`}>
+			<label key={index} className={`player color${(index+1)%10} ${playing ? '' : 'checked'} digits${(index+1).toString().length} ${(index)%30 === 0 ? 'clearLeft' : ''}`}>
 				{index + 1}
 				<input type="checkbox" name={index} checked={playing} onChange={this.onPlayerCheckbox} />
 			</label>

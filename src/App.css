@@ -2,6 +2,14 @@ body {
 	font-family: Helvetica;
 }
 
+#app {
+	background: url('img/erika/bg1-high.jpg') no-repeat;
+	background-attachment: fixed;
+    background-position: center top;
+    background-size: cover;
+	padding: 9% 3% 0 6%;
+}
+
 #config {
 	background-color: #ffffff;
 	opacity: 0.85;
@@ -14,6 +22,10 @@ body {
 	color: red;
 }
 
+.clearLeft {
+	clear: left;
+}
+
 #app .round {
 	display: inline-block;
 	clear: both;
@@ -24,6 +36,9 @@ body {
 	display: block;
 }
 
+#app .round .courtName {
+	font-size: 2em;
+}
 .delete {
 	height: 0.7em;
 	margin-left: 0.4em;
@@ -43,6 +58,12 @@ body {
 	height: 100%;
 }
 
+#app .ranges {
+	display: block;
+	margin: 0 0 2em 1em;
+	font-weight: bold;
+}
+
 .tournamentSettings,
 .presentationSettings {
 	display: inline-block;
@@ -53,11 +74,18 @@ body {
 	font-size: 1.2em;
 }
 
+#app .players {
+	margin-bottom: 10px;
+	float: left;
+	clear: both;
+	width: 100%
+}
+
 label {
 	display: block;
 }
 
-.players label {
+#app .players label {
 	display: inline-block;
 }
 
@@ -65,9 +93,6 @@ label {
 	margin-left: 10px;
 }
 
-.players {
-	margin-bottom: 10px;
-}
 
 .clearData {
 	float: right;
@@ -87,9 +112,13 @@ label {
 	width: 25px;
 	height: 25px;
 	line-height: 25px;
-	font-size: inherit;
+	font-size: 0.9em;
 	margin-right: 2px;
 	cursor: pointer;
+	float: left;
+}
+#config .player.digits3 {
+	font-size: 0.7em;
 }
 
 #config .player.checked {

@@ -291,7 +291,7 @@ class Round extends React.Component {
 			onClick={e => this.onDeleteRound(e)} />
 	
 		return (
-			<div className={`round ${this.props.className}`}>
+			<div ref={this.props.reff} className={`round ${this.props.className}`}>
 				{this.props.roundName && 
 					<h1>
 						{this.props.onShowOnPresentation && presentationImg}
