@@ -1,11 +1,12 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Install dependencies
-npm install --savereact-scripts
-npm install --savelocal-storage
-npm install --savereact-router-dom  
+npm install --save react-scripts
+npm install --save local-storage
+npm install --save react-router-dom  
 npm install --save i18next
 npm install --save react-i18next
+npm install --save gapi-script
 
 ## Available Scripts
 

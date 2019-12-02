@@ -12,7 +12,9 @@ class Presentation extends React.Component {
 			noRoundMessage: ls.get("noRoundMessage") || "",
 			showRoundName: ls.get("showRoundName") || false,
 			width: 0,
-			height: 0
+			height: 0,
+			showEigthCourts: ls.get("showEigthCourts") || false,
+			courtsToUse: ls.get("courtsToUse") || [1,2,3,4,5,6,7,8]
 		}
 		setInterval(this.checkUpdate, 100);
 		this.containerRef = React.createRef();
@@ -35,6 +37,8 @@ class Presentation extends React.Component {
 			}
 			this.setState({noRoundMessage: ls.get("noRoundMessage")});
 			this.setState({showRoundName: ls.get("showRoundName")});
+			this.setState({showEigthCourts: ls.get("showEigthCourts")});
+			this.setState({courtsToUse: ls.get("courtsToUse")});
 		}
 	}
 	
@@ -61,7 +65,7 @@ class Presentation extends React.Component {
 		if (!this.state.roundToShow) {
 			return;
 		}
-		const noCourts = this.state.roundToShow.length;
+		const noCourts = this.state.showEigthCourts ? 8 : this.state.roundToShow.length;
 		const availableCourtWidths =  [50, 100, 150, 200, 220, 300, 400, 500];
 		const availableCourtHeights = [82, 166, 248, 332, 365, 498, 663, 830];
 		
@@ -82,7 +86,9 @@ class Presentation extends React.Component {
 						reff={this.containerRef}
 						courts={this.state.roundToShow} 
 						courtClass={this.getCourtClass()} 
-						roundName={this.state.showRoundName && `Round ${this.state.roundToShowIndex+1}`} 
+						roundName={this.state.showRoundName && `Round ${this.state.roundToShowIndex+1}`}
+						showEigthCourts={this.state.showEigthCourts}
+						courtsToUse={this.state.courtsToUse}
 					/>
 				}
 			</div>

@@ -13,59 +13,53 @@
 }
 
 .player.color0 {
-	background-color: #e6194b;
+	background-color: #ffb700;
+	color: #7b00ff;
 }
 
 .player.color1 {
-	background-color: #f58231;
+	background-color: #ffee00;
+	color: #e600ff;
 }
 
 .player.color2 {
-	background-color: #ffe119;
+	background-color: #28ff02;
+	color: #ff0220;
 }
 
 .player.color3 {
-	background-color: #bcf60c;
+	background-color: #04ffe2;
+	color: #ff3f04;
 }
 
 .player.color4 {
-	background-color: #4cb44b;
+	background-color: #3f4040;
+	color: #dedcdb;
 }
 
 .player.color5 {
-	background-color: #46f0f0;
+	background-color: #7b00ff;
+	color: #ffb700;
 }
 
 .player.color6 {
-	background-color: #4363d8;
+	background-color: #e600ff;
+	color: #ffee00;
 }
 
 .player.color7 {
-	background-color: #911eb4;
+	background-color: #ff0220;
+	color: #28ff02;
 }
 
 .player.color8 {
-	background-color: #f032e6;
+	background-color: #ff3f04;
+	color: #04ffe2;
 }
 
 .player.color9 {
-	background-color: #808080;
-}
-
-.player.color10 {
-	background-color: #fabebe;
-}
-
-.player.color11 {
-	background-color: #ffd8b1;
-}
-
-.player.color12 {
-	background-color: #fffac8;
-}
-
-.player.color13 {
-	background-color: #aaffc3;
+	background-color: #dedcdb;
+	color: #3f4040;
 }
 
 .court .courtName {
@@ -108,15 +102,15 @@
 }
 
 .t2.row1 {
-	bottom: 1%;
+	bottom: -32%;
 }
 
 .t2.row0 {
-	bottom: 1%;
+	bottom: -17%;
 }
 
 .t2.row0.oneRow {
-	bottom: 1%;
+	bottom: -24%;
 }
 
 .player {

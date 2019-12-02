@@ -8,15 +8,18 @@ class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			noCourts: ls.get("noCourts") || 2,
+			noCourts: ls.get("noCourts") || 8,
 			teamsPerCourt: ls.get("teamsPerCourt") || 2,
 			playersPerTeam: ls.get("playersPerTeam") || 2,
-			availablePlayers: ls.get("availablePlayers") || new Array(8).fill(true),
-			useAllPlayers: ls.get("useAllPlayers") === null ? true : ls.get("useAllPlayers"),
+			availablePlayers: ls.get("availablePlayers") || new Array(99).fill(true),
+			useAllPlayers: ls.get("useAllPlayers") === null ? false : ls.get("useAllPlayers"),
 			errors: ls.get("errors") || [],
 			rounds: ls.get("rounds") || [],
 			presentationRoundIndex: ls.get("presentationRoundIndex") || -1,
-			autoPresentNewRound: ls.get("autoPresentNewRound") || true
+			autoPresentNewRound: ls.get("autoPresentNewRound") || true,
+			showEigthCourts: ls.get("showEigthCourts") || false,
+			courtsToUse: ls.get("courtsToUse") || [1,2,3,4,5,6,7,8],
+			importedPlayers: ls.get("importedPlayers") || []
 		}
 		ls.set("updatePresentation", true);
 	}
@@ -37,12 +40,29 @@ class App extends React.Component {
 		} else {
 			this.setState({[name]: value});
 			ls.set(name, value);
+			if (name === "showEigthCourts") {
+				ls.set("courtsToUse", this.state.courtsToUse);
+				ls.set("updatePresentation", true);
+			}
 		}
 	}
 	
 	onPlayersChange = (newAvailablePlayers) => {
 		this.setState({availablePlayers: newAvailablePlayers});
 		ls.set("availablePlayers", newAvailablePlayers);
+	}
+	
+	onCourtsToUseChange = (e) => {
+		const courtsToUseCopy = [...this.state.courtsToUse];
+		const courtName = Number(e.target.name);
+		if (e.target.checked && courtsToUseCopy.indexOf(e.target.name) === -1) {
+			courtsToUseCopy.push(courtName);
+		} else if (!e.target.checked && courtsToUseCopy.indexOf(courtName) > -1) {
+			courtsToUseCopy.splice(courtsToUseCopy.indexOf(courtName), 1);
+		}
+		this.setState({courtsToUse: courtsToUseCopy});
+		ls.set("courtsToUse", courtsToUseCopy);
+		ls.set("updatePresentation", true);
 	}
 	
 	onDeleteRound = (roundIndex) => {
@@ -106,7 +126,8 @@ class App extends React.Component {
 			this.state.useAllPlayers,
 			dryRun ? (error) => {} : this.logError,
 			dryRun,
-			this.state.rounds
+			this.state.rounds,
+			this.state.importedPlayers
 		);
 		return round;
 	}
@@ -127,24 +148,39 @@ class App extends React.Component {
 		ls.set("errors", newErrors);
 	}
 	
+	setImportedPlayers = (importedPlayers) => {
+		this.setState({importedPlayers: importedPlayers});
+		ls.set("importedPlayers", importedPlayers);
+	}
+	
 	render() {
 		let dryRunRound;
 		const dryRunRoundDraw = this.createRound(true);
 		if (dryRunRoundDraw) {
-			dryRunRound = <Round courts={dryRunRoundDraw} roundName="Example round" courtClass="courtSize3" className="dryRun" />;
+			dryRunRound = <Round 
+				courts={dryRunRoundDraw} 
+				roundName="Example round" 
+				courtClass="courtSize3" 
+				className="dryRun" 
+				showEigthCourts={this.state.showEigthCourts}
+				courtsToUse={this.state.courtsToUse}
+				importedPlayers={this.state.importedPlayers} />;
 		}
 		
 		const rounds = [];
 		for (let index = this.state.rounds.length - 1; index >= 0; index--) {
 			rounds.push(
-				<Round courts={this.state.rounds[index]} 
-					key={index} 
+				<Round courts={this.state.rounds[index]}
+					key={index}
 					roundName={`Round ${index + 1}`}
 					roundIndex={index}
 					onDeleteRound={this.onDeleteRound}
 					onShowOnPresentation={this.onShowOnPresentation}
 					isShown={this.state.presentationRoundIndex === index}
-					courtClass="courtSize1"	/>
+					courtClass="courtSize1"
+					showEigthCourts={this.state.showEigthCourts}
+					courtsToUse={this.state.courtsToUse}
+					importedPlayers={this.state.importedPlayers} />
 			);
 		}
 		
@@ -165,7 +201,13 @@ class App extends React.Component {
 						onSubmit={this.draw}
 						onResetState={this.onResetState}
 						autoPesentNewRound={this.state.autoPresentNewRound}
-						onAutoPresentNewRoundChange={this.onAutoPresentNewRoundChange} />
+						onAutoPresentNewRoundChange={this.onAutoPresentNewRoundChange}
+						showEigthCourts={this.state.showEigthCourts}
+						courtsToUse={this.state.courtsToUse}
+						onCourtsToUseChange={this.onCourtsToUseChange}
+						setImportedPlayers={this.setImportedPlayers}
+						importedPlayers={this.state.importedPlayers}
+						/>
 					<ul className="clear">
 						{errors}
 					</ul>

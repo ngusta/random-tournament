@@ -64,12 +64,17 @@ body {
 	font-weight: bold;
 }
 
-.tournamentSettings,
-.presentationSettings {
+form .col1,
+form .col2 {
 	display: inline-block;
 	float: left;
 	margin: 1em;
 	max-width: 50%;
+}
+.tournamentSettings,
+.presentationSettings,
+.googleImport {
+	display: inline-block;
 	line-height: 1.5;
 	font-size: 1.2em;
 }
@@ -81,11 +86,13 @@ body {
 	width: 100%
 }
 
-label {
+#app label,
+#app .courtsToUse .showEigthCourts label {
 	display: block;
 }
 
-#app .players label {
+#app .players label,
+#app .courtsToUse label {
 	display: inline-block;
 }
 
@@ -129,8 +136,24 @@ label {
 	display: none;
 }
 
+#config .player.genderM {
+	border: 6px solid #89cff0;
+}
+
+#config .player.genderW {
+	border: 6px solid #f4c2c2;
+}
+
+#config .player.genderU {
+	border: 6px solid #000;
+}
+
 #config input[type=text] {
 	width: 2em;
+}
+
+#config .googleImport input[type=text] {
+	width: 27em;
 }
 
 #config .noRoundMessageSetting input[type=text] {
@@ -140,6 +163,16 @@ label {
 #config label span {
 	display: inline-block;
 	width: 21em;
+}
+
+#config .googleImport label span {
+	display: inline-block;
+	width: 8em;
+}
+
+#config .googleImport label span.labelDetails {
+	font-size: 0.7em;
+	width: 100%;
 }
 
 .exampleRoundError {

@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import ls from 'local-storage'
 import deleteIcon from './img/delete.png';
+import GoogleSheets from './GoogleSheets';
 
 class Settings extends React.Component {
 	constructor(props) {
@@ -113,97 +114,125 @@ class Settings extends React.Component {
 	}
 	
 	render() {
-		const players = this.props.players.map((playing, index) =>
-			<label key={index} className={`player color${(index+1)%10} ${playing ? '' : 'checked'} digits${(index+1).toString().length} ${(index)%30 === 0 ? 'clearLeft' : ''}`}>
+		const players = this.props.players.map((playing, index) => 
+			<label key={index} className={`player color${(index+1)%10} ${playing ? '' : 'checked'} digits${(index+1).toString().length} ${(index)%30 === 0 ? 'clearLeft' : ''} gender${this.props.importedPlayers[index + 1] ? this.props.importedPlayers[index + 1].gender : "U"}`}>
 				{index + 1}
 				<input type="checkbox" name={index} checked={playing} onChange={this.onPlayerCheckbox} />
 			</label>
 		);
+		const useCourtsOptions = []
+		for (let court = 1; court <= 8; court++) {
+			useCourtsOptions.push(
+				<label key={court}>
+					{court}
+					<input type="checkbox" name={court} checked={this.props.courtsToUse.indexOf(court) > -1} onChange={this.props.onCourtsToUseChange} />
+				</label>
+			);
+		}
 		return (
 			<div>
 				<React.Fragment>
 					<form>
-						<fieldset className="tournamentSettings">
-							<legend>Tournament settings</legend>
-							<label>
-								<span>Number of players</span>
-								<input type="text" name="noPlayers" value={this.props.players.length === 0 ? "" : this.props.players.length} onChange={this.handleChange}  />
-								<button onClick={e => this.removePlayer(e)}>-</button>
-								<button onClick={e => this.addPlayer(e)}>+</button>
-							</label>
-							<label>
-								<span>Number of courts</span>
-								<input type="text" name="noCourts" value={this.props.noCourts === 0 ? "" : this.props.noCourts} onChange={this.handleChange} />
-								<button onClick={e => this.removeCourt(e)}>-</button>
-								<button onClick={e => this.addCourt(e)}>+</button>
-							</label>
-							<label>
-								<span>Number of teams per court</span>
-								<input type="text" name="teamsPerCourt" value={this.props.teamsPerCourt === 0 ? "" : this.props.teamsPerCourt} onChange={this.handleChange}  />
-								<button onClick={e => this.removeTeamPerCourt(e)}>-</button>
-								<button onClick={e => this.addTeamPerCourt(e)}>+</button>
-							</label>
-							
-							<label>
-								<span>Let all players play every round</span>
-								<input type="checkbox" name="useAllPlayers" checked={this.props.useAllPlayers} onChange={this.handleChange} />
-							</label>
-							{!this.props.useAllPlayers && 
-									<label>
-										<span>Number of players per team</span>
-										<input type="text" name="playersPerTeam" value={this.props.playersPerTeam === 0 ? "" : this.props.playersPerTeam} onChange={this.handleChange}  />
-										<button onClick={e => this.removePlayerPerTeam(e)}>-</button>
-										<button onClick={e => this.addPlayerPerTeam(e)}>+</button>
-									</label>
-							}
-							
-							<div className="players">
-								<span>Players</span>
-								{players}
-							</div>
-							
-							<button className="submit" onClick={this.handleSubmit}>Create new round</button>
-							<button className="clearData" onClick =
-								{e => {
-										e.preventDefault();
-										window.confirm("Are you sure you want to delete all data about the tournament?") &&
-										this.props.onResetState()
-									}
-								}> 
-								<img alt="Clear data" src={deleteIcon} />Clear data
-							</button>
-						</fieldset>
-						<fieldset className="presentationSettings">
-							<legend>Presentation settings</legend>
-							<label>
-								<span>Automatically present new round on creation</span>
-								<input type="checkbox" checked={this.props.autoPesentNewRound} onChange={this.onAutoPresentNewRoundChange} />
-							</label>
-							<label>
-								<span>Show round name</span>
-								<input type="checkbox" checked={this.state.showRoundName} onChange={this.onShowRoundName} />
-							</label>
-							<div className="noRoundMessageSetting">
-								<span>Show message when no round is presented</span>
-								<label>
-									<input type="radio" name="goodGameEn" checked={this.state.selectedNoRoundMessage === "goodGameEn"} onChange={this.onNoRoundMessageChange} />
-									Good game!
-								</label>
-								<label>
-									<input type="radio" name="goodGameSv" checked={this.state.selectedNoRoundMessage === "goodGameSv"} onChange={this.onNoRoundMessageChange} />
-									Bra spelat!
-								</label>
-								<label>
-									<input type="radio" name="custom" checked={this.state.selectedNoRoundMessage === "custom"} onChange={this.onNoRoundMessageChange} />
-									<input type="text" name="customNoRoundMessage" value={this.state.customMessage} onChange={this.onNoRoundMessageChange} />
-								</label>
-								<label>
-									<input type="radio" name="noMessage" checked={this.state.selectedNoRoundMessage === "noMessage"} onChange={this.onNoRoundMessageChange} />
-									No message
-								</label>
-							</div>
-							<Link to="/presentation" target="_blank">Open presentation</Link>
-						</fieldset>
+                        <div className="col1">
+                            <fieldset className="googleImport">
+                                <legend>Import player data</legend>
+                                <GoogleSheets setImportedPlayers={this.props.setImportedPlayers} />
+                            </fieldset>
+                            <fieldset className="tournamentSettings">
+                                <legend>Tournament settings</legend>
+                                <label>
+                                    <span>Number of players</span>
+                                    <input type="text" name="noPlayers" value={this.props.players.length === 0 ? "" : this.props.players.length} onChange={this.handleChange}  />
+                                    <button onClick={e => this.removePlayer(e)}>-</button>
+                                    <button onClick={e => this.addPlayer(e)}>+</button>
+                                </label>
+                                <label>
+                                    <span>Number of courts</span>
+                                    <input type="text" name="noCourts" value={this.props.noCourts === 0 ? "" : this.props.noCourts} onChange={this.handleChange} />
+                                    <button onClick={e => this.removeCourt(e)}>-</button>
+                                    <button onClick={e => this.addCourt(e)}>+</button>
+                                </label>
+                                <label>
+                                    <span>Number of teams per court</span>
+                                    <input type="text" name="teamsPerCourt" value={this.props.teamsPerCourt === 0 ? "" : this.props.teamsPerCourt} onChange={this.handleChange}  />
+                                    <button onClick={e => this.removeTeamPerCourt(e)}>-</button>
+                                    <button onClick={e => this.addTeamPerCourt(e)}>+</button>
+                                </label>
+                                
+                                <label>
+                                    <span>Let all players play every round</span>
+                                    <input type="checkbox" name="useAllPlayers" checked={this.props.useAllPlayers} onChange={this.handleChange} />
+                                </label>
+                                {!this.props.useAllPlayers && 
+                                        <label>
+                                            <span>Number of players per team</span>
+                                            <input type="text" name="playersPerTeam" value={this.props.playersPerTeam === 0 ? "" : this.props.playersPerTeam} onChange={this.handleChange}  />
+                                            <button onClick={e => this.removePlayerPerTeam(e)}>-</button>
+                                            <button onClick={e => this.addPlayerPerTeam(e)}>+</button>
+                                        </label>
+                                }
+                                <div className="players">
+                                    <span>Players</span>
+                                    {players}
+                                </div>
+                                
+                                <button className="submit" onClick={this.handleSubmit}>Create new round</button>
+                                <button className="clearData" onClick =
+                                    {e => {
+                                            e.preventDefault();
+                                            window.confirm("Are you sure you want to delete all data about the tournament?") &&
+                                            this.props.onResetState()
+                                        }
+                                    }> 
+                                    <img alt="Clear data" src={deleteIcon} />Clear data
+                                </button>
+                            </fieldset>
+                        </div>
+                        <div className="col2">
+                            <fieldset className="presentationSettings">
+                                <legend>Presentation settings</legend>
+                                <label>
+                                    <span>Automatically present new round on creation</span>
+                                    <input type="checkbox" checked={this.props.autoPesentNewRound} onChange={this.onAutoPresentNewRoundChange} />
+                                </label>
+                                <label>
+                                    <span>Show round name</span>
+                                    <input type="checkbox" checked={this.state.showRoundName} onChange={this.onShowRoundName} />
+                                </label>
+                                <div className="noRoundMessageSetting">
+                                    <span>Show message when no round is presented</span>
+                                    <label>
+                                        <input type="radio" name="goodGameEn" checked={this.state.selectedNoRoundMessage === "goodGameEn"} onChange={this.onNoRoundMessageChange} />
+                                        Good game!
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="goodGameSv" checked={this.state.selectedNoRoundMessage === "goodGameSv"} onChange={this.onNoRoundMessageChange} />
+                                        Bra spelat!
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="custom" checked={this.state.selectedNoRoundMessage === "custom"} onChange={this.onNoRoundMessageChange} />
+                                        <input type="text" name="customNoRoundMessage" value={this.state.customMessage} onChange={this.onNoRoundMessageChange} />
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="noMessage" checked={this.state.selectedNoRoundMessage === "noMessage"} onChange={this.onNoRoundMessageChange} />
+                                        No message
+                                    </label>
+                                </div>
+                                <div className="courtsToUse">
+                                    <label className="showEigthCourts">
+                                        <span>Show 8 courts</span>
+                                        <input type="checkbox" name="showEigthCourts" checked={this.props.showEigthCourts} onChange={this.handleChange} />
+                                    </label>
+                                    {this.props.showEigthCourts &&
+                                        <div className="showEigthCourts">
+                                            <label className="showEigthCourts">Courts to use for the tournament</label>
+                                            {useCourtsOptions}
+                                        </div>
+                                    }
+                                </div>
+                                <Link to="/presentation" target="_blank">Open presentation</Link>
+                            </fieldset>
+                        </div>
 					</form>
 				</React.Fragment>
 			</div>
