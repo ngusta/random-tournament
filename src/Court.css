@@ -125,24 +125,29 @@
 	width: 50px;
 	height: 82px;
 }
+
 .courtSize0 .player.fit2 {
 	width: 18px;
 	height: 18px;
 	line-height: 18px;
 	font-size: 0.7em;
 }
+
 .courtSize0 .player.fit2.digits3 {
 	font-size: 0.6em;
 }
+
 .courtSize0 .player.fit3 {
 	width: 15px;
 	height: 15px;
 	line-height: 15px;
 	font-size: 0.5em;
 }
+
 .courtSize0 .player.fit3.digits3 {
 	font-size: 0.15em;
 }
+
 .courtSize0 .courtName {
 	font-size: 3.5em;
 	top: -1em;
@@ -153,24 +158,29 @@
 	width: 100px;
 	height: 166px;
 }
+
 .courtSize1 .player.fit2 {
 	width: 38px;
 	height: 38px;
 	line-height: 38px;
 	font-size: 1.6em;
 }
+
 .courtSize1 .player.fit2.digits3 {
 	font-size: 1.2em;
 }
+
 .courtSize1 .player.fit3 {
 	width: 25px;
 	height: 25px;
 	line-height: 25px;
 	font-size: 0.9em;
 }
+
 .courtSize1 .player.fit3.digits3 {
 	font-size: 0.7em;
 }
+
 .courtSize1 .courtName {
 	font-size: 4em;
 	top: -1em;
@@ -181,24 +191,29 @@
 	width: 150px;
 	height: 248px;
 }
+
 .courtSize2 .player.fit2 {
 	width: 55px;
 	height: 55px;
 	line-height: 55px;
 	font-size: 2.2em;
 }
+
 .courtSize2 .player.fit2.digits3 {
 	font-size: 1.8em;
 }
+
 .courtSize2 .player.fit3 {
 	width: 40px;
 	height: 40px;
 	line-height: 40px;
 	font-size: 1.6em;
 }
+
 .courtSize2 .player.fit3.digits3 {
 	font-size: 1.2em;
 }
+
 .courtSize2 .courtName {
 	font-size: 4em;
 	top: -1em;
@@ -209,24 +224,29 @@
 	width: 200px;
 	height: 332px;
 }
+
 .courtSize3 .player.fit2 {
 	width: 75px;
 	height: 75px;
 	line-height: 75px;
 	font-size: 2.9em;
 }
+
 .courtSize3 .player.fit2.digits3 {
 	font-size: 2.4em;
 }
+
 .courtSize3 .player.fit3 {
 	width: 50px;
 	height: 50px;
 	line-height: 50px;
 	font-size: 2.0em;
 }
+
 .courtSize3 .player.fit3.digits3 {
 	font-size: 1.5em;
 }
+
 .courtSize3 .courtName {
 	font-size: 4em;
 	top: -1em;
@@ -237,24 +257,29 @@
 	width: 220px;
 	height: 365px;
 }
+
 .courtSize4 .player.fit2 {
 	width: 80px;
 	height: 80px;
 	line-height: 80px;
 	font-size: 3.0em;
 }
+
 .courtSize4 .player.fit2.digits3 {
 	font-size: 2.5em;
 }
+
 .courtSize4 .player.fit3 {
 	width: 56px;
 	height: 56px;
 	line-height: 56px;
 	font-size: 2.2em;
 }
+
 .courtSize4 .player.fit3.digits3 {
 	font-size: 1.6em;
 }
+
 .courtSize4 .courtName {
 	font-size: 5em;
 	top: -1em;
@@ -265,24 +290,29 @@
 	width: 300px;
 	height: 498px;
 }
+
 .courtSize5 .player.fit2 {
 	width: 110px;
 	height: 110px;
 	line-height: 110px;
 	font-size: 4.9em;
 }
+
 .courtSize5 .player.fit2.digits3 {
 	font-size: 3.8em;
 }
+
 .courtSize5 .player.fit3 {
 	width: 76px;
 	height: 76px;
 	line-height: 76px;
 	font-size: 3.1em;
 }
+
 .courtSize5 .player.fit3.digits3 {
 	font-size: 2.3em;
 }
+
 .courtSize5 .courtName {
 	font-size: 6em;
 	top: -1em;
@@ -293,24 +323,29 @@
 	width: 400px;
 	height: 663px;
 }
+
 .courtSize6 .player.fit2 {
 	width: 140px;
 	height: 140px;
 	line-height: 140px;
 	font-size: 6.0em;
 }
+
 .courtSize6 .player.fit2.digits3 {
 	font-size: 4.8em;
 }
+
 .courtSize6 .player.fit3 {
 	width: 100px;
 	height: 100px;
 	line-height: 100px;
 	font-size: 4.7em;
 }
+
 .courtSize6 .player.fit3.digits3 {
 	font-size: 3.2em;
 }
+
 .courtSize6 .courtName {
 	font-size: 6em;
 	top: -1em;
@@ -321,24 +356,29 @@
 	width: 500px;
 	height: 830px;
 }
+
 .courtSize7 .player.fit2 {
 	width: 180px;
 	height: 180px;
 	line-height: 180px;
 	font-size: 8em;
 }
+
 .courtSize7 .player.fit2.digits3 {
 	font-size: 6.2em;
 }
+
 .courtSize7 .player.fit3 {
 	width: 125px;
 	height: 125px;
 	line-height: 125px;
 	font-size: 5.8em;
 }
+
 .courtSize7 .player.fit3.digits3 {
 	font-size: 4.2em;
 }
+
 .courtSize7 .courtName {
 	font-size: 6em;
 	top: -1em;

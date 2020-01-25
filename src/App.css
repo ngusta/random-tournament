@@ -1,185 +1,189 @@
 body {
-	font-family: Helvetica;
+    font-family: Helvetica;
 }
 
 #app {
-	background: url('img/erika/bg1-high.jpg') no-repeat;
-	background-attachment: fixed;
+    background: url('img/erika/bg1-high.jpg') no-repeat;
+    background-attachment: fixed;
     background-position: center top;
     background-size: cover;
-	padding: 9% 3% 0 6%;
+    padding: 9% 3% 0 6%;
 }
 
 #config {
-	background-color: #ffffff;
-	opacity: 0.85;
+    background-color: #ffffff;
+    opacity: 0.85;
 }
 
 #config ul {
-	clear: both;
+    clear: both;
 }
+
 .error {
-	color: red;
+    color: red;
 }
 
 .clearLeft {
-	clear: left;
+    clear: left;
 }
 
 #app .round {
-	display: inline-block;
-	clear: both;
-	margin-right: 20px;
+    display: inline-block;
+    clear: both;
+    margin-right: 20px;
 }
 
 #app .dryRun {
-	display: block;
+    display: block;
 }
 
 #app .round .courtName {
-	font-size: 2em;
+    font-size: 2em;
 }
+
 .delete {
-	height: 0.7em;
-	margin-left: 0.4em;
-	cursor: pointer;
+    height: 0.7em;
+    margin-left: 0.4em;
+    cursor: pointer;
 }
 
 .star {
-	height: 0.7em;
-	margin-right: 0.4em;
-	cursor: pointer;
+    height: 0.7em;
+    margin-right: 0.4em;
+    cursor: pointer;
 }
 
 #app .courts {
-	display: flex;
-	justify-content: flex-start;
-	align-items: center;
-	height: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    height: 100%;
 }
 
 #app .ranges {
-	display: block;
-	margin: 0 0 2em 1em;
-	font-weight: bold;
+    display: block;
+    margin: 0 0 2em 1em;
+    font-weight: bold;
 }
 
 form .col1,
 form .col2 {
-	display: inline-block;
-	float: left;
-	margin: 1em;
-	max-width: 50%;
+    display: inline-block;
+    float: left;
+    margin: 1em;
+    max-width: 50%;
 }
+
 .tournamentSettings,
 .presentationSettings,
 .googleImport {
-	display: inline-block;
-	line-height: 1.5;
-	font-size: 1.2em;
+    display: inline-block;
+    line-height: 1.5;
+    font-size: 1.2em;
 }
 
 #app .players {
-	margin-bottom: 10px;
-	float: left;
-	clear: both;
-	width: 100%
+    margin-bottom: 10px;
+    float: left;
+    clear: both;
+    width: 100%
 }
 
 #app label,
 #app .courtsToUse .showEigthCourts label {
-	display: block;
+    display: block;
 }
 
 #app .players label,
 #app .courtsToUse label {
-	display: inline-block;
+    display: inline-block;
 }
 
 .noRoundMessageSetting label {
-	margin-left: 10px;
+    margin-left: 10px;
 }
 
 
 .clearData {
-	float: right;
+    float: right;
 }
 
 .createNewRound {
-	font-size: 1.3em;
+    font-size: 1.3em;
 }
 
 #config button.clearData img {
-	background-image: url('/img/delete.png');
-	width: 15px;
-	margin-right: 2px;
+    background-image: url('/img/delete.png');
+    width: 15px;
+    margin-right: 2px;
 }
 
 #config .players span {
-	display: block;
+    display: block;
 }
 
 #config .player {
-	width: 25px;
-	height: 25px;
-	line-height: 25px;
-	font-size: 0.9em;
-	margin-right: 2px;
-	cursor: pointer;
-	float: left;
+    width: 25px;
+    height: 25px;
+    line-height: 25px;
+    font-size: 0.9em;
+    margin-right: 2px;
+    cursor: pointer;
+    float: left;
 }
+
 #config .player.digits3 {
-	font-size: 0.7em;
+    font-size: 0.7em;
 }
 
 #config .player.checked {
-	opacity: 0.1;
+    opacity: 0.1;
 }
 
 #config .player input {
-	display: none;
+    display: none;
 }
 
 #config .player.genderM {
-	border: 6px solid #89cff0;
+    border: 6px solid #89cff0;
 }
 
 #config .player.genderW {
-	border: 6px solid #f4c2c2;
+    border: 6px solid #f4c2c2;
 }
 
 #config .player.genderU {
-	border: 6px solid #000;
+    border: 6px solid #000;
 }
 
 #config input[type=text] {
-	width: 2em;
+    width: 2em;
 }
 
 #config .googleImport input[type=text] {
-	width: 27em;
+    width: 27em;
 }
 
 #config .noRoundMessageSetting input[type=text] {
-	width: 20em;
+    width: 20em;
 }
 
 #config label span {
-	display: inline-block;
-	width: 21em;
+    display: inline-block;
+    width: 21em;
 }
 
 #config .googleImport label span {
-	display: inline-block;
-	width: 8em;
+    display: inline-block;
+    width: 8em;
 }
 
 #config .googleImport label span.labelDetails {
-	font-size: 0.7em;
-	width: 100%;
+    font-size: 0.7em;
+    width: 100%;
 }
 
 .exampleRoundError {
-	float: left;
-	color: red;
+    float: left;
+    color: red;
 }

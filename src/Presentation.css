@@ -20,18 +20,19 @@ h1 {
 	margin: 5% 0 0 1.9%;
 }
 
-#presentation .round>h1 {
+#presentation .round > h1 {
 	position: absolute;
     right: 4%;
     top: 12%;
 }
+
 #presentation .courts {
 	display: flex;
 	justify-content: space-evenly;
 	align-items: center;
 	height: 100%;
 	width: 100%;
-	
+
 }
 
 #presentation .noRoundMessage {

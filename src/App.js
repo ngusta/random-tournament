@@ -105,7 +105,7 @@ class App extends React.Component {
 			ls.set("errors", []);
 			const round = this.createRound();
 			if (round) {
-				const newRounds = [...this.state.rounds, round]
+				const newRounds = [...this.state.rounds, round];
 				let pressIndex = this.state.presentationRoundIndex;
 				if (this.state.autoPresentNewRound) {
 					pressIndex = newRounds.length-1;
@@ -123,18 +123,18 @@ class App extends React.Component {
 	};
 
 	createRound(dryRun = false) {
-		const round = Round.createRound(
+		return Round.createRound(
 			this.getAllAvailablePlayers(),
-			this.state.noCourts, 
-			this.state.teamsPerCourt, 
+			this.state.noCourts,
+			this.state.teamsPerCourt,
 			this.state.playersPerTeam,
 			this.state.useAllPlayers,
-			dryRun ? (error) => {} : this.logError,
+			dryRun ? (error) => {
+			} : this.logError,
 			dryRun,
 			this.state.rounds,
 			this.state.importedPlayers
 		);
-		return round;
 	}
 
 	getAllAvailablePlayers() {
@@ -157,7 +157,7 @@ class App extends React.Component {
 		this.setState({importedPlayers: importedPlayers});
 		ls.set("importedPlayers", importedPlayers);
 	};
-	
+
 	render() {
 		let dryRunRound;
 		const dryRunRoundDraw = this.createRound(true);
