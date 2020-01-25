@@ -17,11 +17,11 @@ class GoogleSheets extends Component {
 		let auth2 = await loadAuth2('299101852059-l3umlu4h53eu1olrmtiivh440uj3g4as.apps.googleusercontent.com', 'https://www.googleapis.com/auth/spreadsheets.readonly');
 		if (auth2.isSignedIn.get()) {
 			gapi.load('client', () => {
-				gapi.client.setApiKey('AIzaSyBVn3mPVm6G3UNTsu6wjzc9pXgD-_xoa0Q');
 				gapi.client.load('sheets', 'v4', () => {
 					this.setState({ gapiReady: true });
 				});
 			});
+            console.log("mount login");
 			this.setState({loggedIn: true});
 		} else {
 			this.attachSignin(document.getElementById('loginButton'), auth2);
@@ -33,7 +33,16 @@ class GoogleSheets extends Component {
             let auth2 = await loadAuth2('299101852059-l3umlu4h53eu1olrmtiivh440uj3g4as.apps.googleusercontent.com', '')
             this.attachSignin(document.getElementById('loginButton'), auth2);
         }
+        if (this.state.loggedIn && !this.state.gapiReady) {
+            gapi.load('client', () => {
+                gapi.client.load('sheets', 'v4', () => {
+                    console.log("update gapi");
+                    this.setState({ gapiReady: true });
+                });
+            });
+        }
     }
+    
     attachSignin(element, auth2) {
         auth2.attachClickHandler(element, {},
             (googleUser) => {
@@ -42,11 +51,12 @@ class GoogleSheets extends Component {
                 console.log(JSON.stringify(error))
             });
     }
+    
     signOut = (e) => {
 		e.preventDefault();
         let auth2 = gapi.auth2.getAuthInstance();
         auth2.signOut().then(() => {
-            this.setState({loggedIn: false})
+            this.setState({loggedIn: false, gapiReady: false})
             console.log('User signed out.');
         });
     }
@@ -115,7 +125,7 @@ class GoogleSheets extends Component {
 		});
 		return (
 			<div>
-				{!this.state.loggedIn && <span id="loginButton">Log in</span>}
+				{!this.state.loggedIn && <button id="loginButton" onClick={e => e.preventDefault()}>Log in</button>}
 				{this.state.loggedIn && <button onClick={this.signOut}>Log out</button>}<br />
 				<label>
 					<span>Google sheet id:</span>
