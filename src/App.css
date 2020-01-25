@@ -105,6 +105,10 @@ form .col2 {
 	float: right;
 }
 
+.createNewRound {
+	font-size: 1.3em;
+}
+
 #config button.clearData img {
 	background-image: url('/img/delete.png');
 	width: 15px;

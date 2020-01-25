@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import ls from 'local-storage'
 import deleteIcon from './img/delete.png';
 import GoogleSheets from './GoogleSheets';
+import Timer from './Timer.js';
 
 class Settings extends React.Component {
 	constructor(props) {
@@ -11,7 +12,7 @@ class Settings extends React.Component {
 			selectedNoRoundMessage: ls.get("selectedNoRoundMessage") || "goodGameEn",	
 			customMessage: ls.get("customMessage") || "",
 			showRoundName: ls.get("showRoundName") || false
-		}
+		};
 		if (!ls.get("selectedNoRoundMessage")) {
 			ls.set("noRoundMessage", "Good game!");
 		}
@@ -20,52 +21,52 @@ class Settings extends React.Component {
 	handleChange = (e) => {
 		const value = e.target.type === 'checkbox' ? e.target.checked : Number(e.target.value);
 		this.props.onSettingChange(e.target.name, value);
-	}
+	};
 	
 	addPlayer = (e) => {
 		e.preventDefault();
 		this.props.onSettingChange("noPlayers", this.props.players.length + 1);
-	}
+	};
 	
 	removePlayer = (e) => {
 		e.preventDefault();
 		this.props.onSettingChange("noPlayers", this.props.players.length - 1);
-	}
+	};
 	
 	addCourt = (e) => {
 		e.preventDefault();
 		this.props.onSettingChange("noCourts", this.props.noCourts + 1);
-	}
+	};
 	
 	removeCourt = (e) => {
 		e.preventDefault();
 		this.props.onSettingChange("noCourts", this.props.noCourts - 1);
-	}
+	};
 	
 	addTeamPerCourt = (e) => {
 		e.preventDefault();
 		this.props.onSettingChange("teamsPerCourt", this.props.teamsPerCourt + 1);
-	}
+	};
 	
 	removeTeamPerCourt = (e) => {
 		e.preventDefault();
 		this.props.onSettingChange("teamsPerCourt", this.props.teamsPerCourt - 1);
-	}
+	};
 	
 	addPlayerPerTeam = (e) => {
 		e.preventDefault();
 		this.props.onSettingChange("playersPerTeam", this.props.playersPerTeam + 1);
-	}
+	};
 	
 	removePlayerPerTeam = (e) => {
 		e.preventDefault();
 		this.props.onSettingChange("playersPerTeam", this.props.playersPerTeam - 1);
-	}
+	};
 	
 	handleSubmit = (e) => {
 		this.props.onSubmit();
 		e.preventDefault();
-	}
+	};
 	
 	onPlayerCheckbox = (e) => {
 		const playersCopy = [...this.props.players];
@@ -101,17 +102,17 @@ class Settings extends React.Component {
 			ls.set("noRoundMessage", noRoundMessage);
 			ls.set("updatePresentation", true);
 		}
-	}
+	};
 	
 	onAutoPresentNewRoundChange = (e) => {
 		this.props.onAutoPresentNewRoundChange(e.target.checked);
-	}
+	};
 	
 	onShowRoundName = (e) => {
 		this.setState({showRoundName: e.target.checked});
 		ls.set("showRoundName", e.target.checked);
 		ls.set("updatePresentation", true);
-	}
+	};
 	
 	render() {
 		const players = this.props.players.map((playing, index) => 
@@ -120,7 +121,7 @@ class Settings extends React.Component {
 				<input type="checkbox" name={index} checked={playing} onChange={this.onPlayerCheckbox} />
 			</label>
 		);
-		const useCourtsOptions = []
+		const useCourtsOptions = [];
 		for (let court = 1; court <= 8; court++) {
 			useCourtsOptions.push(
 				<label key={court}>
@@ -175,8 +176,8 @@ class Settings extends React.Component {
                                     <span>Players</span>
                                     {players}
                                 </div>
-                                
-                                <button className="submit" onClick={this.handleSubmit}>Create new round</button>
+
+								<button className="createNewRound" onClick={this.handleSubmit}>Create new round</button>
                                 <button className="clearData" onClick =
                                     {e => {
                                             e.preventDefault();
@@ -189,6 +190,10 @@ class Settings extends React.Component {
                             </fieldset>
                         </div>
                         <div className="col2">
+							<fieldset>
+								<legend>Time</legend>
+								<Timer lastRoundCreationDate={this.props.lastRoundCreationDate}/>
+							</fieldset>
                             <fieldset className="presentationSettings">
                                 <legend>Presentation settings</legend>
                                 <label>

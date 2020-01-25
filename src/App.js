@@ -19,8 +19,9 @@ class App extends React.Component {
 			autoPresentNewRound: ls.get("autoPresentNewRound") || true,
 			showEigthCourts: ls.get("showEigthCourts") || false,
 			courtsToUse: ls.get("courtsToUse") || [1,2,3,4,5,6,7,8],
-			importedPlayers: ls.get("importedPlayers") || []
-		}
+			importedPlayers: ls.get("importedPlayers") || [],
+			lastRoundCreationDate: ls.get("lastRoundCreationDate") || null
+		};
 		ls.set("updatePresentation", true);
 	}
 
@@ -45,12 +46,12 @@ class App extends React.Component {
 				ls.set("updatePresentation", true);
 			}
 		}
-	}
+	};
 	
 	onPlayersChange = (newAvailablePlayers) => {
 		this.setState({availablePlayers: newAvailablePlayers});
 		ls.set("availablePlayers", newAvailablePlayers);
-	}
+	};
 	
 	onCourtsToUseChange = (e) => {
 		const courtsToUseCopy = [...this.state.courtsToUse];
@@ -63,7 +64,7 @@ class App extends React.Component {
 		this.setState({courtsToUse: courtsToUseCopy});
 		ls.set("courtsToUse", courtsToUseCopy);
 		ls.set("updatePresentation", true);
-	}
+	};
 	
 	onDeleteRound = (roundIndex) => {
 		const roundsCopy = [...this.state.rounds];
@@ -79,8 +80,8 @@ class App extends React.Component {
 		
 		ls.set("playerStats", {});
 		roundsCopy.forEach(round => Round.updatePlayerStats(round));
-		
-	}
+
+	};
 	
 	onShowOnPresentation = (roundIndex) => {
 		if (this.state.presentationRoundIndex === roundIndex) {
@@ -88,16 +89,16 @@ class App extends React.Component {
 		}
 		this.setState({presentationRoundIndex: roundIndex});
 		ls.set("presentationRoundIndex", roundIndex);
-	}
+	};
 	
 	onResetState = () => {
 		ls.clear();
 		window.location.reload();
-	}
+	};
 	
 	onAutoPresentNewRoundChange = (value) => {
 		this.setState({autoPresentNewRound: value});
-	}
+	};
 	
 	draw = () => {
 		this.setState({errors: []}, () => {
@@ -113,9 +114,13 @@ class App extends React.Component {
 				this.setState({rounds: newRounds, presentationRoundIndex: pressIndex});
 				ls.set("rounds", newRounds);
 				ls.set("presentationRoundIndex", pressIndex);
+
+				const created = Date.now();
+				this.setState({lastRoundCreationDate: created});
+				ls.set("lastRoundCreationDate", created);
 			}
 		});
-	}
+	};
 
 	createRound(dryRun = false) {
 		const round = Round.createRound(
@@ -146,12 +151,12 @@ class App extends React.Component {
 		const newErrors = [...this.state.errors, message];
 		this.setState({errors: newErrors});
 		ls.set("errors", newErrors);
-	}
+	};
 	
 	setImportedPlayers = (importedPlayers) => {
 		this.setState({importedPlayers: importedPlayers});
 		ls.set("importedPlayers", importedPlayers);
-	}
+	};
 	
 	render() {
 		let dryRunRound;
@@ -191,22 +196,23 @@ class App extends React.Component {
 		return (
 			<div id="app">
 				<div id="config">
-					<Settings noCourts={this.state.noCourts} 
-						teamsPerCourt={this.state.teamsPerCourt} 
-						playersPerTeam={this.state.playersPerTeam}
-						useAllPlayers={this.state.useAllPlayers}
-						players={this.state.availablePlayers}
-						onSettingChange={this.onSettingChange}
-						onPlayersChange={this.onPlayersChange}
-						onSubmit={this.draw}
-						onResetState={this.onResetState}
-						autoPesentNewRound={this.state.autoPresentNewRound}
-						onAutoPresentNewRoundChange={this.onAutoPresentNewRoundChange}
-						showEigthCourts={this.state.showEigthCourts}
-						courtsToUse={this.state.courtsToUse}
-						onCourtsToUseChange={this.onCourtsToUseChange}
-						setImportedPlayers={this.setImportedPlayers}
-						importedPlayers={this.state.importedPlayers}
+					<Settings noCourts={this.state.noCourts}
+							  teamsPerCourt={this.state.teamsPerCourt}
+							  playersPerTeam={this.state.playersPerTeam}
+							  useAllPlayers={this.state.useAllPlayers}
+							  players={this.state.availablePlayers}
+							  onSettingChange={this.onSettingChange}
+							  onPlayersChange={this.onPlayersChange}
+							  onSubmit={this.draw}
+							  onResetState={this.onResetState}
+							  autoPesentNewRound={this.state.autoPresentNewRound}
+							  onAutoPresentNewRoundChange={this.onAutoPresentNewRoundChange}
+							  showEigthCourts={this.state.showEigthCourts}
+							  courtsToUse={this.state.courtsToUse}
+							  onCourtsToUseChange={this.onCourtsToUseChange}
+							  setImportedPlayers={this.setImportedPlayers}
+							  importedPlayers={this.state.importedPlayers}
+							  lastRoundCreationDate={this.state.lastRoundCreationDate}
 						/>
 					<ul className="clear">
 						{errors}
