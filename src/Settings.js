@@ -4,6 +4,7 @@ import ls from 'local-storage'
 import deleteIcon from './img/delete.png';
 import GoogleSheets from './GoogleSheets';
 import Timer from './Timer.js';
+import Round from './Round.js';
 
 class Settings extends React.Component {
     constructor(props) {
@@ -75,13 +76,10 @@ class Settings extends React.Component {
 
     onPlayerCheckbox = (e) => {
         if (this.state.editGender) {
-            console.log(this.props.importedPlayers);
             const importedPlayers = Object.assign({}, this.props.importedPlayers);
-            console.log(importedPlayers);
             const player = Number(e.target.name) + 1;
-            console.log("Player: " + player);
             if (player in importedPlayers) {
-                if (importedPlayers[player].gender === "M") {
+                if (Round.isMan(importedPlayers, player)) {
                     importedPlayers[player].gender = "W";
                 } else {
                     importedPlayers[player].gender = "M";
@@ -140,7 +138,7 @@ class Settings extends React.Component {
     render() {
         const players = this.props.players.map((playing, index) =>
             <label key={index}
-                   className={`player color${(index + 1) % 10} ${playing ? '' : 'checked'} digits${(index + 1).toString().length} ${(index) % 30 === 0 ? 'clearLeft' : ''} gender${this.props.importedPlayers[index + 1] ? this.props.importedPlayers[index + 1].gender : "M"}`}>
+                   className={`player color${(index + 1) % 10} ${playing ? '' : 'checked'} digits${(index + 1).toString().length} ${(index) % 30 === 0 ? 'clearLeft' : ''} gender${Round.getGender(this.props.importedPlayers, index + 1)}`}>
                 {index + 1}
                 <input type="checkbox" name={index} checked={playing} onChange={this.onPlayerCheckbox}/>
             </label>

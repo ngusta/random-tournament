@@ -108,7 +108,6 @@ class Round extends React.Component {
         const mean = totalPoints / allPoints.length;
         const stdDev = Math.sqrt((1 / (allPoints.length - 1)) * allPoints.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b, 0));
         !dryRun && console.log("Final mean/StdDev: " + Math.round(mean) + "/" + Math.round(stdDev));
-        //console.log(allPoints.join(","));
         !dryRun && console.log("Best after 1, 10, 50, 100, 300, 500, 1000, 10000, best");
         !dryRun && console.log(diff1 + ", " + diff10 + ", " + diff50 + ", " + diff100 + ", " + diff300 + ", " + diff500 + ", " + diff1000 + ", " + diff10000 + ", " + bestPoints);
         if (!dryRun) {
@@ -197,8 +196,11 @@ class Round extends React.Component {
     static evaulateRound(round, importedPlayers) {
         const playerStats = ls.get("playerStats") || {};
         let points = 0;
+        let mixedPoints = 0;
         for (let c = 0; c < round.length; c++) {
             for (let t = 0; t < round[c].length; t++) {
+                let noMenInTeam = 0;
+                let noWomenInTeam = 0;
                 for (let p = 0; p < round[c][t].length; p++) {
                     const player = round[c][t][p];
                     const partners = Round.partners(round, c, t, p);
@@ -217,16 +219,35 @@ class Round extends React.Component {
                         points += 1 * Round.countOccurences(c, playerStats[player].courts);
 
                     }
-                    //Partner of same gender
-                    if (partners.length === 1 && p === 0
-                        && importedPlayers[player] && importedPlayers[partners[0]]
-                        && importedPlayers[player].gender === importedPlayers[partners[0]].gender) {
-                        points += 2;
+                    if (Round.isMan(importedPlayers, player)) {
+                        noMenInTeam++;
                     }
+                    if (Round.isWoman(importedPlayers, player)) {
+                        noWomenInTeam++;
+                    }
+                }
+                if (noMenInTeam === 0 || noWomenInTeam === 0) {
+                    points += round[c][t].length * 2;
+                    mixedPoints += round[c][t].length * 2;
                 }
             }
         }
         return points;
+    }
+
+    static isMan(importedPlayers, player) {
+        return Round.getGender(importedPlayers, player) === "M"
+    }
+
+    static isWoman(importedPlayers, player) {
+        return Round.getGender(importedPlayers, player) === "W"
+    }
+
+    static getGender(importedPlayers, player) {
+        if (importedPlayers && importedPlayers[player] && importedPlayers[player].gender === "W") {
+            return "W";
+        }
+        return "M";
     }
 
     static countOccurences(item, list) {
@@ -310,26 +331,25 @@ class Round extends React.Component {
     }
 
     getNoMixedTeams = () => {
-        let noOfMixedTeams = 0;
+        let noMixedTeams = 0;
         this.props.courts.forEach(court => {
             court.forEach(team => {
-                if (team.length === 2) {
-                    const p1 = team[0];
-                    const p2 = team[1];
-                    if (this.props.importedPlayers
-                        && this.props.importedPlayers[p1] && this.props.importedPlayers[p2]) {
-                        const playerIsWoman = this.props.importedPlayers[p1].gender === "W";
-                        const playerIsMan = this.props.importedPlayers[p1].gender === "M";
-                        const partnerIsWoman = this.props.importedPlayers[p2].gender === "W";
-                        const partnerIsMan = this.props.importedPlayers[p2].gender === "M";
-                        if ((playerIsWoman && partnerIsMan) || (playerIsMan && partnerIsWoman)) {
-                            noOfMixedTeams++;
-                        }
+                let noMenInTeam = 0;
+                let noWomenInTeam = 0;
+                team.forEach(player => {
+                    if (Round.isWoman(this.props.importedPlayers, player)) {
+                        noWomenInTeam++;
+                    } else {
+                        noMenInTeam++;
                     }
+                });
+                if (noMenInTeam > 0 && noWomenInTeam > 0) {
+                    noMixedTeams++;
                 }
-            })
+
+            });
         });
-        return noOfMixedTeams;
+        return noMixedTeams;
     };
 
     onDeleteRound = (e) => {

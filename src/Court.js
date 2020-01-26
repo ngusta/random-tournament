@@ -1,5 +1,6 @@
 import React from 'react';
 import './Court.css';
+import Round from './Round.js';
 
 class Court extends React.Component {
 	render() {
@@ -15,8 +16,8 @@ class Court extends React.Component {
 			const oneRowClass = noPlayersRow2 === 0 ? " oneRow" : "";
 			let playersInRow = team.slice(0, noPlayersRow1).map((player) =>
 				<div
-                    className={`player fit${noOfPlayersToFitClass} color${player % 10} digits${player.toString().length} gender${(this.props.importedPlayers && this.props.importedPlayers[player]) ? this.props.importedPlayers[player].gender : "M"}`}
-                    key={player}>
+					className={`player fit${noOfPlayersToFitClass} color${player % 10} digits${player.toString().length} gender${Round.getGender(this.props.importedPlayers, player)}`}
+					key={player}>
 					{player}
 				</div>
 			);
@@ -27,8 +28,8 @@ class Court extends React.Component {
 			);
             playersInRow = team.slice(noPlayersRow1, team.length).map((player) =>
 				<div
-                    className={`player fit${noOfPlayersToFitClass} color${player % 10} digits${player.toString().length} gender${(this.props.importedPlayers && this.props.importedPlayers[player]) ? this.props.importedPlayers[player].gender : "M"}`}
-                    key={player}>
+					className={`player fit${noOfPlayersToFitClass} color${player % 10} digits${player.toString().length} gender${Round.getGender(this.props.importedPlayers, player)}`}
+					key={player}>
 					{player}
 				</div>
 			);

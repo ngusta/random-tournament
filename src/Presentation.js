@@ -21,11 +21,7 @@ class Presentation extends React.Component {
 	}
 
 	checkUpdate = () => {
-		//console.log("\nrts: " + this.state.roundToShow);
-		//console.log("rtsi: " + this.state.roundToShowIndex);
 		const presentationRoundIndex = Number(ls.get("presentationRoundIndex") === null ? -1 : ls.get("presentationRoundIndex"));
-		//console.log("ls rtsi: " + presentationRoundIndex);
-		//console.log("ls rts: " + ((presentationRoundIndex >= 0) ? ls.get("rounds")[presentationRoundIndex] : "ogitligt index"));
 		if (this.state.roundToShowIndex !== presentationRoundIndex || ls.get("updatePresentation")) {
 			ls.set("updatePresentation", false);
 			if (presentationRoundIndex === -1 || ls.get("rounds") === null || presentationRoundIndex >= ls.get("rounds").length) {
@@ -58,7 +54,6 @@ class Presentation extends React.Component {
 	updateWindowDimensions = () => {
 		if (this.containerRef.current) {
 			const boundingClient = this.containerRef.current.getBoundingClientRect();
-			console.log("W: " + boundingClient.width + " H: " + boundingClient.height);
 			this.setState({width: boundingClient.width, height: boundingClient.height});
 		} else {
 			this.setState({width: window.innerWidth, height: window.innerHeight});
@@ -77,7 +72,6 @@ class Presentation extends React.Component {
 		while (i > 0 && (availableCourtWidths[i] > (this.state.width / noCourts) || availableCourtHeights[i] > this.state.height)) {
 			i--;
 		}
-		console.log("cS" + i);
 		return "courtSize" + i;
 	}
 

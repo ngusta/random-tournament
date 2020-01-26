@@ -22,7 +22,6 @@ class GoogleSheets extends Component {
                     this.setState({gapiReady: true});
                 });
             });
-            console.log("mount login");
             this.setState({loggedIn: true});
         } else {
             this.attachSignin(document.getElementById('loginButton'), auth2);
@@ -37,7 +36,6 @@ class GoogleSheets extends Component {
         if (this.state.loggedIn && !this.state.gapiReady) {
             gapi.load('client', () => {
                 gapi.client.load('sheets', 'v4', () => {
-                    console.log("update gapi");
                     this.setState({gapiReady: true});
                 });
             });
@@ -82,9 +80,6 @@ class GoogleSheets extends Component {
                     playerData.forEach(player => {
                         let gender;
                         switch (player[3]) {
-                            case "Kille":
-                                gender = "M";
-                                break;
                             case "Tjej":
                                 gender = "W";
                                 break;
