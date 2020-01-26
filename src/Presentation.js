@@ -14,6 +14,7 @@ class Presentation extends React.Component {
 			width: 0,
 			height: 0,
 			showEigthCourts: ls.get("showEigthCourts") || false,
+			hideUnusedCourts: ls.get("hideUnusedCourts") || false,
 			courtsToUse: ls.get("courtsToUse") || [1, 2, 3, 4, 5, 6, 7, 8]
 		};
 		setInterval(this.checkUpdate, 100);
@@ -38,6 +39,7 @@ class Presentation extends React.Component {
 			this.setState({noRoundMessage: ls.get("noRoundMessage")});
 			this.setState({showRoundName: ls.get("showRoundName")});
 			this.setState({showEigthCourts: ls.get("showEigthCourts")});
+			this.setState({hideUnusedCourts: ls.get("hideUnusedCourts")});
 			this.setState({courtsToUse: ls.get("courtsToUse")});
 		}
 	};
@@ -86,6 +88,7 @@ class Presentation extends React.Component {
 					courtClass={this.getCourtClass()}
 					roundName={this.state.showRoundName && `Round ${this.state.roundToShowIndex + 1}`}
 					showEigthCourts={this.state.showEigthCourts}
+					hideUnusedCourts={this.state.hideUnusedCourts}
 					courtsToUse={this.state.courtsToUse}
 				/>
 				}

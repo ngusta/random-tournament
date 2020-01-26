@@ -390,8 +390,10 @@ class Round extends React.Component {
                 if (courtsToUse.indexOf(court) > -1 && nextCourtFromRound < this.props.courts.length) {
                     teams = this.props.courts[nextCourtFromRound++];
                 }
-                courts.push(<Court teams={teams} key={court} courtNumber={court} courtClass={this.props.courtClass}
-                                   importedPlayers={this.props.importedPlayers}/>)
+                if (teams.length > 0 || !this.props.hideUnusedCourts) {
+                    courts.push(<Court teams={teams} key={court} courtNumber={court} courtClass={this.props.courtClass}
+                                       importedPlayers={this.props.importedPlayers}/>)
+                }
             }
         } else {
             courts = this.props.courts.map((teamsOnCourt, index) =>

@@ -280,8 +280,13 @@ class Settings extends React.Component {
                                     </label>
                                     {this.props.showEigthCourts &&
                                     <div className="showEigthCourts">
-                                        <label className="showEigthCourts">Courts to use for the tournament</label>
+                                        <label>Courts to use for the tournament</label>
                                         {useCourtsOptions}
+                                        <label>
+                                            <span>Hide unused courts</span>
+                                            <input type="checkbox" name="hideUnusedCourts"
+                                                   checked={this.props.hideUnusedCourts} onChange={this.handleChange}/>
+                                        </label>
                                     </div>
                                     }
                                 </div>

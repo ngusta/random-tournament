@@ -94,6 +94,10 @@ form .col2 {
     display: block;
 }
 
+#app .courtsToUse div.showEigthCourts {
+    margin-left: 1em;
+}
+
 #app .players label,
 #app .courtsToUse label {
     display: inline-block;

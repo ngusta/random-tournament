@@ -18,6 +18,7 @@ class App extends React.Component {
 			presentationRoundIndex: ls.get("presentationRoundIndex") || -1,
 			autoPresentNewRound: ls.get("autoPresentNewRound") || true,
 			showEigthCourts: ls.get("showEigthCourts") || false,
+			hideUnusedCourts: ls.get("hideUnusedCourts") || false,
 			courtsToUse: ls.get("courtsToUse") || [1,2,3,4,5,6,7,8],
 			importedPlayers: ls.get("importedPlayers") || [],
 			lastRoundCreationDate: ls.get("lastRoundCreationDate") || null
@@ -41,7 +42,7 @@ class App extends React.Component {
 		} else {
 			this.setState({[name]: value});
 			ls.set(name, value);
-			if (name === "showEigthCourts") {
+			if (name === "showEigthCourts" || name === "hideUnusedCourts") {
 				ls.set("courtsToUse", this.state.courtsToUse);
 				ls.set("updatePresentation", true);
 			}
@@ -208,6 +209,7 @@ class App extends React.Component {
 							  autoPesentNewRound={this.state.autoPresentNewRound}
 							  onAutoPresentNewRoundChange={this.onAutoPresentNewRoundChange}
 							  showEigthCourts={this.state.showEigthCourts}
+							  hideUnusedCourts={this.state.hideUnusedCourts}
 							  courtsToUse={this.state.courtsToUse}
 							  onCourtsToUseChange={this.onCourtsToUseChange}
 							  setImportedPlayers={this.setImportedPlayers}
