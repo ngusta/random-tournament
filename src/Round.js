@@ -143,7 +143,6 @@ class Round extends React.Component {
         if (playersPerTeam < 2 || playersPerTeam > 10) {
             return "playersPerTeam - Min: 2, Max: 10, Was: " + playersPerTeam;
         }
-        return;
     }
 
     static addTwoTeamsOfTwoPlayers(nextPlayer, noCourts, players, round) {
@@ -221,7 +220,6 @@ class Round extends React.Component {
                     //Partner of same gender
                     if (partners.length === 1 && p === 0
                         && importedPlayers[player] && importedPlayers[partners[0]]
-                        && importedPlayers[player].gender !== "U" && importedPlayers[partners[0]].gender !== "U"
                         && importedPlayers[player].gender === importedPlayers[partners[0]].gender) {
                         points += 2;
                     }

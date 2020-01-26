@@ -46,7 +46,7 @@ class GoogleSheets extends Component {
 
     attachSignin(element, auth2) {
         auth2.attachClickHandler(element, {},
-            (googleUser) => {
+            () => {
                 this.setState({loggedIn: true});
             }, (error) => {
                 console.log(JSON.stringify(error))
@@ -89,7 +89,7 @@ class GoogleSheets extends Component {
                                 gender = "W";
                                 break;
                             default:
-                                gender = "U";
+                                gender = "M";
                         }
 
                         importedPlayers[player[0]] = {name: player[1] + " " + player[2], gender: gender};

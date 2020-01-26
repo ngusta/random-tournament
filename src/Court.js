@@ -15,8 +15,8 @@ class Court extends React.Component {
 			const oneRowClass = noPlayersRow2 === 0 ? " oneRow" : "";
 			let playersInRow = team.slice(0, noPlayersRow1).map((player) =>
 				<div
-					className={`player fit${noOfPlayersToFitClass} color${player % 10} digits${player.toString().length} gender${(this.props.importedPlayers && this.props.importedPlayers[player]) ? this.props.importedPlayers[player].gender : "U"}`}
-					key={player}>
+                    className={`player fit${noOfPlayersToFitClass} color${player % 10} digits${player.toString().length} gender${(this.props.importedPlayers && this.props.importedPlayers[player]) ? this.props.importedPlayers[player].gender : "M"}`}
+                    key={player}>
 					{player}
 				</div>
 			);
@@ -25,10 +25,10 @@ class Court extends React.Component {
 					{playersInRow}
 				</div>
 			);
-			playersInRow = team.slice(noPlayersRow1, team.length).map((player, playerIndex) =>
+            playersInRow = team.slice(noPlayersRow1, team.length).map((player) =>
 				<div
-					className={`player fit${noOfPlayersToFitClass} color${player % 10} digits${player.toString().length} gender${(this.props.importedPlayers && this.props.importedPlayers[player]) ? this.props.importedPlayers[player].gender : "U"}`}
-					key={player}>
+                    className={`player fit${noOfPlayersToFitClass} color${player % 10} digits${player.toString().length} gender${(this.props.importedPlayers && this.props.importedPlayers[player]) ? this.props.importedPlayers[player].gender : "M"}`}
+                    key={player}>
 					{player}
 				</div>
 			);

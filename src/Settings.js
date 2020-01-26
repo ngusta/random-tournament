@@ -83,13 +83,11 @@ class Settings extends React.Component {
             if (player in importedPlayers) {
                 if (importedPlayers[player].gender === "M") {
                     importedPlayers[player].gender = "W";
-                } else if (importedPlayers[player].gender === "W") {
-                    importedPlayers[player].gender = "U";
                 } else {
                     importedPlayers[player].gender = "M";
                 }
             } else {
-                importedPlayers[player] = {name: "", gender: "M"};
+                importedPlayers[player] = {name: "", gender: "W"};
             }
             this.props.setImportedPlayers(importedPlayers);
         } else {
@@ -142,7 +140,7 @@ class Settings extends React.Component {
     render() {
         const players = this.props.players.map((playing, index) =>
             <label key={index}
-                   className={`player color${(index + 1) % 10} ${playing ? '' : 'checked'} digits${(index + 1).toString().length} ${(index) % 30 === 0 ? 'clearLeft' : ''} gender${this.props.importedPlayers[index + 1] ? this.props.importedPlayers[index + 1].gender : "U"}`}>
+                   className={`player color${(index + 1) % 10} ${playing ? '' : 'checked'} digits${(index + 1).toString().length} ${(index) % 30 === 0 ? 'clearLeft' : ''} gender${this.props.importedPlayers[index + 1] ? this.props.importedPlayers[index + 1].gender : "M"}`}>
                 {index + 1}
                 <input type="checkbox" name={index} checked={playing} onChange={this.onPlayerCheckbox}/>
             </label>
