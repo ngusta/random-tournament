@@ -196,8 +196,9 @@ class Round extends React.Component {
     static evaulateRound(round, importedPlayers) {
         const playerStats = ls.get("playerStats") || {};
         let points = 0;
-        let mixedPoints = 0;
         for (let c = 0; c < round.length; c++) {
+            let noMenInLastTeam = 0;
+            let noWomenInLastTeam = 0;
             for (let t = 0; t < round[c].length; t++) {
                 let noMenInTeam = 0;
                 let noWomenInTeam = 0;
@@ -226,10 +227,25 @@ class Round extends React.Component {
                         noWomenInTeam++;
                     }
                 }
-                if (noMenInTeam === 0 || noWomenInTeam === 0) {
-                    points += round[c][t].length * 2;
-                    mixedPoints += round[c][t].length * 2;
+                //Avoid mixed teams playing non-mixed teams
+                if (round[c].length === 2 && t === 1) {
+                    const isThisAMixedTeam = noMenInTeam > 0 && noWomenInTeam > 0;
+                    const isLastTeamAMixedTeam = noMenInLastTeam > 0 && noWomenInLastTeam > 0;
+                    if (isThisAMixedTeam !== isLastTeamAMixedTeam) {
+                        points += 10;
+                    }
+                    if ((noWomenInTeam === 0 && noMenInLastTeam === 0) || (noMenInTeam === 0 && noWomenInLastTeam === 0)) {
+                        points += 20;
+                    }
                 }
+
+                //Avoid non-mixed teams
+                if (noMenInTeam === 0 || noWomenInTeam === 0) {
+                    points += round[c][t].length * 3;
+                }
+
+                noMenInLastTeam = noMenInTeam;
+                noWomenInLastTeam = noWomenInTeam;
             }
         }
         return points;
