@@ -22,14 +22,26 @@ class Timer extends React.Component {
     }
 
     render() {
-        const roundCreated = dateFormat(this.props.lastRoundCreationDate, "HH:MM:ss");
-        var roundCreatedSecondsDiff = Math.floor((Date.now() - this.props.lastRoundCreationDate) / 1000);
-        const roundCreatedMinDiff = Math.floor(roundCreatedSecondsDiff / 60);
-        roundCreatedSecondsDiff -= roundCreatedMinDiff * 60;
+        const lastRoundCreated = dateFormat(this.props.lastRoundCreationDate, "HH:MM:ss");
+        var lastRoundCreatedSecondsDiff = Math.floor((Date.now() - this.props.lastRoundCreationDate) / 1000);
+        const lastRoundCreatedMinDiff = Math.floor(lastRoundCreatedSecondsDiff / 60);
+        lastRoundCreatedSecondsDiff -= lastRoundCreatedMinDiff * 60;
+
+        const secondLastRoundCreated = dateFormat(this.props.secondLastRoundCreationDate, "HH:MM:ss");
+        var secondLastRoundCreatedSecondsDiff = Math.floor((Date.now() - this.props.secondLastRoundCreationDate) / 1000);
+        const secondLastRoundCreatedMinDiff = Math.floor(secondLastRoundCreatedSecondsDiff / 60);
+        secondLastRoundCreatedSecondsDiff -= secondLastRoundCreatedMinDiff * 60;
         return (
-            <p>
-                Last round created {roundCreated}. ({roundCreatedMinDiff} min {roundCreatedSecondsDiff} s sedan)
-            </p>
+            <div>
+                <p>
+                    Second last round created {secondLastRoundCreated}.
+                    ({secondLastRoundCreatedMinDiff} min {secondLastRoundCreatedSecondsDiff} s sedan)
+                </p>
+                <p>
+                    Last round created {lastRoundCreated}.
+                    ({lastRoundCreatedMinDiff} min {lastRoundCreatedSecondsDiff} s sedan)
+                </p>
+            </div>
         );
     }
 }

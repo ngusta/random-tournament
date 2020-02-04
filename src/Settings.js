@@ -5,6 +5,7 @@ import deleteIcon from './img/delete.png';
 import GoogleSheets from './GoogleSheets';
 import Timer from './Timer.js';
 import Round from './Round.js';
+import Stats from "./Stats";
 
 class Settings extends React.Component {
     constructor(props) {
@@ -157,7 +158,7 @@ class Settings extends React.Component {
             <div>
                 <React.Fragment>
                     <form>
-                        <div className="col1">
+                        <div className="col">
                             <fieldset className="googleImport">
                                 <legend>Import player data</legend>
                                 <GoogleSheets setImportedPlayers={this.props.setImportedPlayers}/>
@@ -227,10 +228,11 @@ class Settings extends React.Component {
                                 </button>
                             </fieldset>
                         </div>
-                        <div className="col2">
+                        <div className="col">
                             <fieldset>
                                 <legend>Time</legend>
-                                <Timer lastRoundCreationDate={this.props.lastRoundCreationDate}/>
+                                <Timer lastRoundCreationDate={this.props.lastRoundCreationDate}
+                                       secondLastRoundCreationDate={this.props.secondLastRoundCreationDate}/>
                             </fieldset>
                             <fieldset className="presentationSettings">
                                 <legend>Presentation settings</legend>
@@ -293,6 +295,11 @@ class Settings extends React.Component {
                                 <Link to="/presentation" target="_blank">Open presentation</Link>
                             </fieldset>
                         </div>
+
+                        <Stats
+                            players={this.props.players}
+                            importedPlayers={this.props.importedPlayers}
+                        />
                     </form>
                 </React.Fragment>
             </div>

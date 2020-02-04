@@ -98,7 +98,6 @@ class Round extends React.Component {
                     console.log("Stopping at: " + bestPoints + " (i=" + (i + 1) + ") with mean/StdDev: " + Math.round(mean) + "/" + Math.round(stdDev));
                     foundStopValue = true;
                     break;
-
                 }
             }
             if (bestPoints === 0) {
@@ -111,7 +110,7 @@ class Round extends React.Component {
         !dryRun && console.log("Best after 1, 10, 50, 100, 300, 500, 1000, 10000, best");
         !dryRun && console.log(diff1 + ", " + diff10 + ", " + diff50 + ", " + diff100 + ", " + diff300 + ", " + diff500 + ", " + diff1000 + ", " + diff10000 + ", " + bestPoints);
         if (!dryRun) {
-            Round.updatePlayerStats(bestRound);
+            Round.updatePlayerStats(bestRound, importedPlayers);
             const stopTime = performance.now();
             console.log("CreateRound took " + Math.round(stopTime - startTime) + " ms.");
         }
@@ -208,7 +207,7 @@ class Round extends React.Component {
                     if (playerStats[player]) {
                         const opponents = Round.opponents(round, c, t);
                         //Played with partner
-                        partners.forEach((partner) => points += 4 * Round.countOccurences(partner, playerStats[player].partners));
+                        partners.forEach((partner) => points += 8 * Round.countOccurences(partner, playerStats[player].partners));
                         //points += partners.map((partner) => 4*Round.countOccurences(partner, playerStats[player].partners)).reduce((a, b) => a + b));
                         //Played against partner
                         partners.forEach((partner) => points += 1 * Round.countOccurences(partner, playerStats[player].opponents));
@@ -290,14 +289,25 @@ class Round extends React.Component {
         return opponents
     }
 
-    static updatePlayerStats(round) {
+    static updatePlayerStats(round, importedPlayers) {
         const playerStats = ls.get("playerStats") || {};
         for (let c = 0; c < round.length; c++) {
+            let noMenInLastTeam = 0;
+            let noWomenInLastTeam = 0;
             for (let t = 0; t < round[c].length; t++) {
+                let noMenInTeam = 0;
+                let noWomenInTeam = 0;
                 for (let p = 0; p < round[c][t].length; p++) {
                     const player = round[c][t][p];
                     if (!playerStats[player]) {
-                        playerStats[player] = {partners: [], opponents: [], courts: []};
+                        playerStats[player] = {
+                            partners: [],
+                            opponents: [],
+                            courts: [],
+                            playedMatches: 0,
+                            mixedMatches: 0,
+                            mixedTeams: 0
+                        };
                     }
                     const newPartners = Round.partners(round, c, t, p);
                     playerStats[player].partners = [...playerStats[player].partners, ...newPartners].sort();
@@ -306,6 +316,32 @@ class Round extends React.Component {
                     playerStats[player].opponents = [...playerStats[player].opponents, ...newOpponents].sort();
 
                     playerStats[player].courts.push(c);
+
+                    playerStats[player].playedMatches++;
+
+                    if (Round.isMan(importedPlayers, player)) {
+                        noMenInTeam++;
+                    }
+                    if (Round.isWoman(importedPlayers, player)) {
+                        noWomenInTeam++;
+                    }
+
+                }
+
+                if (round[c].length === 2 && t === 1) {
+                    const isThisAMixedTeam = noMenInTeam > 0 && noWomenInTeam > 0;
+                    const isLastTeamAMixedTeam = noMenInLastTeam > 0 && noWomenInLastTeam > 0;
+                    if (isThisAMixedTeam !== isLastTeamAMixedTeam) {
+                        playerStats[round[c][t][0]].mixedMatches += 1;
+                        playerStats[round[c][t][1]].mixedMatches += 1;
+                        playerStats[round[c][t - 1][0]].mixedMatches += 1;
+                        playerStats[round[c][t - 1][1]].mixedMatches += 1;
+                    }
+                }
+
+                if (noMenInTeam > 0 && noWomenInTeam > 0) {
+                    playerStats[round[c][t][0]].mixedTeams += 1;
+                    playerStats[round[c][t][1]].mixedTeams += 1;
                 }
             }
         }

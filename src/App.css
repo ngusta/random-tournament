@@ -66,8 +66,9 @@ body {
     font-weight: bold;
 }
 
-form .col1,
-form .col2 {
+.col,
+.col,
+.col {
     display: inline-block;
     float: left;
     margin: 1em;
@@ -190,4 +191,8 @@ form .col2 {
 .exampleRoundError {
     float: left;
     color: red;
+}
+
+.playerStatsTrigger {
+    cursor: pointer;
 }

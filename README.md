@@ -8,6 +8,7 @@ npm install --save i18next
 npm install --save react-i18next
 npm install --save gapi-script
 npm install --save dateformat
+npm install --save react-collapsible
 
 ## Available Scripts
 
