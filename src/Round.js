@@ -11,7 +11,8 @@ class Round extends React.Component {
                        onError, dryRun, earlierRounds, importedPlayers) {
         const startTime = performance.now();
 
-        const lastPlayerInPreviousRound = isNaN(ls.get("lastPlayerInPreviousRound")) ? 0 : ls.get("lastPlayerInPreviousRound");
+        const lastPlayerInRounds = ls.get("lastPlayerInRounds") ? ls.get("lastPlayerInRounds") : [];
+        const lastPlayerInPreviousRound = lastPlayerInRounds.length > 0 ? lastPlayerInRounds[lastPlayerInRounds.length - 1] : 0;
         let players = [...allAvailablePlayers.filter(player => player > lastPlayerInPreviousRound), ...allAvailablePlayers.filter(player => player <= lastPlayerInPreviousRound)];
         if (!useAllPlayers) {
             let useableCourts = noCourts;
@@ -22,7 +23,8 @@ class Round extends React.Component {
         }
 
         if (!dryRun) {
-            ls.set("lastPlayerInPreviousRound", players[players.length - 1]);
+            lastPlayerInRounds.push(players[players.length - 1]);
+            ls.set("lastPlayerInRounds", lastPlayerInRounds);
         }
 
         const error = Round.validateInput(players, noCourts, teamsPerCourt, playersPerTeam);

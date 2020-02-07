@@ -72,12 +72,15 @@ class App extends React.Component {
 
     onDeleteRound = (roundIndex) => {
         const roundsCopy = [...this.state.rounds];
+        const lastPlayerInRounds = ls.get("lastPlayerInRounds") ? ls.get("lastPlayerInRounds") : [];
         roundsCopy.splice(roundIndex, 1);
+        lastPlayerInRounds.splice(roundIndex, 1);
         let pressIndex = this.state.presentationRoundIndex;
         if (pressIndex >= roundsCopy.length) {
             pressIndex = pressIndex >= 0 ? pressIndex - 1 : -1;
         }
         this.setState({rounds: roundsCopy, presentationRoundIndex: pressIndex});
+        ls.set("lastPlayerInRounds", lastPlayerInRounds);
         ls.set("updatePresentation", true);
         ls.set("rounds", roundsCopy);
         ls.set("presentationRoundIndex", pressIndex);
@@ -241,7 +244,7 @@ class App extends React.Component {
 
                 {this.state.showLoadingSpinner &&
                 <div className="loadingSpinner">
-                    <img src={loadingSpinner}/>
+                    <img alt="Loading spinner" src={loadingSpinner}/>
                 </div>
                 }
 
