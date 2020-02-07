@@ -3,7 +3,8 @@ import './App.css';
 import Settings from './Settings';
 import Stats from './Stats';
 import Round from './Round';
-import ls from 'local-storage'
+import ls from 'local-storage';
+import loadingSpinner from './img/loading-spinner.svg';
 
 class App extends React.Component {
     constructor(props) {
@@ -23,7 +24,8 @@ class App extends React.Component {
             courtsToUse: ls.get("courtsToUse") || [1, 2, 3, 4, 5, 6, 7, 8],
             importedPlayers: ls.get("importedPlayers") || [],
             lastRoundCreationDate: ls.get("lastRoundCreationDate") || null,
-            secondLastRoundCreationDate: ls.get("secondLastRoundCreationDate") || null
+            secondLastRoundCreationDate: ls.get("secondLastRoundCreationDate") || null,
+            showLoadingSpinner: false
         };
         ls.set("updatePresentation", true);
     }
@@ -104,27 +106,29 @@ class App extends React.Component {
     };
 
     draw = () => {
-        this.setState({errors: []}, () => {
-            ls.set("errors", []);
-            const round = this.createRound();
-            if (round) {
-                const newRounds = [...this.state.rounds, round];
-                let pressIndex = this.state.presentationRoundIndex;
-                if (this.state.autoPresentNewRound) {
-                    pressIndex = newRounds.length - 1;
+        this.setState({errors: [], showLoadingSpinner: true}, () => {
+            setTimeout(() => {
+                ls.set("errors", []);
+                const round = this.createRound();
+                if (round) {
+                    const newRounds = [...this.state.rounds, round];
+                    let pressIndex = this.state.presentationRoundIndex;
+                    if (this.state.autoPresentNewRound) {
+                        pressIndex = newRounds.length - 1;
+                    }
+
+                    this.setState({rounds: newRounds, presentationRoundIndex: pressIndex});
+                    ls.set("rounds", newRounds);
+                    ls.set("presentationRoundIndex", pressIndex);
+
+                    const created = Date.now();
+                    this.setState({secondLastRoundCreationDate: this.state.lastRoundCreationDate});
+                    ls.set("secondLastRoundCreationDate", this.state.lastRoundCreationDate);
+                    this.setState({lastRoundCreationDate: created});
+                    ls.set("lastRoundCreationDate", created);
                 }
-
-                this.setState({rounds: newRounds, presentationRoundIndex: pressIndex});
-                ls.set("rounds", newRounds);
-                ls.set("presentationRoundIndex", pressIndex);
-
-                const created = Date.now();
-                this.setState({secondLastRoundCreationDate: this.state.lastRoundCreationDate});
-                ls.set("secondLastRoundCreationDate", this.state.lastRoundCreationDate);
-                this.setState({lastRoundCreationDate: created});
-                ls.set("lastRoundCreationDate", created);
-
-            }
+                this.setState({showLoadingSpinner: false});
+            }, 100);
         });
     };
 
@@ -235,6 +239,12 @@ class App extends React.Component {
                         try generate the round for more detailed errors.</p>}
                     {rounds}
                 </div>
+
+                {this.state.showLoadingSpinner &&
+                <div className="loadingSpinner">
+                    <img src={loadingSpinner}/>
+                </div>
+                }
 
             </div>
         );
