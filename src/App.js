@@ -1,7 +1,6 @@
 import React from 'react';
 import './App.css';
 import Settings from './Settings';
-import Stats from './Stats';
 import Round from './Round';
 import ls from 'local-storage';
 import loadingSpinner from './img/loading-spinner.svg';
