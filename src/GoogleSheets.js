@@ -71,7 +71,8 @@ class GoogleSheets extends Component {
                 if (range.values.length > 0) {
                     const playerData = [];
                     range.values.forEach((player) => {
-                        if (player[1].length > 0) {
+                        console.log(player);
+                        if (player.length === 4 && player[1].length > 0) {
                             playerData.push(player);
                         }
                     });
