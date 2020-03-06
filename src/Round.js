@@ -48,10 +48,12 @@ class Round extends React.Component {
         let totalPoints = 0;
         const allPoints = [];
         let foundStopValue = false;
+        if (!dryRun) {
+            Round.shuffle(players);
+            console.log("players: " + players);
+        }
+        let bestPlayers = players;
         for (let i = 0; i < noTries; i++) {
-            if (!dryRun) {
-                Round.shuffle(players);
-            }
 
             const round = [];
             nextPlayer = 0;
@@ -59,11 +61,26 @@ class Round extends React.Component {
             nextPlayer = Round.addExtraTeams(nextPlayer, noCourts, teamsPerCourt, players, round);
             nextPlayer = Round.addExtraPlayersInTeams(nextPlayer, noCourts, teamsPerCourt, players, round, useAllPlayers, playersPerTeam);
 
-            const points = dryRun ? 0 : Round.evaulateRound(round, importedPlayers);
+            const res = dryRun ? 0 : Round.evaluateRound(round, importedPlayers);
+            const points = dryRun ? 0 : res[0];
 
             if (points < bestPoints) {
                 bestPoints = points;
                 bestRound = round;
+                bestPlayers = players;
+                if (!dryRun) {
+                    console.log("new best " + points + " after " + i);
+                    console.log(res[1]);
+                }
+            } else if (Math.random() * noTries < 10 * i) { // avoids getting stuck at a local minima
+                players = bestPlayers;
+            }
+            if (!dryRun) {
+                if (Object.keys(res[1]).length > 0) {
+                    Round.swapTwo(players, res[1]);
+                } else {
+                    Round.swapTwo(players, {0: players});
+                }
             }
             if (i === 1) {
                 diff1 = bestPoints;
@@ -96,7 +113,7 @@ class Round extends React.Component {
                 const stdDev = Math.sqrt((1 / i) * allPoints.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b, 0));
 
                 const stopAtPoints = (mean - 3 * stdDev) < 0 ? 0 : (mean - 3 * stdDev);
-                if (bestPoints <= stopAtPoints) {
+                if (0 && bestPoints <= stopAtPoints) {
                     console.log("Stopping at: " + bestPoints + " (i=" + (i + 1) + ") with mean/StdDev: " + Math.round(mean) + "/" + Math.round(stdDev));
                     foundStopValue = true;
                     break;
@@ -124,6 +141,19 @@ class Round extends React.Component {
             const j = Math.floor(Math.random() * (i + 1));
             [a[i], a[j]] = [a[j], a[i]];
         }
+        return a;
+    }
+
+    static swapTwo(a, scores) {
+        const worst = Object.keys(scores).reduce(function (a, b) {
+            return scores[a] > scores[b] ? a : b
+        });
+        const i = a.indexOf(scores[worst][Math.floor(Math.random() * scores[worst].length)]);
+        let j = Math.floor(Math.random() * a.length);
+        while (i === j) {
+            j = Math.floor(Math.random() * a.length);
+        }
+        [a[i], a[j]] = [a[j], a[i]];
         return a;
     }
 
@@ -194,9 +224,10 @@ class Round extends React.Component {
         return nextPlayer;
     }
 
-    static evaulateRound(round, importedPlayers) {
+    static evaluateRound(round, importedPlayers) {
         const playerStats = ls.get("playerStats") || {};
         let points = 0;
+        let scores = {};
         for (let c = 0; c < round.length; c++) {
             let noMenInLastTeam = 0;
             let noWomenInLastTeam = 0;
@@ -208,18 +239,25 @@ class Round extends React.Component {
                     const partners = Round.partners(round, c, t, p);
                     if (playerStats[player]) {
                         const opponents = Round.opponents(round, c, t);
+                        let playerPoints = 0;
                         //Played with partner
-                        partners.forEach((partner) => points += 8 * Round.countOccurences(partner, playerStats[player].partners));
+                        partners.forEach((partner) => playerPoints += 5 * Round.countOccurences(partner, playerStats[player].partners));
                         //points += partners.map((partner) => 4*Round.countOccurences(partner, playerStats[player].partners)).reduce((a, b) => a + b));
                         //Played against partner
-                        partners.forEach((partner) => points += 1 * Round.countOccurences(partner, playerStats[player].opponents));
+                        partners.forEach((partner) => playerPoints += 2 * Round.countOccurences(partner, playerStats[player].opponents));
                         //Played with opponent
-                        opponents.forEach((opponent) => points += 1 * Round.countOccurences(opponent, playerStats[player].partners));
+                        opponents.forEach((opponent) => playerPoints += 2 * Round.countOccurences(opponent, playerStats[player].partners));
                         //Played against opponent
-                        opponents.forEach((opponent) => points += 1 * Round.countOccurences(opponent, playerStats[player].opponents));
-                        //Played on the same court
-                        points += 1 * Round.countOccurences(c, playerStats[player].courts);
+                        opponents.forEach((opponent) => playerPoints += 2 * Round.countOccurences(opponent, playerStats[player].opponents));
+                        //Played on the same court (People get sad when they end on court 8 every game)
+                        playerPoints += 1 * Round.countOccurences(c, playerStats[player].courts);
 
+                        points += playerPoints * playerPoints; // square it to spread the points out among players better!
+                        if (playerPoints in scores) {
+                            scores[playerPoints].push(player);
+                        } else {
+                            scores[playerPoints] = [player];
+                        }
                     }
                     if (Round.isMan(importedPlayers, player)) {
                         noMenInTeam++;
@@ -228,28 +266,31 @@ class Round extends React.Component {
                         noWomenInTeam++;
                     }
                 }
+
                 //Avoid mixed teams playing non-mixed teams
+                let mixPoints = 0;
                 if (round[c].length === 2 && t === 1) {
                     const isThisAMixedTeam = noMenInTeam > 0 && noWomenInTeam > 0;
                     const isLastTeamAMixedTeam = noMenInLastTeam > 0 && noWomenInLastTeam > 0;
                     if (isThisAMixedTeam !== isLastTeamAMixedTeam) {
-                        points += 10;
+                        mixPoints += 4;
                     }
                     if ((noWomenInTeam === 0 && noMenInLastTeam === 0) || (noMenInTeam === 0 && noWomenInLastTeam === 0)) {
-                        points += 20;
+                        mixPoints += 8;
                     }
                 }
 
                 //Avoid non-mixed teams
                 if (noMenInTeam === 0 || noWomenInTeam === 0) {
-                    points += round[c][t].length * 3;
+                    mixPoints += round[c][t].length * 6;
                 }
+                points += mixPoints * mixPoints; // square it to make it really rare!
 
                 noMenInLastTeam = noMenInTeam;
                 noWomenInLastTeam = noWomenInTeam;
             }
         }
-        return points;
+        return [points, scores];
     }
 
     static isMan(importedPlayers, player) {
