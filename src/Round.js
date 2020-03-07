@@ -4,7 +4,6 @@ import ls from 'local-storage';
 import deleteIcon from './img/delete.png';
 import emptyStar from './img/star_empty.png';
 import filledStar from './img/star_filled.png';
-import Collapsible from "react-collapsible";
 
 class Round extends React.Component {
 
@@ -36,14 +35,6 @@ class Round extends React.Component {
 
         let bestRound = [];
         let bestPoints = Number.MAX_SAFE_INTEGER;
-        let diff1 = 0;
-        let diff10 = 0;
-        let diff50 = 0;
-        let diff100 = 0;
-        let diff300 = 0;
-        let diff500 = 0;
-        let diff1000 = 0;
-        let diff10000 = 0;
         const noTries = dryRun ? 1 : 10000;
         let nextPlayer = 0;
         let totalPoints = 0;
@@ -83,30 +74,6 @@ class Round extends React.Component {
                     Round.swapTwo(players, {0: players});
                 }
             }
-            if (i === 1) {
-                diff1 = bestPoints;
-            }
-            if (i === 9) {
-                diff10 = bestPoints;
-            }
-            if (i === 49) {
-                diff50 = bestPoints;
-            }
-            if (i === 99) {
-                diff100 = bestPoints;
-            }
-            if (i === 299) {
-                diff300 = bestPoints;
-            }
-            if (i === 499) {
-                diff500 = bestPoints;
-            }
-            if (i === 999) {
-                diff1000 = bestPoints;
-            }
-            if (i === 9999) {
-                diff10000 = bestPoints;
-            }
             totalPoints += points;
             allPoints.push(points);
             if (!foundStopValue && i > 500) {
@@ -127,8 +94,6 @@ class Round extends React.Component {
         const mean = totalPoints / allPoints.length;
         const stdDev = Math.sqrt((1 / (allPoints.length - 1)) * allPoints.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b, 0));
         !dryRun && console.log("Final mean/StdDev: " + Math.round(mean) + "/" + Math.round(stdDev));
-        !dryRun && console.log("Best after 1, 10, 50, 100, 300, 500, 1000, 10000, best");
-        !dryRun && console.log(diff1 + ", " + diff10 + ", " + diff50 + ", " + diff100 + ", " + diff300 + ", " + diff500 + ", " + diff1000 + ", " + diff10000 + ", " + bestPoints);
         if (!dryRun) {
             Round.updatePlayerStats(bestRound, importedPlayers);
             const stopTime = performance.now();
@@ -145,17 +110,17 @@ class Round extends React.Component {
         return a;
     }
 
-    static swapTwo(a, scores) {
+    static swapTwo(players, scores) {
         const worst = Object.keys(scores).reduce(function (a, b) {
             return scores[a] > scores[b] ? a : b
         });
-        const i = a.indexOf(scores[worst][Math.floor(Math.random() * scores[worst].length)]);
-        let j = Math.floor(Math.random() * a.length);
+        const i = players.indexOf(scores[worst][Math.floor(Math.random() * scores[worst].length)]);
+        let j = Math.floor(Math.random() * players.length);
         while (i === j) {
-            j = Math.floor(Math.random() * a.length);
+            j = Math.floor(Math.random() * players.length);
         }
-        [a[i], a[j]] = [a[j], a[i]];
-        return a;
+        [players[i], players[j]] = [players[j], players[i]];
+        return players;
     }
 
     static validateInput(players, noCourts, teamsPerCourt, playersPerTeam) {
@@ -250,7 +215,7 @@ class Round extends React.Component {
                         opponents.forEach((opponent) => playerPoints += 2 * Round.countOccurences(opponent, playerStats[player].partners));
                         //Played against opponent
                         opponents.forEach((opponent) => playerPoints += 2 * Round.countOccurences(opponent, playerStats[player].opponents));
-                        //Played on the same court (People get sad when they end on court 8 every game)
+                        //Played on the same court (People get sad when they end up on court 8 every game)
                         playerPoints += 1 * Round.countOccurences(c, playerStats[player].courts);
 
                         points += playerPoints * playerPoints; // square it to spread the points out among players better!
