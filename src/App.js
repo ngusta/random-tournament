@@ -24,7 +24,8 @@ class App extends React.Component {
             importedPlayers: ls.get("importedPlayers") || [],
             lastRoundCreationDate: ls.get("lastRoundCreationDate") || null,
             secondLastRoundCreationDate: ls.get("secondLastRoundCreationDate") || null,
-            showLoadingSpinner: false
+            showLoadingSpinner: false,
+            showExampleRound: ls.get("showExampleRound") === null ? true : ls.get("showExampleRound")
         };
         ls.set("updatePresentation", true);
     }
@@ -105,6 +106,11 @@ class App extends React.Component {
 
     onAutoPresentNewRoundChange = (value) => {
         this.setState({autoPresentNewRound: value});
+    };
+
+    onShowExampleRoundChange = (e) => {
+        this.setState({showExampleRound: e.target.checked});
+        ls.set("showExampleRound", e.target.checked)
     };
 
     draw = () => {
@@ -227,6 +233,8 @@ class App extends React.Component {
                               importedPlayers={this.state.importedPlayers}
                               lastRoundCreationDate={this.state.lastRoundCreationDate}
                               secondLastRoundCreationDate={this.state.secondLastRoundCreationDate}
+                              showExampleRound={this.state.showExampleRound}
+                              onShowExampleRoundChange={this.onShowExampleRoundChange}
                     />
                     <ul className="clear">
                         {errors}
@@ -235,7 +243,7 @@ class App extends React.Component {
 
 
                 <div>
-                    {dryRunRound}
+                    {this.state.showExampleRound && dryRunRound}
                     {!dryRunRound &&
                     <p className="exampleRoundError">The example run couldn't be generated. Check your input values or
                         try generate the round for more detailed errors.</p>}

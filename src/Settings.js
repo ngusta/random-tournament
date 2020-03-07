@@ -205,10 +205,14 @@ class Settings extends React.Component {
                                     <button onClick={e => this.addPlayerPerTeam(e)}>+</button>
                                 </label>
                                 }
+                                <label>Show example round
+                                    <input type="checkbox" name="showExampleRound" checked={this.props.showExampleRound}
+                                           onChange={this.props.onShowExampleRoundChange}/>
+                                </label>
                                 <div className="players">
                                     <span>Players</span>
                                     <span>
-										<label>Edit gender
+										<label className="clearLeft">Edit gender
 											<input type="checkbox" name="editGender" checked={this.state.editGender}
                                                    onChange={this.onEditGenderChange}/>
 										</label>

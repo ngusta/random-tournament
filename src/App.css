@@ -25,6 +25,7 @@ body {
 
 .clearLeft {
     clear: left;
+    margin-left: 10px;
 }
 
 #app .round {

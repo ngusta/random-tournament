@@ -4,6 +4,7 @@ import ls from 'local-storage';
 import deleteIcon from './img/delete.png';
 import emptyStar from './img/star_empty.png';
 import filledStar from './img/star_filled.png';
+import Collapsible from "react-collapsible";
 
 class Round extends React.Component {
 

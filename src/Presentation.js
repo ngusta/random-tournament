@@ -66,7 +66,7 @@ class Presentation extends React.Component {
 		if (!this.state.roundToShow) {
 			return;
 		}
-		const noCourts = this.state.showEigthCourts ? 8 : this.state.roundToShow.length;
+		const noCourts = (this.state.showEigthCourts && !this.state.hideUnusedCourts) ? 8 : this.state.roundToShow.length;
 		const availableCourtWidths = [50, 100, 150, 200, 220, 300, 400, 500];
 		const availableCourtHeights = [82, 166, 248, 332, 365, 498, 663, 830];
 

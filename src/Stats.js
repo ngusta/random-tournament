@@ -28,6 +28,7 @@ class Stats extends React.Component {
             <Collapsible trigger="Player stats &#9660;" triggerWhenOpen="Player stats &#9650;" classParentString="col"
                          triggerClassName="playerStatsTrigger" triggerOpenedClassName="playerStatsTrigger">
                 <table>
+                    <thead>
                     <tr>
                         <th title="Player number">P</th>
                         <th title="Player name">Name</th>
@@ -38,7 +39,10 @@ class Stats extends React.Component {
                         <th title="Number of played mixed matches">mm</th>
                         <th title="Number of matches played in a mixed team">mt</th>
                     </tr>
+                    </thead>
+                    <tbody>
                     {players}
+                    </tbody>
                 </table>
             </Collapsible>
         )
