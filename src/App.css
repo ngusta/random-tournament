@@ -1,5 +1,5 @@
 body {
-    font-family: Helvetica;
+    font-family: Helvetica, sans-serif;
 }
 
 #app {
@@ -31,6 +31,7 @@ body {
     display: inline-block;
     clear: both;
     margin-right: 20px;
+    margin-bottom: 6%;
 }
 
 #app .dryRun {

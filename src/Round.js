@@ -269,11 +269,11 @@ class Round extends React.Component {
 
                 //Avoid mixed teams playing non-mixed teams
                 let mixPoints = 0;
-                if (round[c].length === 2 && t === 1) {
+                if (t >= 1) {
                     const isThisAMixedTeam = noMenInTeam > 0 && noWomenInTeam > 0;
                     const isLastTeamAMixedTeam = noMenInLastTeam > 0 && noWomenInLastTeam > 0;
                     if (isThisAMixedTeam !== isLastTeamAMixedTeam) {
-                        mixPoints += 4;
+                        mixPoints += 10;
                     }
                     if ((noWomenInTeam === 0 && noMenInLastTeam === 0) || (noMenInTeam === 0 && noWomenInLastTeam === 0)) {
                         mixPoints += 8;
