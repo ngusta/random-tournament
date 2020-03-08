@@ -61,8 +61,7 @@ class Round extends React.Component {
                 bestRound = round;
                 bestPlayers = players;
                 if (!dryRun) {
-                    console.log("new best " + points + " after " + i);
-                    console.log(res[1]);
+                    console.log("New best " + points + " after " + i);
                 }
             } else if (Math.random() * noTries < 10 * i) { // avoids getting stuck at a local minima
                 players = bestPlayers;
@@ -112,15 +111,19 @@ class Round extends React.Component {
 
     static swapTwo(players, scores) {
         const worst = Object.keys(scores).reduce(function (a, b) {
-            return scores[a] > scores[b] ? a : b
+            return a > b ? a : b
         });
-        const i = players.indexOf(scores[worst][Math.floor(Math.random() * scores[worst].length)]);
-        let j = Math.floor(Math.random() * players.length);
+        const i = players.indexOf(scores[worst][(this.getRandomInteger(scores[worst].length))]);
+        let j = this.getRandomInteger(players.length);
         while (i === j) {
-            j = Math.floor(Math.random() * players.length);
+            j = this.getRandomInteger(players.length);
         }
         [players[i], players[j]] = [players[j], players[i]];
         return players;
+    }
+
+    static getRandomInteger(maxNumber) {
+        return Math.floor(Math.random() * maxNumber);
     }
 
     static validateInput(players, noCourts, teamsPerCourt, playersPerTeam) {
