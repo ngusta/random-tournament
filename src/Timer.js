@@ -1,5 +1,4 @@
 import React from 'react';
-import dateFormat from 'dateformat';
 
 class Timer extends React.Component {
     constructor(props) {
@@ -22,24 +21,27 @@ class Timer extends React.Component {
     }
 
     render() {
-        const lastRoundCreated = dateFormat(this.props.lastRoundCreationDate, "HH:MM:ss");
         var lastRoundCreatedSecondsDiff = Math.floor((Date.now() - this.props.lastRoundCreationDate) / 1000);
         const lastRoundCreatedMinDiff = Math.floor(lastRoundCreatedSecondsDiff / 60);
         lastRoundCreatedSecondsDiff -= lastRoundCreatedMinDiff * 60;
+        if (lastRoundCreatedSecondsDiff <= 9) {
+            lastRoundCreatedSecondsDiff = "0" + lastRoundCreatedSecondsDiff;
+        }
 
-        const secondLastRoundCreated = dateFormat(this.props.secondLastRoundCreationDate, "HH:MM:ss");
         var secondLastRoundCreatedSecondsDiff = Math.floor((Date.now() - this.props.secondLastRoundCreationDate) / 1000);
         const secondLastRoundCreatedMinDiff = Math.floor(secondLastRoundCreatedSecondsDiff / 60);
         secondLastRoundCreatedSecondsDiff -= secondLastRoundCreatedMinDiff * 60;
+        if (secondLastRoundCreatedSecondsDiff <= 9) {
+            secondLastRoundCreatedSecondsDiff = "0" + secondLastRoundCreatedSecondsDiff;
+        }
         return (
             <div>
                 <p>
-                    Second last round created {secondLastRoundCreated}.
-                    ({secondLastRoundCreatedMinDiff} min {secondLastRoundCreatedSecondsDiff} s sedan)
-                </p>
-                <p>
-                    Last round created {lastRoundCreated}.
-                    ({lastRoundCreatedMinDiff} min {lastRoundCreatedSecondsDiff} s sedan)
+                    Second last round created <span
+                    className="time">{secondLastRoundCreatedMinDiff}:{secondLastRoundCreatedSecondsDiff}</span> min ago.
+                    <br/>
+                    Last round created <span
+                    className="time">{lastRoundCreatedMinDiff}:{lastRoundCreatedSecondsDiff}</span> min ago.
                 </p>
             </div>
         );

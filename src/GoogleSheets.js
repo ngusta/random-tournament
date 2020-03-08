@@ -127,6 +127,8 @@ class GoogleSheets extends Component {
                 <label>
                     <span>Google sheet id:</span>
                     <input type="text" value={this.state.sheetId} onChange={this.setSheetId}/>
+                    <span className="labelDetails">https://docs.google.com/spreadsheets/d/<span
+                        className="highlight">1e4C8ArBqc5_hhWdpio-v9lWMpjdWn1mrpz0d_HS4LDg</span>/edit#gid=1073790956</span>
                 </label>
                 <label>
                     <span>Player range:</span>

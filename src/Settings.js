@@ -144,6 +144,7 @@ class Settings extends React.Component {
                 <input type="checkbox" name={index} checked={playing} onChange={this.onPlayerCheckbox}/>
             </label>
         );
+        const numberOfActivePlayers = this.props.players.filter(playing => playing).length;
         const useCourtsOptions = [];
         for (let court = 1; court <= 8; court++) {
             useCourtsOptions.push(
@@ -210,7 +211,7 @@ class Settings extends React.Component {
                                            onChange={this.props.onShowExampleRoundChange}/>
                                 </label>
                                 <div className="players">
-                                    <span>Players</span>
+                                    <span>Players ({numberOfActivePlayers} currently active)</span>
                                     <span>
 										<label className="clearLeft">Edit gender
 											<input type="checkbox" name="editGender" checked={this.state.editGender}
@@ -233,11 +234,6 @@ class Settings extends React.Component {
                             </fieldset>
                         </div>
                         <div className="col">
-                            <fieldset>
-                                <legend>Time</legend>
-                                <Timer lastRoundCreationDate={this.props.lastRoundCreationDate}
-                                       secondLastRoundCreationDate={this.props.secondLastRoundCreationDate}/>
-                            </fieldset>
                             <fieldset className="presentationSettings">
                                 <legend>Presentation settings</legend>
                                 <label>
@@ -297,6 +293,11 @@ class Settings extends React.Component {
                                     }
                                 </div>
                                 <Link to="/presentation" target="_blank">Open presentation</Link>
+                            </fieldset>
+                            <fieldset className="timeSettings">
+                                <legend>Time</legend>
+                                <Timer lastRoundCreationDate={this.props.lastRoundCreationDate}
+                                       secondLastRoundCreationDate={this.props.secondLastRoundCreationDate}/>
                             </fieldset>
                         </div>
 

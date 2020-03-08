@@ -394,28 +394,6 @@ class Round extends React.Component {
         return ranges.map(range => range[0] === range[1] ? range[0] : range[0] + "-" + range[1]).join(", ");
     }
 
-    getNoMixedTeams = () => {
-        let noMixedTeams = 0;
-        this.props.courts.forEach(court => {
-            court.forEach(team => {
-                let noMenInTeam = 0;
-                let noWomenInTeam = 0;
-                team.forEach(player => {
-                    if (Round.isWoman(this.props.importedPlayers, player)) {
-                        noWomenInTeam++;
-                    } else {
-                        noMenInTeam++;
-                    }
-                });
-                if (noMenInTeam > 0 && noWomenInTeam > 0) {
-                    noMixedTeams++;
-                }
-
-            });
-        });
-        return noMixedTeams;
-    };
-
     onDeleteRound = (e) => {
         this.props.onDeleteRound(this.props.roundIndex);
         e.preventDefault();
@@ -428,7 +406,6 @@ class Round extends React.Component {
 
     render() {
         const ranges = this.getRangeOfPlayers();
-        const noMixedTeams = this.getNoMixedTeams();
         let courts = [];
         if (this.props.courts && this.props.showEigthCourts && this.props.courtsToUse && this.props.courts.length <= this.props.courtsToUse.length) {
             const courtsToUse = this.props.courtsToUse.sort();
@@ -467,7 +444,7 @@ class Round extends React.Component {
                     {this.props.onDeleteRound && deleteImg}
                 </h1>
                 }
-                {ranges.length > 0 && <span className="ranges">{ranges} plays, {noMixedTeams} mixed teams</span>}
+                {ranges.length > 0 && <span className="ranges">Plays: {ranges}</span>}
                 <div className="courts">
                     {courts}
                 </div>

@@ -65,11 +65,9 @@ body {
 #app .ranges {
     display: block;
     margin: 0 0 2em 1em;
-    font-weight: bold;
+    font-size: 2em;
 }
 
-.col,
-.col,
 .col {
     display: inline-block;
     float: left;
@@ -83,6 +81,15 @@ body {
     display: inline-block;
     line-height: 1.5;
     font-size: 1.2em;
+}
+
+.timeSettings {
+    line-height: 1.5;
+    font-size: 1.2em;
+}
+
+.timeSettings .time {
+    font-size: 2em;
 }
 
 #app .players {
@@ -188,6 +195,12 @@ body {
 #config .googleImport label span.labelDetails {
     font-size: 0.7em;
     width: 100%;
+}
+
+#config .googleImport label span.labelDetails .highlight {
+    font-size: inherit;
+    display: inline;
+    color: green;
 }
 
 .exampleRoundError {
