@@ -15,7 +15,7 @@ class GoogleSheets extends Component {
     }
 
     async componentDidMount() {
-        let auth2 = await loadAuth2('299101852059-l3umlu4h53eu1olrmtiivh440uj3g4as.apps.googleusercontent.com', 'https://www.googleapis.com/auth/spreadsheets.readonly');
+        let auth2 = await loadAuth2(gapi, '299101852059-l3umlu4h53eu1olrmtiivh440uj3g4as.apps.googleusercontent.com', 'https://www.googleapis.com/auth/spreadsheets.readonly');
         if (auth2.isSignedIn.get()) {
             gapi.load('client', () => {
                 gapi.client.load('sheets', 'v4', () => {
@@ -30,7 +30,7 @@ class GoogleSheets extends Component {
 
     async componentDidUpdate() {
         if (!this.state.loggedIn) {
-            let auth2 = await loadAuth2('299101852059-l3umlu4h53eu1olrmtiivh440uj3g4as.apps.googleusercontent.com', '');
+            let auth2 = await loadAuth2(gapi, '299101852059-l3umlu4h53eu1olrmtiivh440uj3g4as.apps.googleusercontent.com', '');
             this.attachSignin(document.getElementById('loginButton'), auth2);
         }
         if (this.state.loggedIn && !this.state.gapiReady) {

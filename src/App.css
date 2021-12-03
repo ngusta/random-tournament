@@ -127,7 +127,7 @@ body {
 }
 
 #config button.clearData img {
-    background-image: url('/img/delete.png');
+    background-image: url('img/delete.png');
     width: 15px;
     margin-right: 2px;
 }
