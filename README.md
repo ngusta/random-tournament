@@ -1,14 +1,14 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Install dependencies
-npm install --save react-scripts
-npm install --save local-storage
-npm install --save react-router-dom  
-npm install --save i18next
-npm install --save react-i18next
-npm install --save gapi-script
-npm install --save dateformat
-npm install --save react-collapsible
+- npm install --save react-scripts
+- npm install --save local-storage
+- npm install --save react-router-dom  
+- npm install --save i18next
+- npm install --save react-i18next
+- npm install --save gapi-script
+- npm install --save dateformat
+- npm install --save react-collapsible
 
 ## Available Scripts
 
@@ -19,13 +19,9 @@ In the project directory, you can run:
 Runs the app in the development mode.<br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
-
 ### `npm test`
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+There are not tests...
 
 ### `npm run build`
 
@@ -36,6 +32,19 @@ The build is minified and the filenames include the hashes.<br />
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+### `npm run deploy`
+
+Run this to deploy to AWS.
+
+Prereq: 
+- Install AWS CLI first.
+- Run ``aws configure``
+- Use Private AWS Access Credentials from 1Password as Access Key ID and passowrd
+- Use eu-north-1 as default region
+- Use json as default output
+
+Now the deploy command should work!
 
 ### `npm run eject`
 
