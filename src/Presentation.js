@@ -7,15 +7,17 @@ class Presentation extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			roundToShow: ls.get("roundToShow") || null,
+			roundToShow: null,
+			previousRound: null,
 			roundToShowIndex: ls.get("roundToShowIndex") || -1,
 			noRoundMessage: ls.get("noRoundMessage") || "",
 			showRoundName: ls.get("showRoundName") || false,
 			width: 0,
 			height: 0,
-			showEigthCourts: ls.get("showEigthCourts") || false,
+			showEightCourts: ls.get("showEightCourts") || false,
 			hideUnusedCourts: ls.get("hideUnusedCourts") || false,
-			courtsToUse: ls.get("courtsToUse") || [1, 2, 3, 4, 5, 6, 7, 8]
+			courtsToUse: ls.get("courtsToUse") || [1, 2, 3, 4, 5, 6, 7, 8],
+			isLatestRoundStarted: ls.get("isLatestRoundStarted") || false
 		};
 		setInterval(this.checkUpdate, 100);
 		this.containerRef = React.createRef();
@@ -28,19 +30,23 @@ class Presentation extends React.Component {
 			if (presentationRoundIndex === -1 || ls.get("rounds") === null || presentationRoundIndex >= ls.get("rounds").length) {
 				this.setState({
 					roundToShow: null,
+					previousRound: null,
 					roundToShowIndex: presentationRoundIndex
 				});
 			} else {
 				this.setState({
 					roundToShowIndex: presentationRoundIndex,
-					roundToShow: ls.get("rounds")[presentationRoundIndex]
+					roundToShow: ls.get("rounds")[presentationRoundIndex],
+					previousRound: presentationRoundIndex > 0 ? ls.get("rounds")[presentationRoundIndex-1] : null
 				});
 			}
 			this.setState({noRoundMessage: ls.get("noRoundMessage")});
 			this.setState({showRoundName: ls.get("showRoundName")});
-			this.setState({showEigthCourts: ls.get("showEigthCourts")});
+			this.setState({showEightCourts: ls.get("showEightCourts")});
 			this.setState({hideUnusedCourts: ls.get("hideUnusedCourts")});
 			this.setState({courtsToUse: ls.get("courtsToUse")});
+			console.log("latest: " + ls.get("isLatestRoundStarted"));
+			this.setState({isLatestRoundStarted: ls.get("isLatestRoundStarted")});
 		}
 	};
 
@@ -66,7 +72,7 @@ class Presentation extends React.Component {
 		if (!this.state.roundToShow) {
 			return;
 		}
-		const noCourts = (this.state.showEigthCourts && !this.state.hideUnusedCourts) ? 8 : this.state.roundToShow.length;
+		const noCourts = (this.state.showEightCourts && !this.state.hideUnusedCourts) ? 8 : this.state.roundToShow.length;
 		const availableCourtWidths = [50, 100, 150, 200, 220, 300, 400, 500];
 		const availableCourtHeights = [82, 166, 248, 332, 365, 498, 663, 830];
 
@@ -80,18 +86,38 @@ class Presentation extends React.Component {
 	render() {
 		return (
 			<div id="presentation">
-				{!this.state.roundToShow && <p className="noRoundMessage">{this.state.noRoundMessage}</p>}
 				{this.state.roundToShow &&
-				<Round
-					reff={this.containerRef}
-					courts={this.state.roundToShow}
-					courtClass={this.getCourtClass()}
-					roundName={this.state.showRoundName && `Round ${this.state.roundToShowIndex + 1}`}
-					showEigthCourts={this.state.showEigthCourts}
-					hideUnusedCourts={this.state.hideUnusedCourts}
-					courtsToUse={this.state.courtsToUse}
-				/>
+				<span id="currentRoundLabel">{this.state.isLatestRoundStarted ? "Now playing" : "Next round"}</span>
 				}
+				<div id="currentRound">
+					{!this.state.roundToShow && <p className="noRoundMessage">{this.state.noRoundMessage}</p>}
+					{this.state.roundToShow &&
+					<Round
+						reff={this.containerRef}
+						courts={this.state.roundToShow}
+						courtClass={this.getCourtClass()}
+						roundName={this.state.showRoundName && `Round ${this.state.roundToShowIndex + 1}`}
+						showEigthCourts={this.state.showEightCourts}
+						hideUnusedCourts={this.state.hideUnusedCourts}
+						courtsToUse={this.state.courtsToUse}
+					/>
+					}
+				</div>
+				{this.state.previousRound && !this.state.isLatestRoundStarted &&
+					<span id="previousRoundLabel">Now playing</span>
+				}
+				<div id="previousRound">
+					{this.state.previousRound && !this.state.isLatestRoundStarted &&
+					<Round
+						courts={this.state.previousRound}
+						courtClass="courtSize1"
+						roundName=""
+						showEigthCourts={this.state.showEightCourts}
+						hideUnusedCourts={this.state.hideUnusedCourts}
+						courtsToUse={this.state.courtsToUse}
+					/>
+				}
+				</div>
 			</div>
 		);
 	}

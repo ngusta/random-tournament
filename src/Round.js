@@ -407,7 +407,7 @@ class Round extends React.Component {
     render() {
         const ranges = this.getRangeOfPlayers();
         let courts = [];
-        if (this.props.courts && this.props.showEigthCourts && this.props.courtsToUse && this.props.courts.length <= this.props.courtsToUse.length) {
+        if (this.props.courts && this.props.showEightCourts && this.props.courtsToUse && this.props.courts.length <= this.props.courtsToUse.length) {
             const courtsToUse = this.props.courtsToUse.sort();
             let nextCourtFromRound = 0;
             for (let court = 1; court <= 8; court++) {

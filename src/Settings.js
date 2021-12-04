@@ -222,13 +222,21 @@ class Settings extends React.Component {
                                 </div>
 
                                 <button className="createNewRound" onClick={this.handleSubmit}>Create new round</button>
+                                <button className="createNewRound" onClick=
+                                    {e => {
+                                        e.preventDefault();
+                                        ls.set("isLatestRoundStarted", true);
+                                        ls.set("updatePresentation", true);
+
+                                    }}>
+                                    Start latest round
+                                </button>
                                 <button className="clearData" onClick=
                                     {e => {
                                         e.preventDefault();
                                         window.confirm("Are you sure you want to delete all data about the tournament?") &&
                                         this.props.onResetState()
-                                    }
-                                    }>
+                                    }}>
                                     <img alt="Clear data" src={deleteIcon}/>Clear data
                                 </button>
                             </fieldset>
@@ -275,13 +283,13 @@ class Settings extends React.Component {
                                     </label>
                                 </div>
                                 <div className="courtsToUse">
-                                    <label className="showEigthCourts">
+                                    <label className="showEightCourts">
                                         <span>Show 8 courts</span>
-                                        <input type="checkbox" name="showEigthCourts"
-                                               checked={this.props.showEigthCourts} onChange={this.handleChange}/>
+                                        <input type="checkbox" name="showEightCourts"
+                                               checked={this.props.showEightCourts} onChange={this.handleChange}/>
                                     </label>
-                                    {this.props.showEigthCourts &&
-                                    <div className="showEigthCourts">
+                                    {this.props.showEightCourts &&
+                                    <div className="showEightCourts">
                                         <label>Courts to use for the tournament</label>
                                         {useCourtsOptions}
                                         <label>

@@ -18,7 +18,7 @@ class App extends React.Component {
             rounds: ls.get("rounds") || [],
             presentationRoundIndex: ls.get("presentationRoundIndex") || -1,
             autoPresentNewRound: ls.get("autoPresentNewRound") || true,
-            showEigthCourts: ls.get("showEigthCourts") || false,
+            showEightCourts: ls.get("showEightCourts") || false,
             hideUnusedCourts: ls.get("hideUnusedCourts") || false,
             courtsToUse: ls.get("courtsToUse") || [1, 2, 3, 4, 5, 6, 7, 8],
             importedPlayers: ls.get("importedPlayers") || [],
@@ -46,7 +46,7 @@ class App extends React.Component {
         } else {
             this.setState({[name]: value});
             ls.set(name, value);
-            if (name === "showEigthCourts" || name === "hideUnusedCourts") {
+            if (name === "showEightCourts" || name === "hideUnusedCourts") {
                 ls.set("courtsToUse", this.state.courtsToUse);
                 ls.set("updatePresentation", true);
             }
@@ -134,6 +134,7 @@ class App extends React.Component {
                     ls.set("secondLastRoundCreationDate", this.state.lastRoundCreationDate);
                     this.setState({lastRoundCreationDate: created});
                     ls.set("lastRoundCreationDate", created);
+                    ls.set("isLatestRoundStarted", false);
                 }
                 this.setState({showLoadingSpinner: false});
             }, 100);
@@ -185,7 +186,7 @@ class App extends React.Component {
                 roundName="Example round"
                 courtClass="courtSize3"
                 className="dryRun"
-                showEigthCourts={this.state.showEigthCourts}
+                showEigthCourts={this.state.showEightCourts}
                 courtsToUse={this.state.courtsToUse}
                 importedPlayers={this.state.importedPlayers}/>;
         }
@@ -201,7 +202,7 @@ class App extends React.Component {
                        onShowOnPresentation={this.onShowOnPresentation}
                        isShown={this.state.presentationRoundIndex === index}
                        courtClass="courtSize1"
-                       showEigthCourts={this.state.showEigthCourts}
+                       showEigthCourts={this.state.showEightCourts}
                        courtsToUse={this.state.courtsToUse}
                        importedPlayers={this.state.importedPlayers}/>
             );
@@ -225,7 +226,7 @@ class App extends React.Component {
                               onResetState={this.onResetState}
                               autoPesentNewRound={this.state.autoPresentNewRound}
                               onAutoPresentNewRoundChange={this.onAutoPresentNewRoundChange}
-                              showEigthCourts={this.state.showEigthCourts}
+                              showEigthCourts={this.state.showEightCourts}
                               hideUnusedCourts={this.state.hideUnusedCourts}
                               courtsToUse={this.state.courtsToUse}
                               onCourtsToUseChange={this.onCourtsToUseChange}

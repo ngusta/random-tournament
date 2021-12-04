@@ -13,19 +13,6 @@ h1 {
 	align-items: center;
 }
 
-#presentation .round {
-	clear: both;
-	height: 66%;
-	width: 93%;
-	margin: 5% 0 0 1.9%;
-}
-
-#presentation .round > h1 {
-	position: absolute;
-    right: 4%;
-    top: 12%;
-}
-
 #presentation .courts {
 	display: flex;
 	justify-content: space-evenly;
@@ -35,12 +22,57 @@ h1 {
 
 }
 
-#presentation .noRoundMessage {
+#currentRound {
+	display: flex;
+	position: absolute;
+	height: 100%;
+	width: 100%;
+}
+
+#currentRound .round {
+	height: 66%;
+	width: 93%;
+	margin: auto;
+}
+
+#presentation .ranges {
+	display: none;
+}
+
+#currentRound .noRoundMessage {
 	margin: auto;
 	text-align: center;
 	font-size: 10vw;
 }
 
-#presentation .ranges {
+#previousRound {
+	position: absolute;
+	bottom: 1px;
+	left: 200px;
+}
+
+#previousRound .round h1 {
+	font-size: 20pt;
+}
+
+#previousRound .noRoundMessage {
 	display: none;
+}
+
+#currentRoundLabel {
+	position: absolute;
+	top: 170px;
+	left: 250px;
+	font-size: 20pt;
+	font-weight: bolder;
+	color: white;
+}
+
+#previousRoundLabel {
+	position: absolute;
+	left: 250px;
+	bottom: 200px;
+	font-size: 20pt;
+	font-weight: bolder;
+	color: white;
 }

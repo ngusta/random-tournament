@@ -100,11 +100,11 @@ body {
 }
 
 #app label,
-#app .courtsToUse .showEigthCourts label {
+#app .courtsToUse .showEightCourts label {
     display: block;
 }
 
-#app .courtsToUse div.showEigthCourts {
+#app .courtsToUse div.showEightCourts {
     margin-left: 1em;
 }
 
