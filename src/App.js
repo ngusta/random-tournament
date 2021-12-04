@@ -113,6 +113,14 @@ class App extends React.Component {
         ls.set("showExampleRound", e.target.checked)
     };
 
+    onStartRound = () => {
+        const created = Date.now();
+        this.setState({secondLastRoundCreationDate: this.state.lastRoundCreationDate});
+        ls.set("secondLastRoundCreationDate", this.state.lastRoundCreationDate);
+        this.setState({lastRoundCreationDate: created});
+        ls.set("lastRoundCreationDate", created);
+    }
+
     draw = () => {
         this.setState({errors: [], showLoadingSpinner: true}, () => {
             setTimeout(() => {
@@ -128,12 +136,6 @@ class App extends React.Component {
                     this.setState({rounds: newRounds, presentationRoundIndex: pressIndex});
                     ls.set("rounds", newRounds);
                     ls.set("presentationRoundIndex", pressIndex);
-
-                    const created = Date.now();
-                    this.setState({secondLastRoundCreationDate: this.state.lastRoundCreationDate});
-                    ls.set("secondLastRoundCreationDate", this.state.lastRoundCreationDate);
-                    this.setState({lastRoundCreationDate: created});
-                    ls.set("lastRoundCreationDate", created);
                     ls.set("isLatestRoundStarted", false);
                 }
                 this.setState({showLoadingSpinner: false});
@@ -236,12 +238,12 @@ class App extends React.Component {
                               secondLastRoundCreationDate={this.state.secondLastRoundCreationDate}
                               showExampleRound={this.state.showExampleRound}
                               onShowExampleRoundChange={this.onShowExampleRoundChange}
+                              onStartRound={this.onStartRound}
                     />
                     <ul className="clear">
                         {errors}
                     </ul>
                 </div>
-
 
                 <div>
                     {this.state.showExampleRound && dryRunRound}

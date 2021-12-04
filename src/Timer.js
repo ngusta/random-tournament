@@ -37,10 +37,10 @@ class Timer extends React.Component {
         return (
             <div>
                 <p>
-                    Second last round created <span
+                    Second last round started <span
                     className="time">{secondLastRoundCreatedMinDiff}:{secondLastRoundCreatedSecondsDiff}</span> min ago.
                     <br/>
-                    Last round created <span
+                    Last round started <span
                     className="time">{lastRoundCreatedMinDiff}:{lastRoundCreatedSecondsDiff}</span> min ago.
                 </p>
             </div>

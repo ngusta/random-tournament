@@ -227,7 +227,7 @@ class Settings extends React.Component {
                                         e.preventDefault();
                                         ls.set("isLatestRoundStarted", true);
                                         ls.set("updatePresentation", true);
-
+                                        this.props.onStartRound();
                                     }}>
                                     Start latest round
                                 </button>
