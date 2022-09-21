@@ -218,7 +218,7 @@ class Round extends React.Component {
                         opponents.forEach((opponent) => playerPoints += 2 * Round.countOccurences(opponent, playerStats[player].partners));
                         //Played against opponent
                         opponents.forEach((opponent) => playerPoints += 2 * Round.countOccurences(opponent, playerStats[player].opponents));
-                        //Played on the same court (People get sad when they end up on court 8 every game)
+                        //Played on the same court (People get sad when they end up on court 10 every game)
                         playerPoints += 1 * Round.countOccurences(c, playerStats[player].courts);
 
                         points += playerPoints * playerPoints; // square it to spread the points out among players better!
@@ -407,10 +407,10 @@ class Round extends React.Component {
     render() {
         const ranges = this.getRangeOfPlayers();
         let courts = [];
-        if (this.props.courts && this.props.showEightCourts && this.props.courtsToUse && this.props.courts.length <= this.props.courtsToUse.length) {
-            const courtsToUse = this.props.courtsToUse.sort();
-            let nextCourtFromRound = 0;
-            for (let court = 1; court <= 8; court++) {
+        if (this.props.courts && this.props.showTenCourts && this.props.courtsToUse && this.props.courts.length <= this.props.courtsToUse.length) {
+        	const courtsToUse = this.props.courtsToUse.sort(function(a, b){return a-b});
+		    let nextCourtFromRound = 0;
+            for (let court = 1; court <= 10; court++) {
                 let teams = [];
                 if (courtsToUse.indexOf(court) > -1 && nextCourtFromRound < this.props.courts.length) {
                     teams = this.props.courts[nextCourtFromRound++];

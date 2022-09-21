@@ -14,9 +14,9 @@ class Presentation extends React.Component {
 			showRoundName: ls.get("showRoundName") || false,
 			width: 0,
 			height: 0,
-			showEightCourts: ls.get("showEightCourts") || false,
+			showTenCourts: ls.get("showTenCourts") || false,
 			hideUnusedCourts: ls.get("hideUnusedCourts") || false,
-			courtsToUse: ls.get("courtsToUse") || [1, 2, 3, 4, 5, 6, 7, 8],
+			courtsToUse: ls.get("courtsToUse") || [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
 			isLatestRoundStarted: ls.get("isLatestRoundStarted") || false
 		};
 		setInterval(this.checkUpdate, 100);
@@ -42,7 +42,7 @@ class Presentation extends React.Component {
 			}
 			this.setState({noRoundMessage: ls.get("noRoundMessage")});
 			this.setState({showRoundName: ls.get("showRoundName")});
-			this.setState({showEightCourts: ls.get("showEightCourts")});
+			this.setState({showTenCourts: ls.get("showTenCourts")});
 			this.setState({hideUnusedCourts: ls.get("hideUnusedCourts")});
 			this.setState({courtsToUse: ls.get("courtsToUse")});
 			console.log("latest: " + ls.get("isLatestRoundStarted"));
@@ -72,9 +72,9 @@ class Presentation extends React.Component {
 		if (!this.state.roundToShow) {
 			return;
 		}
-		const noCourts = (this.state.showEightCourts && !this.state.hideUnusedCourts) ? 8 : this.state.roundToShow.length;
-		const availableCourtWidths = [50, 100, 150, 200, 220, 300, 400, 500];
-		const availableCourtHeights = [82, 166, 248, 332, 365, 498, 663, 830];
+		const noCourts = (this.state.showTenCourts && !this.state.hideUnusedCourts) ? 10 : this.state.roundToShow.length;
+		const availableCourtWidths = [50, 100, 150, 200, 220, 300, 400, 500, 600];
+		const availableCourtHeights = [82, 166, 248, 332, 365, 498, 663, 830, 945];
 
 		let i = availableCourtWidths.length - 1;
 		while (i > 0 && (availableCourtWidths[i] > (this.state.width / noCourts) || availableCourtHeights[i] > this.state.height)) {
@@ -97,7 +97,7 @@ class Presentation extends React.Component {
 						courts={this.state.roundToShow}
 						courtClass={this.getCourtClass()}
 						roundName={this.state.showRoundName && `Round ${this.state.roundToShowIndex + 1}`}
-						showEigthCourts={this.state.showEightCourts}
+						showTenCourts={this.state.showTenCourts}
 						hideUnusedCourts={this.state.hideUnusedCourts}
 						courtsToUse={this.state.courtsToUse}
 					/>
@@ -112,7 +112,7 @@ class Presentation extends React.Component {
 						courts={this.state.previousRound}
 						courtClass="courtSize1"
 						roundName=""
-						showEigthCourts={this.state.showEightCourts}
+						showTenCourts={this.state.showTenCourts}
 						hideUnusedCourts={this.state.hideUnusedCourts}
 						courtsToUse={this.state.courtsToUse}
 					/>

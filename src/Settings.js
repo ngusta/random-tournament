@@ -146,7 +146,7 @@ class Settings extends React.Component {
         );
         const numberOfActivePlayers = this.props.players.filter(playing => playing).length;
         const useCourtsOptions = [];
-        for (let court = 1; court <= 8; court++) {
+        for (let court = 1; court <= 10; court++) {
             useCourtsOptions.push(
                 <label key={court}>
                     {court}
@@ -154,6 +154,11 @@ class Settings extends React.Component {
                            onChange={this.props.onCourtsToUseChange}/>
                 </label>
             );
+			if (court === 5){
+				useCourtsOptions.push(
+					<br key="middleBreak" />
+				);
+			}
         }
         return (
             <div>
@@ -283,15 +288,17 @@ class Settings extends React.Component {
                                     </label>
                                 </div>
                                 <div className="courtsToUse">
-                                    <label className="showEightCourts">
-                                        <span>Show 8 courts</span>
-                                        <input type="checkbox" name="showEightCourts"
-                                               checked={this.props.showEightCourts} onChange={this.handleChange}/>
+                                    <label className="showTenCourts">
+                                        <span>Show 10 courts</span>
+                                        <input type="checkbox" name="showTenCourts"
+                                               checked={this.props.showTenCourts} onChange={this.handleChange}/>
                                     </label>
-                                    {this.props.showEightCourts &&
-                                    <div className="showEightCourts">
+                                    {this.props.showTenCourts &&
+                                    <div className="showTenCourts">
                                         <label>Courts to use for the tournament</label>
+										<br />
                                         {useCourtsOptions}
+										<br />
                                         <label>
                                             <span>Hide unused courts</span>
                                             <input type="checkbox" name="hideUnusedCourts"

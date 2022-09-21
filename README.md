@@ -1,6 +1,9 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Install dependencies
+
+Install npm (Node.js + npm https://docs.npmjs.com/downloading-and-installing-node-js-and-npm#os-x-or-windows-node-installers)
+
 - npm install --save react-scripts
 - npm install --save local-storage
 - npm install --save react-router-dom  
@@ -38,13 +41,14 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 Run this to deploy to AWS.
 
 Prereq: 
-- Install AWS CLI first.
+- Install AWS CLI first (CLI 2 is fine)
 - Run ``aws configure``
 - Use Private AWS Access Credentials from 1Password as Access Key ID and passowrd
 - Use eu-north-1 as default region
 - Use json as default output
 
 Now the deploy command should work!
+After deployment, to see the results right away on ngusta.com, go to AWS CloudFront (https://us-east-1.console.aws.amazon.com/cloudfront/v3/home?region=eu-north-1#/distributions/ETQT8NOF6TB09) and create an invalidation (Invalidation tab) for /* and run that
 
 ### `npm run eject`
 
