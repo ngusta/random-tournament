@@ -48,7 +48,10 @@ Prereq:
 - Use json as default output
 
 Now the deploy command should work!
-After deployment, to see the results right away on ngusta.com, go to AWS CloudFront (https://us-east-1.console.aws.amazon.com/cloudfront/v3/home?region=eu-north-1#/distributions/ETQT8NOF6TB09) and create an invalidation (Invalidation tab) for /* and run that
+After deployment, to see the results right away on ngusta.com
+- Go to AWS CloudFront (https://us-east-1.console.aws.amazon.com/cloudfront/v3/home?region=eu-north-1#/distributions/ETQT8NOF6TB09) 
+- Create an invalidation (Invalidation tab) for /* 
+- Run it
 
 ### `npm run eject`
 

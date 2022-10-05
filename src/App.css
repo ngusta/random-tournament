@@ -3,7 +3,7 @@ body {
 }
 
 #app {
-    background: url('img/erika/bg1-high.jpg') no-repeat;
+    background: url('img/erika/bg1-new-high.jpg') no-repeat;
     background-attachment: fixed;
     background-position: center top;
     background-size: cover;
@@ -100,11 +100,11 @@ body {
 }
 
 #app label,
-#app .courtsToUse .showEightCourts label {
+#app .courtsToUse .showTenCourts label {
     display: block;
 }
 
-#app .courtsToUse div.showEightCourts {
+#app .courtsToUse div.showTenCourts {
     margin-left: 1em;
 }
 
