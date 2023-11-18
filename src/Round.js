@@ -16,7 +16,7 @@ class Round extends React.Component {
         let players = [...allAvailablePlayers.filter(player => player > lastPlayerInPreviousRound), ...allAvailablePlayers.filter(player => player <= lastPlayerInPreviousRound)];
         if (!useAllPlayers) {
             let useableCourts = noCourts;
-            while (players.length < 4 * useableCourts) {
+            while (players.length < 2 * playersPerTeam * useableCourts) {
                 useableCourts--;
             }
             players.splice(useableCourts * teamsPerCourt * playersPerTeam);
@@ -49,8 +49,8 @@ class Round extends React.Component {
 
             const round = [];
             nextPlayer = 0;
-            nextPlayer = Round.addTwoTeamsOfTwoPlayers(nextPlayer, noCourts, players, round);
-            nextPlayer = Round.addExtraTeams(nextPlayer, noCourts, teamsPerCourt, players, round);
+            nextPlayer = Round.addTwoTeamsOfMaximumTwoPlayers(nextPlayer, noCourts, players, round, playersPerTeam);
+            nextPlayer = Round.addExtraTeams(nextPlayer, noCourts, teamsPerCourt, players, round, playersPerTeam);
             nextPlayer = Round.addExtraPlayersInTeams(nextPlayer, noCourts, teamsPerCourt, players, round, useAllPlayers, playersPerTeam);
 
             const res = dryRun ? 0 : Round.evaluateRound(round, importedPlayers);
@@ -139,19 +139,20 @@ class Round extends React.Component {
             return "teamsPerCourt - Min: 2, Max: 4, Was: " + teamsPerCourt;
         }
 
-        if (playersPerTeam < 2 || playersPerTeam > 10) {
+        if (playersPerTeam < 1 || playersPerTeam > 10) {
             return "playersPerTeam - Min: 2, Max: 10, Was: " + playersPerTeam;
         }
     }
 
-    static addTwoTeamsOfTwoPlayers(nextPlayer, noCourts, players, round) {
-        for (let c = 0; c < noCourts; c++) {
+    static addTwoTeamsOfMaximumTwoPlayers(nextPlayer, noCourts, players, round, playersPerTeam) {
+        let minimumPlayersPerTeam = Math.min(playersPerTeam, 2); //Handle playersPerTeam = 1
+		for (let c = 0; c < noCourts; c++) {
             const court = [];
-            if (nextPlayer + 3 < players.length) {
+            if (nextPlayer + (2*minimumPlayersPerTeam-1) < players.length) {
                 for (let t = 0; t < 2; t++) {
-                    const team = players.slice(nextPlayer, nextPlayer + 2);
+                    const team = players.slice(nextPlayer, nextPlayer + minimumPlayersPerTeam);
                     court.push(team);
-                    nextPlayer += 2
+                    nextPlayer += minimumPlayersPerTeam
                 }
                 round.push(court)
             }
@@ -159,13 +160,14 @@ class Round extends React.Component {
         return nextPlayer;
     }
 
-    static addExtraTeams(nextPlayer, noCourts, teamsPerCourt, players, round) {
-        if (teamsPerCourt > 2 && (nextPlayer + 1) < players.length) {
+    static addExtraTeams(nextPlayer, noCourts, teamsPerCourt, players, round, playersPerTeam) {
+		let minimumPlayersPerTeam = Math.min(playersPerTeam, 2); //Handle playersPerTeam = 1
+        if (teamsPerCourt > 2 && (nextPlayer + (minimumPlayersPerTeam - 1)) < players.length) {
             let court = 0;
-            while ((nextPlayer + 1) < players.length && round[court].length < teamsPerCourt) {
-                const team = players.slice(nextPlayer, nextPlayer + 2);
+            while ((nextPlayer + (minimumPlayersPerTeam - 1)) < players.length && round[court].length < teamsPerCourt) {
+                const team = players.slice(nextPlayer, nextPlayer + minimumPlayersPerTeam);
                 round[court].push(team);
-                nextPlayer += 2;
+                nextPlayer += minimumPlayersPerTeam;
                 court = (court + 1) % noCourts;
             }
         }
