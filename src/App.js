@@ -25,7 +25,9 @@ class App extends React.Component {
             lastRoundCreationDate: ls.get("lastRoundCreationDate") || null,
             secondLastRoundCreationDate: ls.get("secondLastRoundCreationDate") || null,
             showLoadingSpinner: false,
-            showExampleRound: ls.get("showExampleRound") === null ? true : ls.get("showExampleRound")
+            showExampleRound: ls.get("showExampleRound") === null ? true : ls.get("showExampleRound"),
+            paradiseMode: ls.get("paradiseMode") === null ? false : ls.get("paradiseMode"),
+            paradisePlayersPerCourt: ls.get("paradisePlayersPerCourt") === null ? 5 : ls.get("paradisePlayersPerCourt")
         };
         ls.set("updatePresentation", true);
     }
@@ -121,6 +123,11 @@ class App extends React.Component {
         ls.set("lastRoundCreationDate", created);
     }
 
+    onParadiseModeChange = (e) => {
+        this.setState({paradiseMode: e.target.checked});
+        ls.set("paradiseMode", e.target.checked)
+    };
+
     draw = () => {
         this.setState({errors: [], showLoadingSpinner: true}, () => {
             setTimeout(() => {
@@ -154,7 +161,9 @@ class App extends React.Component {
             } : this.logError,
             dryRun,
             this.state.rounds,
-            this.state.importedPlayers
+            this.state.importedPlayers,
+            this.state.paradiseMode,
+            this.state.paradisePlayersPerCourt
         );
     }
 
@@ -239,6 +248,9 @@ class App extends React.Component {
                               showExampleRound={this.state.showExampleRound}
                               onShowExampleRoundChange={this.onShowExampleRoundChange}
                               onStartRound={this.onStartRound}
+                              paradiseMode={this.state.paradiseMode}
+                              onParadiseModeChange={this.onParadiseModeChange}
+                              paradisePlayersPerCourt={this.state.paradisePlayersPerCourt}
                     />
                     <ul className="clear">
                         {errors}

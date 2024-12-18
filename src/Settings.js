@@ -70,6 +70,16 @@ class Settings extends React.Component {
         this.props.onSettingChange("playersPerTeam", this.props.playersPerTeam - 1);
     };
 
+    addParadisePlayersPerCourt = (e) => {
+        e.preventDefault();
+        this.props.onSettingChange("paradisePlayersPerCourt", this.props.paradisePlayersPerCourt + 1);
+    };
+
+    removeParadisePlayersPerCourt = (e) => {
+        e.preventDefault();
+        this.props.onSettingChange("paradisePlayersPerCourt", this.props.paradisePlayersPerCourt - 1);
+    };
+
     handleSubmit = (e) => {
         this.props.onSubmit();
         e.preventDefault();
@@ -154,11 +164,11 @@ class Settings extends React.Component {
                            onChange={this.props.onCourtsToUseChange}/>
                 </label>
             );
-			if (court === 5){
-				useCourtsOptions.push(
-					<br key="middleBreak" />
-				);
-			}
+            if (court === 5) {
+                useCourtsOptions.push(
+                    <br key="middleBreak"/>
+                );
+            }
         }
         return (
             <div>
@@ -171,6 +181,11 @@ class Settings extends React.Component {
                             </fieldset>
                             <fieldset className="tournamentSettings">
                                 <legend>Tournament settings</legend>
+                                <label>
+                                    <span>Paradise Mode</span>
+                                    <input type="checkbox" name="paradiseMode" checked={this.props.paradiseMode}
+                                           onChange={this.props.onParadiseModeChange}/>
+                                </label>
                                 <label>
                                     <span>Number of players</span>
                                     <input type="text" name="noPlayers"
@@ -187,29 +202,41 @@ class Settings extends React.Component {
                                     <button onClick={e => this.removeCourt(e)}>-</button>
                                     <button onClick={e => this.addCourt(e)}>+</button>
                                 </label>
-                                <label>
-                                    <span>Number of teams per court</span>
-                                    <input type="text" name="teamsPerCourt"
-                                           value={this.props.teamsPerCourt === 0 ? "" : this.props.teamsPerCourt}
-                                           onChange={this.handleChange}/>
-                                    <button onClick={e => this.removeTeamPerCourt(e)}>-</button>
-                                    <button onClick={e => this.addTeamPerCourt(e)}>+</button>
-                                </label>
-
+                                {!this.props.paradiseMode &&
+                                    <label>
+                                        <span>Number of teams per court</span>
+                                        <input type="text" name="teamsPerCourt"
+                                               value={this.props.teamsPerCourt === 0 ? "" : this.props.teamsPerCourt}
+                                               onChange={this.handleChange}/>
+                                        <button onClick={e => this.removeTeamPerCourt(e)}>-</button>
+                                        <button onClick={e => this.addTeamPerCourt(e)}>+</button>
+                                    </label>
+                                }
                                 <label>
                                     <span>Let all players play every round</span>
                                     <input type="checkbox" name="useAllPlayers" checked={this.props.useAllPlayers}
                                            onChange={this.handleChange}/>
                                 </label>
-                                {!this.props.useAllPlayers &&
-                                <label>
-                                    <span>Number of players per team</span>
-                                    <input type="text" name="playersPerTeam"
-                                           value={this.props.playersPerTeam === 0 ? "" : this.props.playersPerTeam}
-                                           onChange={this.handleChange}/>
-                                    <button onClick={e => this.removePlayerPerTeam(e)}>-</button>
-                                    <button onClick={e => this.addPlayerPerTeam(e)}>+</button>
-                                </label>
+                                {!this.props.useAllPlayers && !this.props.paradiseMode &&
+                                    <label>
+                                        <span>Number of players per team</span>
+                                        <input type="text" name="playersPerTeam"
+                                               value={this.props.playersPerTeam === 0 ? "" : this.props.playersPerTeam}
+                                               onChange={this.handleChange}/>
+                                        <button onClick={e => this.removePlayerPerTeam(e)}>-</button>
+                                        <button onClick={e => this.addPlayerPerTeam(e)}>+</button>
+                                    </label>
+                                }
+
+                                {!this.props.useAllPlayers && this.props.paradiseMode &&
+                                    <label>
+                                        <span>Max number of players per court</span>
+                                        <input type="text" name="paradisePlayersPerCourt"
+                                               value={this.props.paradisePlayersPerCourt === 0 ? "" : this.props.paradisePlayersPerCourt}
+                                               onChange={this.handleChange}/>
+                                        <button onClick={e => this.removeParadisePlayersPerCourt(e)}>-</button>
+                                        <button onClick={e => this.addParadisePlayersPerCourt(e)}>+</button>
+                                    </label>
                                 }
                                 <label>Show example round
                                     <input type="checkbox" name="showExampleRound" checked={this.props.showExampleRound}
@@ -294,17 +321,18 @@ class Settings extends React.Component {
                                                checked={this.props.showTenCourts} onChange={this.handleChange}/>
                                     </label>
                                     {this.props.showTenCourts &&
-                                    <div className="showTenCourts">
-                                        <label>Courts to use for the tournament</label>
-										<br />
-                                        {useCourtsOptions}
-										<br />
-                                        <label>
-                                            <span>Hide unused courts</span>
-                                            <input type="checkbox" name="hideUnusedCourts"
-                                                   checked={this.props.hideUnusedCourts} onChange={this.handleChange}/>
-                                        </label>
-                                    </div>
+                                        <div className="showTenCourts">
+                                            <label>Courts to use for the tournament</label>
+                                            <br/>
+                                            {useCourtsOptions}
+                                            <br/>
+                                            <label>
+                                                <span>Hide unused courts</span>
+                                                <input type="checkbox" name="hideUnusedCourts"
+                                                       checked={this.props.hideUnusedCourts}
+                                                       onChange={this.handleChange}/>
+                                            </label>
+                                        </div>
                                     }
                                 </div>
                                 <Link to="/presentation" target="_blank">Open presentation</Link>

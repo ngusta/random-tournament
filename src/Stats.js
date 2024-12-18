@@ -22,6 +22,7 @@ class Stats extends React.Component {
                 <td>{playerStats[index + 1] && new Set(playerStats[index + 1].opponents.concat(playerStats[index + 1].partners)).size}</td>
                 <td>{playerStats[index + 1] && playerStats[index + 1].mixedMatches}</td>
                 <td>{playerStats[index + 1] && playerStats[index + 1].mixedTeams}</td>
+                <td>{playerStats[index + 1] && playerStats[index + 1].paradiseMixedDiff}</td>
             </tr>
         );
         return (
@@ -38,6 +39,7 @@ class Stats extends React.Component {
                         <th title="Number of different partners and opponents">p+o</th>
                         <th title="Number of played mixed matches">mm</th>
                         <th title="Number of matches played in a mixed team">mt</th>
+                        <th title="Total gender diff on court (Paradise)">gd</th>
                     </tr>
                     </thead>
                     <tbody>

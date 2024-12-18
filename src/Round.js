@@ -8,18 +8,19 @@ import filledStar from './img/star_filled.png';
 class Round extends React.Component {
 
     static createRound(allAvailablePlayers, noCourts, teamsPerCourt, playersPerTeam, useAllPlayers,
-                       onError, dryRun, earlierRounds, importedPlayers) {
+                       onError, dryRun, earlierRounds, importedPlayers, paradiseMode, paradisePlayersPerCourt) {
         const startTime = performance.now();
 
         const lastPlayerInRounds = ls.get("lastPlayerInRounds") ? ls.get("lastPlayerInRounds") : [];
         const lastPlayerInPreviousRound = lastPlayerInRounds.length > 0 ? lastPlayerInRounds[lastPlayerInRounds.length - 1] : 0;
         let players = [...allAvailablePlayers.filter(player => player > lastPlayerInPreviousRound), ...allAvailablePlayers.filter(player => player <= lastPlayerInPreviousRound)];
+
         if (!useAllPlayers) {
             let useableCourts = noCourts;
-            while (players.length < 2 * playersPerTeam * useableCourts) {
+            while (players.length < (useableCourts * 2 * playersPerTeam)) {
                 useableCourts--;
             }
-            players.splice(useableCourts * teamsPerCourt * playersPerTeam);
+            players.splice(useableCourts * (paradiseMode ? paradisePlayersPerCourt : teamsPerCourt * playersPerTeam));
         }
 
         if (!dryRun) {
@@ -27,7 +28,7 @@ class Round extends React.Component {
             ls.set("lastPlayerInRounds", lastPlayerInRounds);
         }
 
-        const error = Round.validateInput(players, noCourts, teamsPerCourt, playersPerTeam);
+        const error = Round.validateInput(players, noCourts, teamsPerCourt, playersPerTeam, paradiseMode, paradisePlayersPerCourt);
         if (error) {
             onError(error);
             return;
@@ -45,15 +46,28 @@ class Round extends React.Component {
             console.log("players: " + players);
         }
         let bestPlayers = players;
+
         for (let i = 0; i < noTries; i++) {
 
             const round = [];
             nextPlayer = 0;
-            nextPlayer = Round.addTwoTeamsOfMaximumTwoPlayers(nextPlayer, noCourts, players, round, playersPerTeam);
-            nextPlayer = Round.addExtraTeams(nextPlayer, noCourts, teamsPerCourt, players, round, playersPerTeam);
-            nextPlayer = Round.addExtraPlayersInTeams(nextPlayer, noCourts, teamsPerCourt, players, round, useAllPlayers, playersPerTeam);
+            if (paradiseMode) {
+                //console.log("no courts: " + noCourts + " players per team: 2");
+                nextPlayer = Round.addTwoTeamsOfMaximumTwoPlayers(nextPlayer, noCourts, players, round, 2);
+                let playersStartingOutside = paradisePlayersPerCourt - 4;
+                //console.log("Rounds after 2 teams");
+                //console.log(structuredClone(round));
+                //console.log("teams per court: 3, players outside: " + playersStartingOutside + ", useAllplayers: " + useAllPlayers);
+                nextPlayer = Round.addExtraPlayersToOutsideTeams(nextPlayer, noCourts, players, round, useAllPlayers, playersStartingOutside);
+                //console.log("Rounds after extra players & team");
+                //console.log(structuredClone(round));
+            } else {
+                nextPlayer = Round.addTwoTeamsOfMaximumTwoPlayers(nextPlayer, noCourts, players, round, playersPerTeam);
+                nextPlayer = Round.addExtraTeams(nextPlayer, noCourts, teamsPerCourt, players, round, playersPerTeam);
+                nextPlayer = Round.addExtraPlayersInTeams(nextPlayer, noCourts, teamsPerCourt, players, round, useAllPlayers, playersPerTeam);
+            }
 
-            const res = dryRun ? 0 : Round.evaluateRound(round, importedPlayers);
+            const res = dryRun ? 0 : Round.evaluateRound(round, importedPlayers, paradiseMode);
             const points = dryRun ? 0 : res[0];
 
             if (points < bestPoints) {
@@ -92,7 +106,7 @@ class Round extends React.Component {
         }
         const mean = totalPoints / allPoints.length;
         const stdDev = Math.sqrt((1 / (allPoints.length - 1)) * allPoints.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b, 0));
-        !dryRun && console.log("Final mean/StdDev: " + Math.round(mean) + "/" + Math.round(stdDev));
+        !dryRun && console.log("Final mean/StdDev: " + Math.round(mean) + "/" + Math.round(stdDev) + ". Best points: " + bestPoints);
         if (!dryRun) {
             Round.updatePlayerStats(bestRound, importedPlayers);
             const stopTime = performance.now();
@@ -126,7 +140,7 @@ class Round extends React.Component {
         return Math.floor(Math.random() * maxNumber);
     }
 
-    static validateInput(players, noCourts, teamsPerCourt, playersPerTeam) {
+    static validateInput(players, noCourts, teamsPerCourt, playersPerTeam, paradiseMode, paradisePlayersPerCourt) {
         if (players.length < 4) {
             return "noPlayers - Min: 4, Was: " + players.length;
         }
@@ -135,20 +149,26 @@ class Round extends React.Component {
             return "noCourts - Min: 1, Max: 20, Was: " + noCourts;
         }
 
-        if (teamsPerCourt < 2 || teamsPerCourt > 4) {
-            return "teamsPerCourt - Min: 2, Max: 4, Was: " + teamsPerCourt;
-        }
+        if (paradiseMode) {
+            if (paradisePlayersPerCourt < 4 || paradisePlayersPerCourt > 12) {
+                return "paradisePlayersPerCourt - Min: 4, Max: 12, Was: " + paradisePlayersPerCourt;
+            }
+        } else {
+            if (teamsPerCourt < 2 || teamsPerCourt > 4) {
+                return "teamsPerCourt - Min: 2, Max: 4, Was: " + teamsPerCourt;
+            }
 
-        if (playersPerTeam < 1 || playersPerTeam > 10) {
-            return "playersPerTeam - Min: 2, Max: 10, Was: " + playersPerTeam;
+            if (playersPerTeam < 1 || playersPerTeam > 10) {
+                return "playersPerTeam - Min: 2, Max: 10, Was: " + playersPerTeam;
+            }
         }
     }
 
     static addTwoTeamsOfMaximumTwoPlayers(nextPlayer, noCourts, players, round, playersPerTeam) {
         let minimumPlayersPerTeam = Math.min(playersPerTeam, 2); //Handle playersPerTeam = 1
-		for (let c = 0; c < noCourts; c++) {
+        for (let c = 0; c < noCourts; c++) {
             const court = [];
-            if (nextPlayer + (2*minimumPlayersPerTeam-1) < players.length) {
+            if (nextPlayer + (2 * minimumPlayersPerTeam - 1) < players.length) {
                 for (let t = 0; t < 2; t++) {
                     const team = players.slice(nextPlayer, nextPlayer + minimumPlayersPerTeam);
                     court.push(team);
@@ -161,7 +181,7 @@ class Round extends React.Component {
     }
 
     static addExtraTeams(nextPlayer, noCourts, teamsPerCourt, players, round, playersPerTeam) {
-		let minimumPlayersPerTeam = Math.min(playersPerTeam, 2); //Handle playersPerTeam = 1
+        let minimumPlayersPerTeam = Math.min(playersPerTeam, 2); //Handle playersPerTeam = 1
         if (teamsPerCourt > 2 && (nextPlayer + (minimumPlayersPerTeam - 1)) < players.length) {
             let court = 0;
             while ((nextPlayer + (minimumPlayersPerTeam - 1)) < players.length && round[court].length < teamsPerCourt) {
@@ -195,13 +215,38 @@ class Round extends React.Component {
         return nextPlayer;
     }
 
-    static evaluateRound(round, importedPlayers) {
+    static addExtraPlayersToOutsideTeams(nextPlayer, noCourts, players, round, useAllPlayers, playersInOutsideTeams) {
+        let court = 0;
+        let outsideTeam = 2;
+        while (nextPlayer < players.length) {
+            if (!useAllPlayers && round[court].length === 3 && round[court][outsideTeam].length === playersInOutsideTeams) {
+                nextPlayer++;
+                break;
+            }
+            if (round[court].length === 2) { //Add outside team
+                const team = players.slice(nextPlayer, nextPlayer + 1);
+                round[court].push(team);
+                nextPlayer++;
+            } else { //Add player to outside team
+                round[court][outsideTeam] = [...round[court][outsideTeam], players[nextPlayer]];
+                nextPlayer++
+            }
+
+            court = (court + 1) % Math.min(noCourts, round.length);
+        }
+        return nextPlayer;
+    }
+
+    static evaluateRound(round, importedPlayers, paradiseMode) {
         const playerStats = ls.get("playerStats") || {};
         let points = 0;
         let scores = {};
         for (let c = 0; c < round.length; c++) {
             let noMenInLastTeam = 0;
             let noWomenInLastTeam = 0;
+
+            let totalMenOnCourt = 0;
+            let totalWomenOnCourt = 0;
             for (let t = 0; t < round[c].length; t++) {
                 let noMenInTeam = 0;
                 let noWomenInTeam = 0;
@@ -211,15 +256,19 @@ class Round extends React.Component {
                     if (playerStats[player]) {
                         const opponents = Round.opponents(round, c, t);
                         let playerPoints = 0;
+
+                        const partnerFactor = paradiseMode ? 2 : 5;
+                        const otherThenPartnerFactor = 2;
+
                         //Played with partner
-                        partners.forEach((partner) => playerPoints += 5 * Round.countOccurences(partner, playerStats[player].partners));
+                        partners.forEach((partner) => playerPoints += partnerFactor * Round.countOccurences(partner, playerStats[player].partners));
                         //points += partners.map((partner) => 4*Round.countOccurences(partner, playerStats[player].partners)).reduce((a, b) => a + b));
                         //Played against partner
-                        partners.forEach((partner) => playerPoints += 2 * Round.countOccurences(partner, playerStats[player].opponents));
+                        partners.forEach((partner) => playerPoints += otherThenPartnerFactor * Round.countOccurences(partner, playerStats[player].opponents));
                         //Played with opponent
-                        opponents.forEach((opponent) => playerPoints += 2 * Round.countOccurences(opponent, playerStats[player].partners));
+                        opponents.forEach((opponent) => playerPoints += otherThenPartnerFactor * Round.countOccurences(opponent, playerStats[player].partners));
                         //Played against opponent
-                        opponents.forEach((opponent) => playerPoints += 2 * Round.countOccurences(opponent, playerStats[player].opponents));
+                        opponents.forEach((opponent) => playerPoints += otherThenPartnerFactor * Round.countOccurences(opponent, playerStats[player].opponents));
                         //Played on the same court (People get sad when they end up on court 10 every game)
                         playerPoints += 1 * Round.countOccurences(c, playerStats[player].courts);
 
@@ -238,24 +287,40 @@ class Round extends React.Component {
                     }
                 }
 
-                //Avoid mixed teams playing non-mixed teams
-                let mixPoints = 0;
-                if (t >= 1) {
-                    const isThisAMixedTeam = noMenInTeam > 0 && noWomenInTeam > 0;
-                    const isLastTeamAMixedTeam = noMenInLastTeam > 0 && noWomenInLastTeam > 0;
-                    if (isThisAMixedTeam !== isLastTeamAMixedTeam) {
-                        mixPoints += 10;
-                    }
-                    if ((noWomenInTeam === 0 && noMenInLastTeam === 0) || (noMenInTeam === 0 && noWomenInLastTeam === 0)) {
-                        mixPoints += 8;
-                    }
-                }
+                totalMenOnCourt += noMenInTeam;
+                totalWomenOnCourt += noWomenInTeam;
 
-                //Avoid non-mixed teams
-                if (noMenInTeam === 0 || noWomenInTeam === 0) {
-                    mixPoints += round[c][t].length * 6;
+                if (paradiseMode) {
+                    if (t === (round[c].length - 1)) {
+                        //Promote mixed courts
+                        if ((totalMenOnCourt + totalWomenOnCourt) % 2 === 0) {
+                            const paradiseMixedPoints = Math.abs(totalMenOnCourt - totalWomenOnCourt) * 4;
+                            points += paradiseMixedPoints * paradiseMixedPoints;
+                        } else {
+                            const paradiseMixedPoints = (Math.abs(totalMenOnCourt - totalWomenOnCourt) - 1) * 4;
+                            points += paradiseMixedPoints * paradiseMixedPoints;
+                        }
+                    }
+                } else {
+                    //Avoid mixed teams playing non-mixed teams
+                    let mixPoints = 0;
+                    if (t >= 1) {
+                        const isThisAMixedTeam = noMenInTeam > 0 && noWomenInTeam > 0;
+                        const isLastTeamAMixedTeam = noMenInLastTeam > 0 && noWomenInLastTeam > 0;
+                        if (isThisAMixedTeam !== isLastTeamAMixedTeam) {
+                            mixPoints += 10;
+                        }
+                        if ((noWomenInTeam === 0 && noMenInLastTeam === 0) || (noMenInTeam === 0 && noWomenInLastTeam === 0)) {
+                            mixPoints += 8;
+                        }
+                    }
+
+                    //Avoid non-mixed teams
+                    if (noMenInTeam === 0 || noWomenInTeam === 0) {
+                        mixPoints += round[c][t].length * 6;
+                    }
+                    points += mixPoints * mixPoints; // square it to make it really rare!
                 }
-                points += mixPoints * mixPoints; // square it to make it really rare!
 
                 noMenInLastTeam = noMenInTeam;
                 noWomenInLastTeam = noWomenInTeam;
@@ -306,11 +371,7 @@ class Round extends React.Component {
     static updatePlayerStats(round, importedPlayers) {
         const playerStats = ls.get("playerStats") || {};
         for (let c = 0; c < round.length; c++) {
-            let noMenInLastTeam = 0;
-            let noWomenInLastTeam = 0;
             for (let t = 0; t < round[c].length; t++) {
-                let noMenInTeam = 0;
-                let noWomenInTeam = 0;
                 for (let p = 0; p < round[c][t].length; p++) {
                     const player = round[c][t][p];
                     if (!playerStats[player]) {
@@ -320,9 +381,26 @@ class Round extends React.Component {
                             courts: [],
                             playedMatches: 0,
                             mixedMatches: 0,
-                            mixedTeams: 0
+                            mixedTeams: 0,
+                            paradiseMixedDiff: 0
                         };
                     }
+                }
+            }
+        }
+
+        for (let c = 0; c < round.length; c++) {
+            let noMenInLastTeam = 0;
+            let noWomenInLastTeam = 0;
+
+            let totalMenOnCourt = 0;
+            let totalWomenOnCourt = 0;
+            for (let t = 0; t < round[c].length; t++) {
+                let noMenInTeam = 0;
+                let noWomenInTeam = 0;
+                for (let p = 0; p < round[c][t].length; p++) {
+                    const player = round[c][t][p];
+
                     const newPartners = Round.partners(round, c, t, p);
                     playerStats[player].partners = [...playerStats[player].partners, ...newPartners].sort();
 
@@ -340,6 +418,9 @@ class Round extends React.Component {
                         noWomenInTeam++;
                     }
 
+                    totalMenOnCourt += noMenInTeam;
+                    totalWomenOnCourt += noWomenInTeam;
+
                 }
 
                 if (round[c].length === 2 && t === 1) {
@@ -356,6 +437,15 @@ class Round extends React.Component {
                 if (noMenInTeam > 0 && noWomenInTeam > 0) {
                     playerStats[round[c][t][0]].mixedTeams += 1;
                     playerStats[round[c][t][1]].mixedTeams += 1;
+                }
+
+                if (t === (round[c].length - 1)) {
+                    const mixedDiff = Math.abs(totalMenOnCourt - totalWomenOnCourt);
+                    for (let t2 = 0; t2 < round[c].length; t2++) {
+                        for (let p2 = 0; p2 < round[c][t2].length; p2++) {
+                            playerStats[round[c][t2][p2]].paradiseMixedDiff += mixedDiff;
+                        }
+                    }
                 }
             }
         }
@@ -410,8 +500,10 @@ class Round extends React.Component {
         const ranges = this.getRangeOfPlayers();
         let courts = [];
         if (this.props.courts && this.props.showTenCourts && this.props.courtsToUse && this.props.courts.length <= this.props.courtsToUse.length) {
-        	const courtsToUse = this.props.courtsToUse.sort(function(a, b){return a-b});
-		    let nextCourtFromRound = 0;
+            const courtsToUse = this.props.courtsToUse.sort(function (a, b) {
+                return a - b
+            });
+            let nextCourtFromRound = 0;
             for (let court = 1; court <= 10; court++) {
                 let teams = [];
                 if (courtsToUse.indexOf(court) > -1 && nextCourtFromRound < this.props.courts.length) {
@@ -440,11 +532,11 @@ class Round extends React.Component {
         return (
             <div ref={this.props.reff} className={`round ${this.props.className}`}>
                 {this.props.roundName &&
-                <h1>
-                    {this.props.onShowOnPresentation && presentationImg}
-                    {this.props.roundName}
-                    {this.props.onDeleteRound && deleteImg}
-                </h1>
+                    <h1>
+                        {this.props.onShowOnPresentation && presentationImg}
+                        {this.props.roundName}
+                        {this.props.onDeleteRound && deleteImg}
+                    </h1>
                 }
                 {ranges.length > 0 && <span className="ranges">Plays: {ranges}</span>}
                 <div className="courts">
