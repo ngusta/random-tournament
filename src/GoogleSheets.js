@@ -8,8 +8,8 @@ class GoogleSheets extends Component {
         this.state = {
             loggedIn: false,
             gapiReady: false,
-            sheetId: ls.get("sheetId") || "1e4C8ArBqc5_hhWdpio-v9lWMpjdWn1mrpz0d_HS4LDg",
-            sheetRange: ls.get("sheetRange") || "'Lista turnering med kille / tjej'!A2:D",
+            sheetId: ls.get("sheetId") || "1uci8khgGfqnpKtkyQ4mSYIroeHmXfZd8ColINEwyP2I",
+            sheetRange: ls.get("sheetRange") || "'test'!A2:D",
             playerData: []
         }
     }
@@ -128,7 +128,7 @@ class GoogleSheets extends Component {
                     <span>Google sheet id:</span>
                     <input type="text" value={this.state.sheetId} onChange={this.setSheetId}/>
                     <span className="labelDetails">https://docs.google.com/spreadsheets/d/<span
-                        className="highlight">1e4C8ArBqc5_hhWdpio-v9lWMpjdWn1mrpz0d_HS4LDg</span>/edit#gid=1073790956</span>
+                        className="highlight">1uci8khgGfqnpKtkyQ4mSYIroeHmXfZd8ColINEwyP2I</span>/edit#gid=0</span>
                 </label>
                 <label>
                     <span>Player range:</span>
