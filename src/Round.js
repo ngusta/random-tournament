@@ -247,6 +247,9 @@ class Round extends React.Component {
 
             let totalMenOnCourt = 0;
             let totalWomenOnCourt = 0;
+
+            let wins = [];
+
             for (let t = 0; t < round[c].length; t++) {
                 let noMenInTeam = 0;
                 let noWomenInTeam = 0;
@@ -285,6 +288,7 @@ class Round extends React.Component {
                     if (Round.isWoman(importedPlayers, player)) {
                         noWomenInTeam++;
                     }
+                    wins = [...wins, Round.getWins(importedPlayers, player)];
                 }
 
                 totalMenOnCourt += noMenInTeam;
@@ -325,6 +329,8 @@ class Round extends React.Component {
                 noMenInLastTeam = noMenInTeam;
                 noWomenInLastTeam = noWomenInTeam;
             }
+
+            points += (Math.max(...wins) - Math.min(...wins))*10;
         }
         return [points, scores];
     }
@@ -342,6 +348,13 @@ class Round extends React.Component {
             return "W";
         }
         return "M";
+    }
+
+    static getWins(importedPlayers, player) {
+        if (importedPlayers && importedPlayers[player] && importedPlayers[player].wins) {
+            return importedPlayers[player].wins;
+        }
+        return 0;
     }
 
     static countOccurences(item, list) {

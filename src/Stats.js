@@ -16,6 +16,10 @@ class Stats extends React.Component {
             <tr key={index}>
                 <td>{index + 1}</td>
                 <td>{importedPlayers[index + 1] && importedPlayers[index + 1].name}</td>
+                <td>{importedPlayers[index + 1] && (importedPlayers[index + 1].wins + importedPlayers[index + 1].losses + importedPlayers[index + 1].draws)}</td>
+                <td>{importedPlayers[index + 1] && importedPlayers[index + 1].wins}</td>
+                <td>{importedPlayers[index + 1] && importedPlayers[index + 1].losses}</td>
+                <td>{importedPlayers[index + 1] && importedPlayers[index + 1].draws}</td>
                 <td>{playerStats[index + 1] && playerStats[index + 1].playedMatches}</td>
                 <td>{playerStats[index + 1] && new Set(playerStats[index + 1].partners).size}</td>
                 <td>{playerStats[index + 1] && new Set(playerStats[index + 1].opponents).size}</td>
@@ -33,6 +37,10 @@ class Stats extends React.Component {
                     <tr>
                         <th title="Player number">P</th>
                         <th title="Player name">Name</th>
+                        <th title="Total matches">M</th>
+                        <th title="Wins">W</th>
+                        <th title="Losses">L</th>
+                        <th title="Draws">D</th>
                         <th title="Matches played">m</th>
                         <th title="Number of different partners">p</th>
                         <th title="Number of different opponents">o</th>

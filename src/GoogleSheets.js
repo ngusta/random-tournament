@@ -9,7 +9,7 @@ class GoogleSheets extends Component {
             loggedIn: false,
             gapiReady: false,
             sheetId: ls.get("sheetId") || "1uci8khgGfqnpKtkyQ4mSYIroeHmXfZd8ColINEwyP2I",
-            sheetRange: ls.get("sheetRange") || "'test'!A2:D",
+            sheetRange: ls.get("sheetRange") || "'test'!A2:G",
             playerData: []
         }
     }
@@ -72,7 +72,7 @@ class GoogleSheets extends Component {
                     const playerData = [];
                     range.values.forEach((player) => {
                         console.log(player);
-                        if (player.length === 4 && player[1].length > 0) {
+                        if ((player.length === 4 || player.length === 7) && player[1].length > 0) {
                             playerData.push(player);
                         }
                     });
@@ -87,8 +87,13 @@ class GoogleSheets extends Component {
                             default:
                                 gender = "M";
                         }
-
-                        importedPlayers[player[0]] = {name: player[1] + " " + player[2], gender: gender};
+                        if (player.length === 4) {
+                            importedPlayers[player[0]] = {name: player[1] + " " + player[2], gender: gender,
+                                wins: 0, losses: 0, draws: 0};
+                        } else {
+                            importedPlayers[player[0]] = {name: player[1] + " " + player[2], gender: gender,
+                                wins: Number(player[4]), losses: Number(player[5]), draws: Number(player[6])};
+                        }
                     });
                     this.props.setImportedPlayers(importedPlayers);
                 } else {
@@ -133,7 +138,7 @@ class GoogleSheets extends Component {
                 <label>
                     <span>Player range:</span>
                     <input type="text" value={this.state.sheetRange} onChange={this.setSheetRange}/>
-                    <span className="labelDetails">Sheet with four columns in this order: Player number, First name, Last name, Gender</span>
+                    <span className="labelDetails">Sheet with seven columns in this order: Player number, First name, Last name, Gender, Wins, Losses, Draws</span>
                 </label>
                 {this.state.gapiReady && <button onClick={this.importData}>Import data</button>}
                 {
