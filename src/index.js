@@ -4,6 +4,7 @@ import {Route, BrowserRouter as Router} from 'react-router-dom';
 import './index.css';
 import App from './App';
 import Presentation from './Presentation';
+import Leaderboard from './Leaderboard';
 import * as serviceWorker from './serviceWorker';
 
 const routing = (
@@ -11,6 +12,7 @@ const routing = (
         <div>
             <Route exact path="/" component={App}/>
             <Route path="/presentation" component={Presentation}/>
+            <Route path="/leaderboard" component={Leaderboard}/>
         </div>
     </Router>
 );

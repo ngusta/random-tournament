@@ -36,7 +36,7 @@ class Round extends React.Component {
 
         let bestRound = [];
         let bestPoints = Number.MAX_SAFE_INTEGER;
-        const noTries = dryRun ? 1 : 10000;
+        const noTries = dryRun ? 1 : 20000;
         let nextPlayer = 0;
         let totalPoints = 0;
         const allPoints = [];
@@ -48,7 +48,6 @@ class Round extends React.Component {
         let bestPlayers = players;
 
         for (let i = 0; i < noTries; i++) {
-
             const round = [];
             nextPlayer = 0;
             if (paradiseMode) {
@@ -66,9 +65,14 @@ class Round extends React.Component {
                 nextPlayer = Round.addExtraTeams(nextPlayer, noCourts, teamsPerCourt, players, round, playersPerTeam);
                 nextPlayer = Round.addExtraPlayersInTeams(nextPlayer, noCourts, teamsPerCourt, players, round, useAllPlayers, playersPerTeam);
             }
+            if (!dryRun) {
+                //console.log("Round " + i);
+                //Round.printRound(round);
+            }
 
             const res = dryRun ? 0 : Round.evaluateRound(round, importedPlayers, paradiseMode);
             const points = dryRun ? 0 : res[0];
+            const playerPoints = res[1];
 
             if (points < bestPoints) {
                 bestPoints = points;
@@ -80,9 +84,13 @@ class Round extends React.Component {
             } else if (Math.random() * noTries < 10 * i) { // avoids getting stuck at a local minima
                 players = bestPlayers;
             }
+            if (i > 0 && i % 4000 === 0) {
+                console.log("Shuffle!");
+                players = Round.shuffle(players);
+            }
             if (!dryRun) {
-                if (Object.keys(res[1]).length > 0) {
-                    Round.swapTwo(players, res[1]);
+                if (Object.keys(playerPoints).length > 0) {
+                    Round.swapTwo(players, playerPoints);
                 } else {
                     Round.swapTwo(players, {0: players});
                 }
@@ -123,15 +131,15 @@ class Round extends React.Component {
         return a;
     }
 
-    static swapTwo(players, scores) {
-        const worst = Object.keys(scores).reduce(function (a, b) {
-            return a > b ? a : b
-        });
-        const i = players.indexOf(scores[worst][(this.getRandomInteger(scores[worst].length))]);
+    static swapTwo(players, playerPoints) {
+        const highestPoints = Math.max(...Object.values(playerPoints).filter(value => !isNaN(value)));
+        const playersWithHighestPoints = Object.keys(playerPoints).filter(key => playerPoints[key] === highestPoints).map(value => Number(value));
+        const i = players.indexOf(playersWithHighestPoints[this.getRandomInteger(playersWithHighestPoints.length)]);
         let j = this.getRandomInteger(players.length);
         while (i === j) {
             j = this.getRandomInteger(players.length);
         }
+        //console.log("Swapping: " + players[i] + " och " + players[j] + " (Högst poäng: " + highestPoints + ")");
         [players[i], players[j]] = [players[j], players[i]];
         return players;
     }
@@ -241,14 +249,18 @@ class Round extends React.Component {
         const playerStats = ls.get("playerStats") || {};
         let points = 0;
         let scores = {};
+        let allPlayerPoints = {};
         for (let c = 0; c < round.length; c++) {
-            let noMenInLastTeam = 0;
-            let noWomenInLastTeam = 0;
-
             let totalMenOnCourt = 0;
             let totalWomenOnCourt = 0;
 
+            let totalMixedTeamsOnCourt = 0;
+            let totalNonMixedTeamsOnCourt = 0;
+
             let wins = [];
+
+            const noWomenInTeams = new Array(round[c].length).fill(0);
+            const noMenInTeams = new Array(round[c].length).fill(0);
 
             for (let t = 0; t < round[c].length; t++) {
                 let noMenInTeam = 0;
@@ -275,12 +287,17 @@ class Round extends React.Component {
                         //Played on the same court (People get sad when they end up on court 10 every game)
                         playerPoints += 1 * Round.countOccurences(c, playerStats[player].courts);
 
+                        //console.log("Player points: " + playerPoints + " Points before: " + points);
                         points += playerPoints * playerPoints; // square it to spread the points out among players better!
                         if (playerPoints in scores) {
                             scores[playerPoints].push(player);
                         } else {
                             scores[playerPoints] = [player];
                         }
+                        if (!allPlayerPoints[player]) {
+                            allPlayerPoints[player] = 0;
+                        }
+                        allPlayerPoints[player] += playerPoints;
                     }
                     if (Round.isMan(importedPlayers, player)) {
                         noMenInTeam++;
@@ -294,45 +311,72 @@ class Round extends React.Component {
                 totalMenOnCourt += noMenInTeam;
                 totalWomenOnCourt += noWomenInTeam;
 
-                if (paradiseMode) {
-                    if (t === (round[c].length - 1)) {
-                        //Promote mixed courts
-                        if ((totalMenOnCourt + totalWomenOnCourt) % 2 === 0) {
-                            const paradiseMixedPoints = Math.abs(totalMenOnCourt - totalWomenOnCourt) * 4;
-                            points += paradiseMixedPoints * paradiseMixedPoints;
-                        } else {
-                            const paradiseMixedPoints = (Math.abs(totalMenOnCourt - totalWomenOnCourt) - 1) * 4;
-                            points += paradiseMixedPoints * paradiseMixedPoints;
-                        }
-                    }
+                noMenInTeams[t] = noMenInTeam
+                noWomenInTeams[t] = noWomenInTeam
+
+                if (noMenInTeam > 0 && noWomenInTeam > 0) {
+                    totalMixedTeamsOnCourt++;
                 } else {
-                    //Avoid mixed teams playing non-mixed teams
-                    let mixPoints = 0;
-                    if (t >= 1) {
-                        const isThisAMixedTeam = noMenInTeam > 0 && noWomenInTeam > 0;
-                        const isLastTeamAMixedTeam = noMenInLastTeam > 0 && noWomenInLastTeam > 0;
-                        if (isThisAMixedTeam !== isLastTeamAMixedTeam) {
-                            mixPoints += 10;
-                        }
-                        if ((noWomenInTeam === 0 && noMenInLastTeam === 0) || (noMenInTeam === 0 && noWomenInLastTeam === 0)) {
-                            mixPoints += 8;
-                        }
-                    }
-
-                    //Avoid non-mixed teams
-                    if (noMenInTeam === 0 || noWomenInTeam === 0) {
-                        mixPoints += round[c][t].length * 6;
-                    }
-                    points += mixPoints * mixPoints; // square it to make it really rare!
+                    totalNonMixedTeamsOnCourt++;
                 }
-
-                noMenInLastTeam = noMenInTeam;
-                noWomenInLastTeam = noWomenInTeam;
             }
 
-            points += (Math.max(...wins) - Math.min(...wins))*10;
+            if (paradiseMode) {
+                //Promote mixed courts
+                let paradiseMixedPoints = 0;
+                if ((totalMenOnCourt + totalWomenOnCourt) % 2 === 0) {
+                    paradiseMixedPoints = Math.abs(totalMenOnCourt - totalWomenOnCourt) * 4;
+                } else {
+                    paradiseMixedPoints = (Math.abs(totalMenOnCourt - totalWomenOnCourt) - 1) * 4;
+                }
+                console.log("Mix points (paradis): " + paradiseMixedPoints + " Points before: " + points);
+                points += paradiseMixedPoints * paradiseMixedPoints;
+                //Add mixed points to all players
+                for (let t = 0; t < round[c].length; t++) {
+                    for (let p = 0; p < round[c][t].length; p++) {
+                        const player = round[c][t][p];
+                        allPlayerPoints[player] += paradiseMixedPoints;
+                    }
+                }
+            } else if (totalMenOnCourt > 0 && totalWomenOnCourt > 0) { //Only care if we have gender data
+                let mixPoints = 0;
+                //Avoid mixed teams playing non-mixed teams
+                if (totalMixedTeamsOnCourt > 0 && totalNonMixedTeamsOnCourt > 0) {
+                    mixPoints += round[c].length * 5;
+                }
+                //Avoid only women playing only men (Considering only the first two teams)
+                if (round[c].length > 1 && ((noWomenInTeams[1] === 0 && noMenInTeams[0] === 0) || (noMenInTeams[1] === 0 && noWomenInTeams[0] === 0))) {
+                    mixPoints += 8;
+                }
+                //Avoid non-mixed teams
+                mixPoints += totalNonMixedTeamsOnCourt * 6;
+
+                //console.log("Mix points: " + mixPoints + " Points before: " + points);
+                points += mixPoints * mixPoints;
+                //Add mixpoints to players in non-mixed-teams
+                for (let t = 0; t < round[c].length; t++) {
+                    if (noWomenInTeams[t] === 0 || noMenInTeams[t] === 0) {
+                        for (let p = 0; p < round[c][t].length; p++) {
+                            const player = round[c][t][p];
+                            allPlayerPoints[player] += mixPoints;
+                        }
+                    }
+                }
+            }
+
+            let diffInWinsPoints = (Math.max(...wins) - Math.min(...wins))*5;
+            //console.log("Win points: " + diffInWinsPoints + " Points before: " + points);
+            points += diffInWinsPoints * diffInWinsPoints;
+            //Add win points to all players on court
+            const mean = wins.reduce((sum, value) => sum + value, 0) / wins.length;
+            for (let t = 0; t < round[c].length; t++) {
+                for (let p = 0; p < round[c][t].length; p++) {
+                    const player = round[c][t][p];
+                    allPlayerPoints[player] += Math.abs(Round.getWins(importedPlayers, player) - mean)*5;
+                }
+            }
         }
-        return [points, scores];
+        return [points, allPlayerPoints];
     }
 
     static isMan(importedPlayers, player) {
@@ -395,7 +439,10 @@ class Round extends React.Component {
                             playedMatches: 0,
                             mixedMatches: 0,
                             mixedTeams: 0,
-                            paradiseMixedDiff: 0
+                            paradiseMixedDiff: 0,
+                            wins: 0,
+                            losses: 0,
+                            draws: 0
                         };
                     }
                 }
@@ -476,6 +523,15 @@ class Round extends React.Component {
             return a - b
         });
         return players;
+    }
+
+    static printRound(round, indent = '') {
+        for (let c = 0; c < round.length; c++) {
+            console.log("C " + c);
+            for (let t = 0; t < round[c].length; t++) {
+                console.log("  T " + t + ": " + round[c][t].join(" "));
+            }
+        }
     }
 
     getRangeOfPlayers() {

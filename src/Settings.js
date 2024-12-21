@@ -335,7 +335,8 @@ class Settings extends React.Component {
                                         </div>
                                     }
                                 </div>
-                                <Link to="/presentation" target="_blank">Open presentation</Link>
+                                <Link to="/presentation" target="_blank">Open Presentation</Link><br />
+                                <Link to="/leaderboard" target="_blank">Open Leaderboard</Link>
                             </fieldset>
                             <fieldset className="timeSettings">
                                 <legend>Time</legend>

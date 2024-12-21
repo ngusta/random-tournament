@@ -186,7 +186,52 @@ class App extends React.Component {
     setImportedPlayers = (importedPlayers) => {
         this.setState({importedPlayers: importedPlayers});
         ls.set("importedPlayers", importedPlayers);
+        const playerStats = ls.get("playerStats") || [];
+        Object.keys(importedPlayers).forEach(player => {
+            if (!playerStats[player]) {
+                playerStats[player] = {
+                    partners: [],
+                    opponents: [],
+                    courts: [],
+                    playedMatches: 0,
+                    mixedMatches: 0,
+                    mixedTeams: 0,
+                    paradiseMixedDiff: 0,
+                    name: 0,
+                    wins: 0,
+                    losses: 0,
+                    draws: 0
+                };
+            }
+            playerStats[player].name = importedPlayers[player].name;
+            playerStats[player].wins = importedPlayers[player].wins;
+            playerStats[player].losses = importedPlayers[player].losses;
+            playerStats[player].draws = importedPlayers[player].draws;
+        });
+        ls.set("playerStats", playerStats);
+        ls.set("updatePresentation", true);
     };
+
+    static getWins(importedPlayers, player) {
+        if (importedPlayers && importedPlayers[player] && importedPlayers[player].wins) {
+            return importedPlayers[player].wins;
+        }
+        return 0;
+    }
+
+    static getLosses(importedPlayers, player) {
+        if (importedPlayers && importedPlayers[player] && importedPlayers[player].losses) {
+            return importedPlayers[player].losses;
+        }
+        return 0;
+    }
+
+    static getDraws(importedPlayers, player) {
+        if (importedPlayers && importedPlayers[player] && importedPlayers[player].draws) {
+            return importedPlayers[player].draws;
+        }
+        return 0;
+    }
 
     render() {
         let dryRunRound;

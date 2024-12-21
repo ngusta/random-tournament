@@ -1,0 +1,31 @@
+h1 {
+    text-align: center;
+}
+
+#leaderboard {
+    display: flex;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background: url('img/erika/bg1-new-high.jpg') no-repeat;
+    background-size: 100% 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+#content {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+
+}
+
+table {
+    font-size: x-large;
+}
+
+th {
+    text-align: left;
+}
