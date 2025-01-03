@@ -329,7 +329,7 @@ class Round extends React.Component {
                 } else {
                     paradiseMixedPoints = (Math.abs(totalMenOnCourt - totalWomenOnCourt) - 1) * 4;
                 }
-                console.log("Mix points (paradis): " + paradiseMixedPoints + " Points before: " + points);
+
                 points += paradiseMixedPoints * paradiseMixedPoints;
                 //Add mixed points to all players
                 for (let t = 0; t < round[c].length; t++) {

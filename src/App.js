@@ -4,6 +4,7 @@ import Settings from './Settings';
 import Round from './Round';
 import ls from 'local-storage';
 import loadingSpinner from './img/loading-spinner.svg';
+import {getTournaments} from './api.js';
 
 class App extends React.Component {
     constructor(props) {
@@ -30,6 +31,11 @@ class App extends React.Component {
             paradisePlayersPerCourt: ls.get("paradisePlayersPerCourt") === null ? 5 : ls.get("paradisePlayersPerCourt")
         };
         ls.set("updatePresentation", true);
+    }
+
+    componentDidMount() {
+        console.log("Component mounted");
+        console.log(getTournaments());
     }
 
     onSettingChange = (name, value) => {
