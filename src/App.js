@@ -4,11 +4,17 @@ import Settings from './Settings';
 import Round from './Round';
 import ls from 'local-storage';
 import loadingSpinner from './img/loading-spinner.svg';
-import {saveTournament} from './api.js';
+import {saveTournament, deleteTournament} from './api.js';
 
 class App extends React.Component {
     constructor(props) {
         super(props);
+
+        if (ls.get("tournamentId") === null) {
+            const uniqueId = (Date.now().toString(36).substring(2) + Math.random().toString(36).substring(2, 2)).toUpperCase();
+            ls.set("tournamentId", uniqueId);
+        }
+
         this.state = {
             noCourts: ls.get("noCourts") || 10,
             teamsPerCourt: ls.get("teamsPerCourt") || 2,
@@ -28,7 +34,8 @@ class App extends React.Component {
             showLoadingSpinner: false,
             showExampleRound: ls.get("showExampleRound") === null ? true : ls.get("showExampleRound"),
             paradiseMode: ls.get("paradiseMode") === null ? false : ls.get("paradiseMode"),
-            paradisePlayersPerCourt: ls.get("paradisePlayersPerCourt") === null ? 5 : ls.get("paradisePlayersPerCourt")
+            paradisePlayersPerCourt: ls.get("paradisePlayersPerCourt") === null ? 5 : ls.get("paradisePlayersPerCourt"),
+            playerViewEnabled: ls.get("playerViewEnabled") === null ? false : ls.get("playerViewEnabled"),
         };
         ls.set("updatePresentation", true);
     }
@@ -49,10 +56,17 @@ class App extends React.Component {
         } else {
             this.setState({[name]: value});
             ls.set(name, value);
-            if (name === "showTenCourts" || name === "hideUnusedCourts") {
+        }
+        switch (name) {
+            case "playerViewEnabled":
+                this.saveTournamentInCloud();
+                break;
+            case "showTenCourts":
+            case "hideUnusedCourts":
                 ls.set("courtsToUse", this.state.courtsToUse);
                 ls.set("updatePresentation", true);
-            }
+                break;
+            default:
         }
     };
 
@@ -104,8 +118,11 @@ class App extends React.Component {
     };
 
     onResetState = () => {
-        ls.clear();
-        window.location.reload();
+        deleteTournament(ls.get("tournamentId"))
+            .then((response) => {
+                ls.clear();
+                window.location.reload()
+            });
     };
 
     onAutoPresentNewRoundChange = (value) => {
@@ -188,11 +205,13 @@ class App extends React.Component {
     };
 
     saveTournamentInCloud = () => {
-        let data = {};
-        data.rounds = ls.get("rounds");
-        data.presentationRoundIndex = ls.get("presentationRoundIndex");
-        data.isLatestRoundStarted = ls.get("isLatestRoundStarted");
-        saveTournament("1234", data);
+        if (ls.get("playerViewEnabled")) {
+            let data = {};
+            data.rounds = ls.get("rounds");
+            data.presentationRoundIndex = ls.get("presentationRoundIndex");
+            data.isLatestRoundStarted = ls.get("isLatestRoundStarted");
+            saveTournament(ls.get("tournamentId"), data);
+        }
     };
 
     setImportedPlayers = (importedPlayers) => {
@@ -308,6 +327,8 @@ class App extends React.Component {
                               paradiseMode={this.state.paradiseMode}
                               onParadiseModeChange={this.onParadiseModeChange}
                               paradisePlayersPerCourt={this.state.paradisePlayersPerCourt}
+                              playerViewEnabled={this.state.playerViewEnabled}
+                              tournamentId={ls.get("tournamentId")}
                     />
                     <ul className="clear">
                         {errors}
@@ -317,15 +338,16 @@ class App extends React.Component {
                 <div>
                     {this.state.showExampleRound && dryRunRound}
                     {!dryRunRound &&
-                    <p className="exampleRoundError">The example run couldn't be generated. Check your input values or
-                        try generate the round for more detailed errors.</p>}
+                        <p className="exampleRoundError">The example run couldn't be generated. Check your input values
+                            or
+                            try generate the round for more detailed errors.</p>}
                     {rounds}
                 </div>
 
                 {this.state.showLoadingSpinner &&
-                <div className="loadingSpinner">
-                    <img alt="Loading spinner" src={loadingSpinner}/>
-                </div>
+                    <div className="loadingSpinner">
+                        <img alt="Loading spinner" src={loadingSpinner}/>
+                    </div>
                 }
 
             </div>

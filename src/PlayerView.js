@@ -65,7 +65,7 @@ const PlayerView = () => {
             }
         };
 
-        const noCourtMessage = tournament && currentPlayerCourt === null && nextPlayerCourt === null ? "You are not playing this round, or your player is incorrect." : null;
+        const noCourtMessage = player === "" ? "Enter your player number above." : (tournament && currentPlayerCourt === null && nextPlayerCourt === null ? "You are not playing this round, or your player number doesn't exist." : null);
 
         return (
             <div id="playerView">
@@ -79,27 +79,28 @@ const PlayerView = () => {
                     placeholder="Enter your player number"
                 />
 
-                <div>
-                    {nextPlayerCourt !== null &&
-                        <>
-                            <p>Next round here:</p>
-                            <Court teams={nextRound[nextPlayerCourt]} key={nextPlayerCourt} courtNumber={nextPlayerCourt+1}
-                                   courtClass="courtSize5"/>
-                        </>
-                    }
-                    {currentPlayerCourt !== null &&
-                        <>
-                            <p>You are currently playing here:</p>
-                            <Court teams={currentRound[currentPlayerCourt]} key={currentPlayerCourt} courtNumber={currentPlayerCourt+1}
-                                   courtClass="courtSize5"/>
-                        </>
-                    }
-                    {noCourtMessage !== null &&
-                        <p>
-                            {noCourtMessage}
-                        </p>
-                    }
-                </div>
+                {nextPlayerCourt !== null &&
+                    <>
+                        <p className="roundInfo">Your next round is on <span
+                            className="courtInfo">Court {nextPlayerCourt + 1}</span></p>
+                        <Court teams={nextRound[nextPlayerCourt]} key={nextPlayerCourt} courtNumber={nextPlayerCourt + 1}
+                               courtClass="courtSize4"/>
+                    </>
+                }
+                {currentPlayerCourt !== null &&
+                    <>
+                        <p className="roundInfo">Your current round is on <span
+                            className="courtInfo">Court {currentPlayerCourt + 1}</span></p>
+                        <Court teams={currentRound[currentPlayerCourt]} key={currentPlayerCourt}
+                               courtNumber={currentPlayerCourt + 1}
+                               courtClass="courtSize4"/>
+                    </>
+                }
+                {noCourtMessage !== null &&
+                    <p>
+                        {noCourtMessage}
+                    </p>
+                }
             </div>
         );
     }

@@ -77,13 +77,9 @@ body {
 
 .tournamentSettings,
 .presentationSettings,
-.googleImport {
-    display: inline-block;
-    line-height: 1.5;
-    font-size: 1.2em;
-}
-
-.timeSettings {
+.googleImport,
+.timeSettings,
+.playerViewSettings {
     line-height: 1.5;
     font-size: 1.2em;
 }

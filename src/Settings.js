@@ -335,8 +335,27 @@ class Settings extends React.Component {
                                         </div>
                                     }
                                 </div>
-                                <Link to="/presentation" target="_blank">Open Presentation</Link><br />
+                                <Link to="/presentation" target="_blank">Open Presentation</Link><br/>
                                 <Link to="/leaderboard" target="_blank">Open Leaderboard</Link>
+                            </fieldset>
+                            <fieldset className="playerViewSettings">
+                                <legend>Player View Settings</legend>
+                                <label>
+                                    <span>Enable Player View</span>
+                                    <input
+                                        type="checkbox"
+                                        checked={this.props.playerViewEnabled}
+                                        name="playerViewEnabled"
+                                        onChange={this.handleChange}
+                                    />
+
+                                </label>
+                                {this.props.playerViewEnabled &&
+                                    <>
+                                        <span>Tournament id: {this.props.tournamentId}</span><br/>
+                                        <Link to={`/playerView/${this.props.tournamentId}`} target="_blank">Open PlayerView</Link>
+                                    </>
+                                }
                             </fieldset>
                             <fieldset className="timeSettings">
                                 <legend>Time</legend>
