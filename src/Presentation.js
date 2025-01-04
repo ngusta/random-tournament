@@ -45,8 +45,7 @@ class Presentation extends React.Component {
 			this.setState({showTenCourts: ls.get("showTenCourts")});
 			this.setState({hideUnusedCourts: ls.get("hideUnusedCourts")});
 			this.setState({courtsToUse: ls.get("courtsToUse")});
-			console.log("latest: " + ls.get("isLatestRoundStarted"));
-			this.setState({isLatestRoundStarted: ls.get("isLatestRoundStarted")});
+ 			this.setState({isLatestRoundStarted: ls.get("isLatestRoundStarted")});
 		}
 	};
 

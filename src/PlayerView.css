@@ -1,0 +1,28 @@
+#playerView {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+    padding: 20px;
+    background: url('img/erika/bg1-new-high.jpg') no-repeat;
+    background-size: 100% 100%;
+}
+
+#playerInput {
+    font-size: 1.5rem;
+    width: 80%;
+    max-width: 15em;
+    padding: 10px;
+    margin: 10px 0;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    text-align: center;
+}
+
+/* Style the tournament details */
+#playerView p {
+    font-size: 1rem;
+    line-height: 1.6;
+}

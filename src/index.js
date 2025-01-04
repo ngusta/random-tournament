@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import Presentation from './Presentation';
 import Leaderboard from './Leaderboard';
+import PlayerView from './PlayerView';
 import * as serviceWorker from './serviceWorker';
 import { createRoot } from 'react-dom/client';
 
@@ -13,6 +14,7 @@ const routing = (
             <Route exact path="/" component={App}/>
             <Route path="/presentation" component={Presentation}/>
             <Route path="/leaderboard" component={Leaderboard}/>
+            <Route path="/playerview/:tournamentId" component={PlayerView}/>
         </div>
     </Router>
 );

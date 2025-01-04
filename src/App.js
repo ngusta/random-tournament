@@ -4,7 +4,7 @@ import Settings from './Settings';
 import Round from './Round';
 import ls from 'local-storage';
 import loadingSpinner from './img/loading-spinner.svg';
-import {getTournaments} from './api.js';
+import {saveTournament} from './api.js';
 
 class App extends React.Component {
     constructor(props) {
@@ -31,11 +31,6 @@ class App extends React.Component {
             paradisePlayersPerCourt: ls.get("paradisePlayersPerCourt") === null ? 5 : ls.get("paradisePlayersPerCourt")
         };
         ls.set("updatePresentation", true);
-    }
-
-    componentDidMount() {
-        console.log("Component mounted");
-        console.log(getTournaments());
     }
 
     onSettingChange = (name, value) => {
@@ -96,7 +91,7 @@ class App extends React.Component {
 
         ls.set("playerStats", {});
         roundsCopy.forEach(round => Round.updatePlayerStats(round));
-
+        this.saveTournamentInCloud();
     };
 
     onShowOnPresentation = (roundIndex) => {
@@ -105,6 +100,7 @@ class App extends React.Component {
         }
         this.setState({presentationRoundIndex: roundIndex});
         ls.set("presentationRoundIndex", roundIndex);
+        this.saveTournamentInCloud();
     };
 
     onResetState = () => {
@@ -127,6 +123,7 @@ class App extends React.Component {
         ls.set("secondLastRoundCreationDate", this.state.lastRoundCreationDate);
         this.setState({lastRoundCreationDate: created});
         ls.set("lastRoundCreationDate", created);
+        this.saveTournamentInCloud();
     }
 
     onParadiseModeChange = (e) => {
@@ -150,6 +147,7 @@ class App extends React.Component {
                     ls.set("rounds", newRounds);
                     ls.set("presentationRoundIndex", pressIndex);
                     ls.set("isLatestRoundStarted", false);
+                    this.saveTournamentInCloud();
                 }
                 this.setState({showLoadingSpinner: false});
             }, 100);
@@ -187,6 +185,14 @@ class App extends React.Component {
         const newErrors = [...this.state.errors, message];
         this.setState({errors: newErrors});
         ls.set("errors", newErrors);
+    };
+
+    saveTournamentInCloud = () => {
+        let data = {};
+        data.rounds = ls.get("rounds");
+        data.presentationRoundIndex = ls.get("presentationRoundIndex");
+        data.isLatestRoundStarted = ls.get("isLatestRoundStarted");
+        saveTournament("1234", data);
     };
 
     setImportedPlayers = (importedPlayers) => {
