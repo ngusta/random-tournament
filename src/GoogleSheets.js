@@ -116,15 +116,6 @@ class GoogleSheets extends Component {
     };
 
     render() {
-        const players = [];
-        this.state.playerData.forEach((player) => {
-            players.push(
-                <tr key={player[0]}>
-                    <td>{player[0]}</td>
-                    <td>{player[1] + " " + player[2]}</td>
-                    <td>{player[3]}</td>
-                </tr>);
-        });
         return (
             <div>
                 {!this.state.loggedIn && <button id="loginButton" onClick={e => e.preventDefault()}>Log in</button>}
@@ -141,23 +132,7 @@ class GoogleSheets extends Component {
                     <span className="labelDetails">Sheet with seven columns in this order: Player number, First name, Last name, Gender, Wins, Losses, Draws</span>
                 </label>
                 {this.state.gapiReady && <button onClick={this.importData}>Import data</button>}
-                {
-                    false && players.length > 0 &&
-                    <table>
-                        <thead>
-                        <tr>
-                            <th>Number</th>
-                            <th>Name</th>
-                            <th>Gender</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {players}
-                        </tbody>
-                    </table>
-                }
             </div>
-
         );
     }
 }

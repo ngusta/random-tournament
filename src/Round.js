@@ -65,12 +65,8 @@ class Round extends React.Component {
                 nextPlayer = Round.addExtraTeams(nextPlayer, noCourts, teamsPerCourt, players, round, playersPerTeam);
                 nextPlayer = Round.addExtraPlayersInTeams(nextPlayer, noCourts, teamsPerCourt, players, round, useAllPlayers, playersPerTeam);
             }
-            if (!dryRun) {
-                //console.log("Round " + i);
-                //Round.printRound(round);
-            }
 
-            const res = dryRun ? 0 : Round.evaluateRound(round, importedPlayers, paradiseMode);
+            const res = dryRun ? 0 : Round.evaluateRound(round, importedPlayers, paradiseMode, earlierRounds);
             const points = dryRun ? 0 : res[0];
             const playerPoints = res[1];
 
@@ -153,8 +149,8 @@ class Round extends React.Component {
             return "noPlayers - Min: 4, Was: " + players.length;
         }
 
-        if (noCourts < 1 || noCourts > 60) {
-            return "noCourts - Min: 1, Max: 20, Was: " + noCourts;
+        if (noCourts < 1 || noCourts > 80) {
+            return "noCourts - Min: 1, Max: 80, Was: " + noCourts;
         }
 
         if (paradiseMode) {
@@ -245,7 +241,7 @@ class Round extends React.Component {
         return nextPlayer;
     }
 
-    static evaluateRound(round, importedPlayers, paradiseMode) {
+    static evaluateRound(round, importedPlayers, paradiseMode, earlierRounds) {
         const playerStats = ls.get("playerStats") || {};
         let points = 0;
         let scores = {};
@@ -284,8 +280,15 @@ class Round extends React.Component {
                         opponents.forEach((opponent) => playerPoints += otherThenPartnerFactor * Round.countOccurences(opponent, playerStats[player].partners));
                         //Played against opponent
                         opponents.forEach((opponent) => playerPoints += otherThenPartnerFactor * Round.countOccurences(opponent, playerStats[player].opponents));
-                        //Played on the same court (People get sad when they end up on court 10 every game)
-                        playerPoints += 1 * Round.countOccurences(c, playerStats[player].courts);
+
+                        if (round.length <= 10) {
+                            //Played on the same court (People get sad when they end up on court 10 every game)
+                            playerPoints += 1 * Round.countOccurences(c, playerStats[player].courts);
+                        } else if (playerStats[player].courts.length > 0) {
+                            //If there are a lot of courts we want players to be on a court not too far from their last court.
+                            let lastCourt = playerStats[player].courts[playerStats[player].courts.length - 1];
+                            playerPoints += Math.round(Math.abs(c - lastCourt) / 5);
+                        }
 
                         //console.log("Player points: " + playerPoints + " Points before: " + points);
                         points += playerPoints * playerPoints; // square it to spread the points out among players better!
@@ -364,7 +367,7 @@ class Round extends React.Component {
                 }
             }
 
-            let diffInWinsPoints = (Math.max(...wins) - Math.min(...wins))*5;
+            let diffInWinsPoints = (Math.max(...wins) - Math.min(...wins)) * 5;
             //console.log("Win points: " + diffInWinsPoints + " Points before: " + points);
             points += diffInWinsPoints * diffInWinsPoints;
             //Add win points to all players on court
@@ -372,7 +375,7 @@ class Round extends React.Component {
             for (let t = 0; t < round[c].length; t++) {
                 for (let p = 0; p < round[c][t].length; p++) {
                     const player = round[c][t][p];
-                    allPlayerPoints[player] += Math.abs(Round.getWins(importedPlayers, player) - mean)*5;
+                    allPlayerPoints[player] += Math.abs(Round.getWins(importedPlayers, player) - mean) * 5;
                 }
             }
         }
