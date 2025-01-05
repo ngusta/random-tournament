@@ -9,7 +9,10 @@ import * as serviceWorker from './serviceWorker';
 import {createRoot} from 'react-dom/client';
 
 const routing = (
-    <Router>
+    <Router future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true
+    }}>
         <Routes>
             <Route exact path="/" element={<App/>}/>
             <Route path="/presentation" element={<Presentation/>}/>
