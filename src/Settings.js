@@ -6,6 +6,7 @@ import GoogleSheets from './GoogleSheets';
 import Timer from './Timer.js';
 import Round from './Round.js';
 import Stats from "./Stats";
+import {QRCodeCanvas} from 'qrcode.react';
 
 class Settings extends React.Component {
     constructor(props) {
@@ -170,6 +171,9 @@ class Settings extends React.Component {
                 );
             }
         }
+
+        const baseUrl = `${window.location.protocol}//${window.location.host}`;
+
         return (
             <div>
                 <React.Fragment>
@@ -353,7 +357,8 @@ class Settings extends React.Component {
                                 {this.props.playerViewEnabled &&
                                     <>
                                         <span>Tournament id: {this.props.tournamentId}</span><br/>
-                                        <Link to={`/playerView/${this.props.tournamentId}`} target="_blank">Open PlayerView</Link>
+                                        <Link to={`/playerView/${this.props.tournamentId}`} target="_blank">Open PlayerView</Link> or scan this<br/>
+                                        <QRCodeCanvas value={`${baseUrl}/playerView/${this.props.tournamentId}`} size={100} />
                                     </>
                                 }
                             </fieldset>

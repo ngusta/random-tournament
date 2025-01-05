@@ -12,6 +12,7 @@ Install npm (Node.js + npm https://docs.npmjs.com/downloading-and-installing-nod
 - npm install --save gapi-script
 - npm install --save dateformat
 - npm install --save react-collapsible
+- npm install --save qrcode.react
 
 ## Available Scripts
 
