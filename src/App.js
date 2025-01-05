@@ -42,8 +42,8 @@ class App extends React.Component {
 
     onSettingChange = (name, value) => {
         if (name === "noPlayers") {
-            if (value > 300) {
-                return;
+            if (value > 500) {
+                throw new Error("Cannot handle more than 500 players. Was " + value);
             }
             const commonNoPlayers = Math.min(Number(value), this.state.availablePlayers.length);
             let newAvailablePlayers = this.state.availablePlayers.slice(0, commonNoPlayers);

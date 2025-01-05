@@ -10,47 +10,53 @@ const PlayerView = () => {
         const {tournamentId} = useParams();
 
         const [tournament, setTournament] = useState(null);
-        const [currentRound, setCurrentRound] = useState(null);
-        const [nextRound, setNextRound] = useState(null);
+        const [currentRoundIndex, setCurrentRoundIndex] = useState(null);
+        const [nextRoundIndex, setNextRoundIndex] = useState(null);
         const [player, setPlayer] = useState(ls.get("player") || "");
-        const [currentPlayerCourt, setCurrentPlayerCourt] = useState(null);
-        const [nextPlayerCourt, setNextPlayerCourt] = useState(null);
-
+        const [allPlayerRounds, setAllPlayerRounds] = useState(null);
+        const [error, setError] = useState(null);
 
         useEffect(() => {
             getTournament(tournamentId)
                 .then(tournament => {
+                    if (tournament === null) {
+                        setError("Nothing to be found here yet. Are you early? Did you use the correct link/QR code?");
+                    }
                     setTournament(tournament);
                     if (tournament.isLatestRoundStarted) {
-                        setCurrentRound(tournament.presentationRoundIndex > -1 ? tournament.rounds[tournament.presentationRoundIndex] : null);
-                        setNextRound(null);
+                        setCurrentRoundIndex(tournament.presentationRoundIndex > -1 ? tournament.presentationRoundIndex : null);
+                        setNextRoundIndex(null);
                     } else {
-                        setCurrentRound(tournament.presentationRoundIndex > 0 ? tournament.rounds[tournament.presentationRoundIndex - 1] : null);
-                        setNextRound(tournament.presentationRoundIndex > -1 ? tournament.rounds[tournament.presentationRoundIndex] : null);
+                        setCurrentRoundIndex(tournament.presentationRoundIndex > 0 ? tournament.presentationRoundIndex - 1 : null);
+                        setNextRoundIndex(tournament.presentationRoundIndex > -1 ? tournament.presentationRoundIndex : null);
                     }
                 });
         }, [tournamentId]);
 
         useEffect(() => {
-            const findCourtOfSelectedPlayer = (round) => {
-                for (let c = 0; c < round.length; c++) {
-                    for (let t = 0; t < round[c].length; t++) {
-                        for (let p = 0; p < round[c][t].length; p++) {
-                            if (round[c][t][p] === player) {
-                                return c;
+            if (player !== "" && tournament) {
+                const playerRounds = {};
+                for (let r = 0; r < tournament.rounds.length; r++) {
+                    let foundInRound = false;
+                    for (let c = 0; c < tournament.rounds[r].length && !foundInRound; c++) {
+                        for (let t = 0; t < tournament.rounds[r][c].length && !foundInRound; t++) {
+                            for (let p = 0; p < tournament.rounds[r][c][t].length && !foundInRound; p++) {
+                                if (tournament.rounds[r][c][t][p] === player) {
+                                    playerRounds[r] = {
+                                        'courtIndex': c,
+                                        'courtPlayers': tournament.rounds[r][c]
+                                    }
+                                    foundInRound = true;
+                                }
                             }
                         }
                     }
                 }
-                return null;
-            };
+                setAllPlayerRounds(playerRounds);
+                console.log("Player courts: " + JSON.stringify(playerRounds));
 
-            if (player !== "" && tournament) {
-                console.log("Round showing: " + tournament.presentationRoundIndex);
-                setCurrentPlayerCourt(currentRound ? findCourtOfSelectedPlayer(currentRound) : null);
-                setNextPlayerCourt(nextRound ? findCourtOfSelectedPlayer(nextRound) : null);
             }
-        }, [tournament, player, currentRound, nextRound]);
+        }, [tournament, player]);
 
         const handlePlayerChange = (e) => {
             const value = e.target.value;
@@ -65,44 +71,70 @@ const PlayerView = () => {
             }
         };
 
-        const noCourtMessage = player === "" ? "Enter your player number above." : (tournament && currentPlayerCourt === null && nextPlayerCourt === null ? "You are not playing this round, or your player number doesn't exist." : null);
+        const noCourtMessage = player === "" ? "Enter your player number above." : (allPlayerRounds && !allPlayerRounds[currentRoundIndex] && !allPlayerRounds[nextRoundIndex] ? "You are not playing this round, or your player number doesn't exist." : null);
 
         return (
             <div id="playerView">
-                <input
-                    id="playerInput"
-                    type="number"
-                    min="0"
-                    max="1000"
-                    value={player}
-                    onChange={handlePlayerChange}
-                    placeholder="Enter your player number"
-                />
+                {error && <p id="error">{error}</p>}
+                {!error &&
+                    <>
+                        <input
+                            id="playerInput"
+                            type="number"
+                            min="0"
+                            max="1000"
+                            value={player}
+                            onChange={handlePlayerChange}
+                            placeholder="Enter your player number"
+                        />
+                        {allPlayerRounds && allPlayerRounds[nextRoundIndex] &&
+                            <>
+                                <p className="roundInfo">Your next round is on <span
+                                    className="courtInfo">Court {allPlayerRounds[nextRoundIndex].courtIndex + 1}</span></p>
+                                <Court teams={allPlayerRounds[nextRoundIndex].courtPlayers}
+                                       key={allPlayerRounds[nextRoundIndex].courtIndex}
+                                       courtNumber={allPlayerRounds[nextRoundIndex].courtIndex + 1}
+                                       courtClass="courtSize3"/>
+                            </>
+                        }
+                        {allPlayerRounds && allPlayerRounds[currentRoundIndex] &&
+                            <>
+                                <p className="roundInfo">Your current round is on <span
+                                    className="courtInfo">Court {allPlayerRounds[currentRoundIndex].courtIndex + 1}</span>
+                                </p>
+                                <Court teams={allPlayerRounds[currentRoundIndex].courtPlayers}
+                                       key={allPlayerRounds[currentRoundIndex].courtIndex}
+                                       courtNumber={allPlayerRounds[currentRoundIndex].courtIndex + 1}
+                                       courtClass="courtSize3"/>
+                            </>
+                        }
+                        {noCourtMessage !== null &&
+                            <p>
+                                {noCourtMessage}
+                            </p>
+                        }
 
-                {nextPlayerCourt !== null &&
-                    <>
-                        <p className="roundInfo">Your next round is on <span
-                            className="courtInfo">Court {nextPlayerCourt + 1}</span></p>
-                        <Court teams={nextRound[nextPlayerCourt]} key={nextPlayerCourt} courtNumber={nextPlayerCourt + 1}
-                               courtClass="courtSize4"/>
-                    </>
-                }
-                {currentPlayerCourt !== null &&
-                    <>
-                        <p className="roundInfo">Your current round is on <span
-                            className="courtInfo">Court {currentPlayerCourt + 1}</span></p>
-                        <Court teams={currentRound[currentPlayerCourt]} key={currentPlayerCourt}
-                               courtNumber={currentPlayerCourt + 1}
-                               courtClass="courtSize4"/>
-                    </>
-                }
-                {noCourtMessage !== null &&
-                    <p>
-                        {noCourtMessage}
-                    </p>
-                }
+                        {allPlayerRounds && (
+                            <>
+                                <h2>All rounds</h2>
+                                <ul id="allRounds">
+                                    {Object.entries(allPlayerRounds)
+                                        .sort(([roundIndexA], [roundIndexB]) => parseInt(roundIndexB) - parseInt(roundIndexA))
+                                        .map(([roundIndex, {courtIndex, courtPlayers}]) => (
+                                            <li key={roundIndex}>
+                                                <strong>Round {parseInt(roundIndex, 10) + 1}: </strong>
+                                                {courtPlayers.map(team => team.join(" & ")).join(" vs ")}
+                                                {" "}on
+                                                Court {courtIndex + 1} {currentRoundIndex === parseInt(roundIndex) ? " (current)" : (nextRoundIndex === parseInt(roundIndex) ? " (next)" : "")}
+                                            </li>
+                                        ))}
+                                </ul>
+                            </>
+                        )}
+                    </>}
             </div>
-        );
+        )
+            ;
     }
 ;
 

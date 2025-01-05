@@ -153,7 +153,7 @@ class Round extends React.Component {
             return "noPlayers - Min: 4, Was: " + players.length;
         }
 
-        if (noCourts < 1 || noCourts > 20) {
+        if (noCourts < 1 || noCourts > 60) {
             return "noCourts - Min: 1, Max: 20, Was: " + noCourts;
         }
 
