@@ -53,6 +53,12 @@
     list-style: none;
 }
 
+#playerView #allRounds li {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+}
+
 #playerView #error {
     padding: 10vh 10vw;
     font-size: 1.5rem;
@@ -60,4 +66,37 @@
 
 .court:has(.t2) {
     margin-bottom: 85px;
+}
+
+#playerView .circle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+#playerView .circle.neutral {
+    background: linear-gradient(to bottom right, #e0e0e0, #c0c0c0); /* Soft gray gradient */
+    color: #6b6b6b; /* Darker gray text */
+}
+#playerView .circle.win {
+    background: linear-gradient(to bottom right, #4caf50, #81c784); /* Green gradient */
+}
+
+#playerView .circle.lose {
+    background: linear-gradient(to bottom right, #f44336, #e57373); /* Red gradient */
+}
+
+#playerView .circle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }

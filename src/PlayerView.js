@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
 import './PlayerView.css';
 import {getTournament} from './api.js';
@@ -13,7 +13,7 @@ const PlayerView = () => {
         const [currentRoundIndex, setCurrentRoundIndex] = useState(null);
         const [nextRoundIndex, setNextRoundIndex] = useState(null);
         const [player, setPlayer] = useState(ls.get("player") || "");
-        const [allPlayerRounds, setAllPlayerRounds] = useState(null);
+        const [allPlayerRounds, setAllPlayerRounds] = useState(ls.get("allPlayerRounds") ? ls.get("allPlayerRounds") : null);
         const [error, setError] = useState(null);
 
         useEffect(() => {
@@ -44,7 +44,8 @@ const PlayerView = () => {
                                 if (tournament.rounds[r][c][t][p] === player) {
                                     playerRounds[r] = {
                                         'courtIndex': c,
-                                        'courtPlayers': tournament.rounds[r][c]
+                                        'courtPlayers': tournament.rounds[r][c],
+                                        'result': ls.get("allPlayerRounds") && ls.get("allPlayerRounds")[r] ? ls.get("allPlayerRounds")[r].result : null
                                     }
                                     foundInRound = true;
                                 }
@@ -58,6 +59,10 @@ const PlayerView = () => {
             }
         }, [tournament, player]);
 
+        useEffect(() => {
+            ls.set("allPlayerRounds", allPlayerRounds);
+        }, [allPlayerRounds]);
+
         const handlePlayerChange = (e) => {
             const value = e.target.value;
             if (value === "") {
@@ -70,6 +75,30 @@ const PlayerView = () => {
                 console.log("Selected player: " + number);
             }
         };
+
+        const toggleResult = (roundIndex) => {
+            let nextResult = null;
+            switch (allPlayerRounds[roundIndex].result) {
+                case null:
+                    nextResult = "W";
+                    break;
+                case "W":
+                    nextResult = "L";
+                    break;
+                case "L":
+                    nextResult = null;
+                    break;
+                default:
+                    throw new Error("Result should only be null, W, L - something's wrong.");
+            }
+            setAllPlayerRounds((prevValue) => ({
+                ...prevValue,
+                [roundIndex]: {
+                    ...prevValue[roundIndex],
+                    result: nextResult
+                }
+            }));
+        }
 
         const noCourtMessage = player === "" ? "Enter your player number above." : (allPlayerRounds && !allPlayerRounds[currentRoundIndex] && !allPlayerRounds[nextRoundIndex] ? "You are not playing this round, or your player number doesn't exist." : null);
 
@@ -120,11 +149,12 @@ const PlayerView = () => {
                                 <ul id="allRounds">
                                     {Object.entries(allPlayerRounds)
                                         .sort(([roundIndexA], [roundIndexB]) => parseInt(roundIndexB) - parseInt(roundIndexA))
-                                        .map(([roundIndex, {courtIndex, courtPlayers}]) => (
+                                        .map(([roundIndex, {courtIndex, courtPlayers, result}]) => (
                                             <li key={roundIndex}>
-                                                <strong>Round {parseInt(roundIndex, 10) + 1}: </strong>
+                                                <div onClick={() => toggleResult(roundIndex)} className={`circle ${result === null ? "neutral" : (result === "W" ? "win" : "lose")}`}>{result === null ? "?" : (result === "W" ? "W" : "L")}</div>
+                                                <strong>Round {parseInt(roundIndex, 10) + 1}:&nbsp;</strong>
                                                 {courtPlayers.map(team => team.join(" & ")).join(" vs ")}
-                                                {" "}on
+                                                &nbsp;on
                                                 Court {courtIndex + 1} {currentRoundIndex === parseInt(roundIndex) ? " (current)" : (nextRoundIndex === parseInt(roundIndex) ? " (next)" : "")}
                                             </li>
                                         ))}
