@@ -1,5 +1,4 @@
 import React from 'react';
-import ls from 'local-storage';
 import Collapsible from 'react-collapsible';
 
 class Stats extends React.Component {
@@ -10,16 +9,16 @@ class Stats extends React.Component {
     }
 
     render() {
-        const playerStats = ls.get("playerStats") || {};
+        const playerStats = this.props.playerStats ? this.props.playerStats : {};
         const importedPlayers = this.props.importedPlayers;
         const players = this.props.players.map((playing, index) =>
             <tr key={index}>
                 <td>{index + 1}</td>
                 <td>{importedPlayers[index + 1] && importedPlayers[index + 1].name}</td>
-                <td>{importedPlayers[index + 1] && (importedPlayers[index + 1].wins + importedPlayers[index + 1].losses + importedPlayers[index + 1].draws)}</td>
-                <td>{importedPlayers[index + 1] && importedPlayers[index + 1].wins}</td>
-                <td>{importedPlayers[index + 1] && importedPlayers[index + 1].losses}</td>
-                <td>{importedPlayers[index + 1] && importedPlayers[index + 1].draws}</td>
+                <td>{playerStats[index + 1] && playerStats[index + 1].wins + playerStats[index + 1].losses + playerStats[index + 1].draws}</td>
+                <td>{playerStats[index + 1] && playerStats[index + 1].wins}</td>
+                <td>{playerStats[index + 1] && playerStats[index + 1].losses}</td>
+                <td>{playerStats[index + 1] && playerStats[index + 1].draws}</td>
                 <td>{playerStats[index + 1] && playerStats[index + 1].playedMatches}</td>
                 <td>{playerStats[index + 1] && new Set(playerStats[index + 1].partners).size}</td>
                 <td>{playerStats[index + 1] && new Set(playerStats[index + 1].opponents).size}</td>

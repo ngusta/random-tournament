@@ -4,7 +4,7 @@ import Settings from './Settings';
 import Round from './Round';
 import ls from 'local-storage';
 import loadingSpinner from './img/loading-spinner.svg';
-import {saveTournament, deleteTournament} from './api.js';
+import {deleteTournament, saveTournament, getPlayers} from './api.js';
 
 class App extends React.Component {
     constructor(props) {
@@ -35,8 +35,14 @@ class App extends React.Component {
             showExampleRound: ls.get("showExampleRound") === null ? true : ls.get("showExampleRound"),
             paradiseMode: ls.get("paradiseMode") === null ? false : ls.get("paradiseMode"),
             paradisePlayersPerCourt: ls.get("paradisePlayersPerCourt") === null ? 5 : ls.get("paradisePlayersPerCourt"),
+            playerStats: ls.get("playerStats") === null ? null : ls.get("playerStats"),
             playerViewEnabled: ls.get("playerViewEnabled") === null ? false : ls.get("playerViewEnabled"),
+            updateStatsIntervalId: ls.get("playerViewEnabled") ? setInterval(this.updatePlayerStats, 5000) : null
         };
+        setTimeout(() => {
+            clearInterval(this.state.updateStatsIntervalId);
+            console.log("Player stats updating stopped, reload to continue.");
+        }, 5*60*60*1000);
         ls.set("updatePresentation", true);
     }
 
@@ -59,7 +65,17 @@ class App extends React.Component {
         }
         switch (name) {
             case "playerViewEnabled":
-                this.saveTournamentInCloud();
+                if (ls.get("playerViewEnabled")) {
+                    this.saveTournamentInCloud();
+                    const intervalId = setInterval(this.updatePlayerStats, 5000);
+                    this.setState({updateStatsIntervalId: intervalId});
+                    setTimeout(() => {
+                        clearInterval(intervalId);
+                        console.log("Player stats updating stopped, reload to resume.");
+                    }, 5*60*60*1000);
+                } else {
+                    clearInterval(this.state.updateStatsIntervalId);
+                }
                 break;
             case "showTenCourts":
             case "hideUnusedCourts":
@@ -244,6 +260,37 @@ class App extends React.Component {
         ls.set("updatePresentation", true);
     };
 
+    updatePlayerStats = async () => {
+        let playerStats = ls.get("playerStats");
+        if (playerStats) {
+            const cloudPlayerRounds = await getPlayers(ls.get("tournamentId"));
+
+            if (cloudPlayerRounds) {
+                cloudPlayerRounds.forEach(cloudPlayer => {
+                    playerStats[cloudPlayer.playerId].wins = 0;
+                    playerStats[cloudPlayer.playerId].losses = 0;
+
+                    Object.values(cloudPlayer).forEach(round => {
+                        switch (round.result) {
+                            case "W":
+                                playerStats[cloudPlayer.playerId].wins++;
+                                break;
+                            case "L":
+                                playerStats[cloudPlayer.playerId].losses++;
+                                break;
+                            default:
+                                break;
+                        }
+                    });
+                });
+            }
+        }
+
+        ls.set("playerStats", playerStats);
+        this.setState({playerStats: playerStats});
+        console.log('Player stats updated successfully');
+    }
+
     static getWins(importedPlayers, player) {
         if (importedPlayers && importedPlayers[player] && importedPlayers[player].wins) {
             return importedPlayers[player].wins;
@@ -330,6 +377,7 @@ class App extends React.Component {
                               paradisePlayersPerCourt={this.state.paradisePlayersPerCourt}
                               playerViewEnabled={this.state.playerViewEnabled}
                               tournamentId={ls.get("tournamentId")}
+                              playerStats={this.state.playerStats}
                     />
                     <ul className="clear">
                         {errors}

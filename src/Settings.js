@@ -372,6 +372,7 @@ class Settings extends React.Component {
                         <Stats
                             players={this.props.players}
                             importedPlayers={this.props.importedPlayers}
+                            playerStats={this.props.playerStats}
                         />
                     </form>
                 </React.Fragment>

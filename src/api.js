@@ -56,6 +56,22 @@ export async function deleteTournament(tournamentId) {
     }
 }
 
+export async function getPlayers(tournamentId) {
+    try {
+        const response = await fetch(`https://ztx5ai37rj.execute-api.eu-north-1.amazonaws.com/prod/random-partner/${tournamentId}/player`, {
+            method: 'GET',
+            headers: getHeaders()
+        });
+        checkStatus(response);
+        return await response.json();
+    } catch (err) {
+        if (!err.message.includes("404")) {
+            console.error(err);
+        }
+        return null;
+    }
+}
+
 export async function savePlayer(tournamentId, playerId, playerData) {
     try {
         const response = await fetch(`https://ztx5ai37rj.execute-api.eu-north-1.amazonaws.com/prod/random-partner/${tournamentId}/player/${playerId}`, {
