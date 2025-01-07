@@ -287,7 +287,8 @@ class Round extends React.Component {
                         } else if (playerStats[player].courts.length > 0) {
                             //If there are a lot of courts we want players to be on a court not too far from their last court.
                             let lastCourt = playerStats[player].courts[playerStats[player].courts.length - 1];
-                            playerPoints += Math.round(Math.abs(c - lastCourt) / 5);
+                            let courtsToMove = Math.abs(c - lastCourt);
+                            playerPoints += courtsToMove > 5 ? Math.round(courtsToMove/5) : 0;
                         }
 
                         //console.log("Player points: " + playerPoints + " Points before: " + points);

@@ -261,6 +261,10 @@ class App extends React.Component {
     };
 
     updatePlayerStats = async () => {
+        if (this.state.showLoadingSpinner) {
+            //Skip updating while round creation ongoing
+            return;
+        }
         let playerStats = ls.get("playerStats");
         if (playerStats) {
             const cloudPlayerRounds = await getPlayers(ls.get("tournamentId"));
