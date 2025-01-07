@@ -56,6 +56,36 @@ export async function deleteTournament(tournamentId) {
     }
 }
 
+export async function savePlayer(tournamentId, playerId, playerData) {
+    try {
+        const response = await fetch(`https://ztx5ai37rj.execute-api.eu-north-1.amazonaws.com/prod/random-partner/${tournamentId}/player/${playerId}`, {
+            method: 'PUT',
+            headers: getHeaders(),
+            body: JSON.stringify(playerData)
+        });
+        console.log(`Saved player ${playerId} in cloud.`);
+        return response;
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+export async function getPlayer(tournamentId, playerId) {
+    try {
+        const response = await fetch(`https://ztx5ai37rj.execute-api.eu-north-1.amazonaws.com/prod/random-partner/${tournamentId}/player/${playerId}`, {
+            method: 'GET',
+            headers: getHeaders()
+        });
+        checkStatus(response);
+        const player = await response.json();
+        console.log("Fetched player " + playerId + ": " + JSON.stringify(player));
+        return player;
+    } catch (err) {
+        console.error(err);
+        return null;
+    }
+}
+
 function checkStatus(response) {
     if (response.status !== 200) {
         throw new Error("Expected response 200, was " + response.status);
