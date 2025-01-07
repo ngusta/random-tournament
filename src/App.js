@@ -221,6 +221,7 @@ class App extends React.Component {
         Object.keys(importedPlayers).forEach(player => {
             if (!playerStats[player]) {
                 playerStats[player] = {
+                    id: player,
                     partners: [],
                     opponents: [],
                     courts: [],

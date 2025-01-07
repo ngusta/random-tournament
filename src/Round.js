@@ -436,6 +436,7 @@ class Round extends React.Component {
                     const player = round[c][t][p];
                     if (!playerStats[player]) {
                         playerStats[player] = {
+                            id: player,
                             partners: [],
                             opponents: [],
                             courts: [],
