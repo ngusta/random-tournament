@@ -42,7 +42,7 @@ class App extends React.Component {
         setTimeout(() => {
             clearInterval(this.state.updateStatsIntervalId);
             console.log("Player stats updating stopped, reload to continue.");
-        }, 5*60*60*1000);
+        }, 5 * 60 * 60 * 1000);
         ls.set("updatePresentation", true);
     }
 
@@ -72,7 +72,7 @@ class App extends React.Component {
                     setTimeout(() => {
                         clearInterval(intervalId);
                         console.log("Player stats updating stopped, reload to resume.");
-                    }, 5*60*60*1000);
+                    }, 5 * 60 * 60 * 1000);
                 } else {
                     clearInterval(this.state.updateStatsIntervalId);
                 }
@@ -161,7 +161,7 @@ class App extends React.Component {
 
     onParadiseModeChange = (e) => {
         this.setState({paradiseMode: e.target.checked});
-        ls.set("paradiseMode", e.target.checked)
+        ls.set("paradiseMode", e.target.checked);
     };
 
     draw = () => {
@@ -248,7 +248,8 @@ class App extends React.Component {
                     name: 0,
                     wins: 0,
                     losses: 0,
-                    draws: 0
+                    draws: 0,
+                    results: {}
                 };
             }
             playerStats[player].name = importedPlayers[player].name;
@@ -271,16 +272,20 @@ class App extends React.Component {
 
             if (cloudPlayerRounds) {
                 cloudPlayerRounds.forEach(cloudPlayer => {
-                    playerStats[cloudPlayer.playerId].wins = 0;
-                    playerStats[cloudPlayer.playerId].losses = 0;
+                    const statsPlayer = playerStats[cloudPlayer.playerId];
+                    statsPlayer.wins = 0;
+                    statsPlayer.losses = 0;
+                    statsPlayer.results = {};
 
-                    Object.values(cloudPlayer).forEach(round => {
-                        switch (round.result) {
+                    Object.keys(cloudPlayer).forEach(round => {
+                        switch (cloudPlayer[round].result) { //This ignores playerId, tournamentId
                             case "W":
-                                playerStats[cloudPlayer.playerId].wins++;
+                                statsPlayer.wins++;
+                                statsPlayer.results[round] = "W";
                                 break;
                             case "L":
-                                playerStats[cloudPlayer.playerId].losses++;
+                                statsPlayer.losses++;
+                                statsPlayer.results[round] = "L";
                                 break;
                             default:
                                 break;
@@ -343,7 +348,8 @@ class App extends React.Component {
                        courtClass="courtSize1"
                        showTenCourts={this.state.showTenCourts}
                        courtsToUse={this.state.courtsToUse}
-                       importedPlayers={this.state.importedPlayers}/>
+                       importedPlayers={this.state.importedPlayers}
+                       playerStats={this.state.playerStats}/>
             );
         }
 

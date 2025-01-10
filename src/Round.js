@@ -447,7 +447,8 @@ class Round extends React.Component {
                             paradiseMixedDiff: 0,
                             wins: 0,
                             losses: 0,
-                            draws: 0
+                            draws: 0,
+                            results: {}
                         };
                     }
                 }
@@ -585,13 +586,13 @@ class Round extends React.Component {
                 }
                 if (teams.length > 0 || !this.props.hideUnusedCourts) {
                     courts.push(<Court teams={teams} key={court} courtNumber={court} courtClass={this.props.courtClass}
-                                       importedPlayers={this.props.importedPlayers}/>)
+                                       importedPlayers={this.props.importedPlayers} round={this.props.roundIndex} playerStats={this.props.playerStats}/>)
                 }
             }
         } else {
             courts = this.props.courts.map((teamsOnCourt, index) =>
                 <Court teams={teamsOnCourt} key={index} courtNumber={index + 1} courtClass={this.props.courtClass}
-                       importedPlayers={this.props.importedPlayers}/>
+                       importedPlayers={this.props.importedPlayers} round={this.props.roundIndex} playerStats={this.props.playerStats}/>
             );
         }
 

@@ -26,6 +26,7 @@ class Stats extends React.Component {
                 <td>{playerStats[index + 1] && playerStats[index + 1].mixedMatches}</td>
                 <td>{playerStats[index + 1] && playerStats[index + 1].mixedTeams}</td>
                 <td>{playerStats[index + 1] && playerStats[index + 1].paradiseMixedDiff}</td>
+                <td>{playerStats[index + 1] && playerStats[index + 1].results && JSON.stringify(playerStats[index + 1].results)}</td>
             </tr>
         );
         return (
@@ -47,6 +48,7 @@ class Stats extends React.Component {
                         <th title="Number of played mixed matches">mm</th>
                         <th title="Number of matches played in a mixed team">mt</th>
                         <th title="Total gender diff on court (Paradise)">gd</th>
+                        <th>Results</th>
                     </tr>
                     </thead>
                     <tbody>

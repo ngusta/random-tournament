@@ -383,3 +383,11 @@
 	font-size: 6em;
 	top: -1em;
 }
+
+.W {
+	border: 5px green solid;
+}
+
+.L {
+	border: 5px red solid;
+}

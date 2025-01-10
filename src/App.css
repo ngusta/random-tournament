@@ -1,12 +1,12 @@
-body {
+body:has(#app) {
+    background: url('img/erika/bg1-new-high.jpg') no-repeat fixed center top;
+    background-size: cover;
     font-family: Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
 #app {
-    background: url('img/erika/bg1-new-high.jpg') no-repeat;
-    background-attachment: fixed;
-    background-position: center top;
-    background-size: cover;
     padding: 9% 3% 0 6%;
 }
 
@@ -36,7 +36,7 @@ body {
 }
 
 #app .dryRun {
-    display: block;
+
 }
 
 #app .round .courtName {
