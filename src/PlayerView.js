@@ -30,28 +30,11 @@ const PlayerView = () => {
 
     //Load tournament & player + set up focus/visility listeners on load
     useEffect(() => {
-        getTournament(tournamentId)
-            .then(tournament => {
-                if (tournament === null) {
-                    setError("Nothing to be found here yet. Are you early? Did you use the correct link/QR code?");
-                    return;
-                }
-                setTournament(tournament);
-                tournamentRef.current = tournament;
-                if (tournament.isLatestRoundStarted) {
-                    setCurrentRoundIndex(tournament.presentationRoundIndex > -1 ? tournament.presentationRoundIndex : null);
-                    setNextRoundIndex(null);
-                } else {
-                    setCurrentRoundIndex(tournament.presentationRoundIndex > 0 ? tournament.presentationRoundIndex - 1 : null);
-                    setNextRoundIndex(tournament.presentationRoundIndex > -1 ? tournament.presentationRoundIndex : null);
-                }
-                updatePlayerData();
-            });
-
+        updateTournament();
 
         const handleVisibilityChange = debounce(() => {
             if (document.visibilityState === 'visible') {
-                updatePlayerData();
+                updateTournament();
             }
         }, 200);
 
@@ -65,8 +48,25 @@ const PlayerView = () => {
         // eslint-disable-next-line
     }, []);
 
+    const updateTournament = async () => {
+        const tournament = await getTournament(tournamentId);
+        if (tournament === null || tournament.rounds === null) {
+            setError("Nothing to be found here yet. Are you early? Did you use the correct link/QR code?");
+            return;
+        }
+        setTournament(tournament);
+        tournamentRef.current = tournament;
+        if (tournament.isLatestRoundStarted) {
+            setCurrentRoundIndex(tournament.presentationRoundIndex > -1 ? tournament.presentationRoundIndex : null);
+            setNextRoundIndex(null);
+        } else {
+            setCurrentRoundIndex(tournament.presentationRoundIndex > 0 ? tournament.presentationRoundIndex - 1 : null);
+            setNextRoundIndex(tournament.presentationRoundIndex > -1 ? tournament.presentationRoundIndex : null);
+        }
+        updatePlayerData();
+    }
     const updatePlayerData = async () => {
-        if (playerRef.current !== "" && tournamentRef.current) {
+        if (playerRef.current !== "" && tournamentRef.current && tournamentRef.current.rounds) {
             const playerRounds = {};
             const cloudPlayerRounds = await getPlayer(tournamentId, playerRef.current)
             const rounds = tournamentRef.current.rounds;
