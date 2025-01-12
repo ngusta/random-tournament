@@ -16,7 +16,7 @@ class Court extends React.Component {
             const oneRowClass = noPlayersRow2 === 0 ? " oneRow" : "";
             let playersInRow = team.slice(0, noPlayersRow1).map((player) =>
                 <div
-                    className={`player fit${noOfPlayersToFitClass} color${player % 10} digits${player.toString().length} gender${Round.getGender(this.props.importedPlayers, player)}${this.props.playerStats && this.props.playerStats[player] && this.props.playerStats[player].results[this.props.round] ? " " + this.props.playerStats[player].results[this.props.round] : ""}`}
+                    className={`player fit${noOfPlayersToFitClass} color${player % 10} digits${player.toString().length} gender${Round.getGender(this.props.importedPlayers, player)}${this.props.playerStats && this.props.playerStats[player] && this.props.playerStats[player].results && this.props.playerStats[player].results[this.props.round] ? " " + this.props.playerStats[player].results[this.props.round] : ""}`}
                     key={player}>
                     {player}
                 </div>
@@ -28,7 +28,7 @@ class Court extends React.Component {
             );
             playersInRow = team.slice(noPlayersRow1, team.length).map((player) =>
                 <div
-                    className={`player fit${noOfPlayersToFitClass} color${player % 10} digits${player.toString().length} gender${Round.getGender(this.props.importedPlayers, player)}${this.props.playerStats && this.props.playerStats[player] && this.props.playerStats[player].results[this.props.round] ? " " + this.props.playerStats[player].results[this.props.round] : ""}`}
+                    className={`player fit${noOfPlayersToFitClass} color${player % 10} digits${player.toString().length} gender${Round.getGender(this.props.importedPlayers, player)}${this.props.playerStats && this.props.playerStats[player] && this.props.playerStats[player].results && this.props.playerStats[player].results[this.props.round] ? " " + this.props.playerStats[player].results[this.props.round] : ""}`}
                     key={player}>
                     {player}
                 </div>
