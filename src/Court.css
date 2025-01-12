@@ -385,9 +385,18 @@
 }
 
 .W {
-	border: 5px green solid;
+	border: 4px green solid;
 }
 
 .L {
-	border: 5px red solid;
+	border: 4px red solid;
+}
+
+.clickable {
+	cursor: pointer;
+}
+
+.clickable:hover {
+	transform: scale(1.1);
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }

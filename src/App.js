@@ -4,7 +4,7 @@ import Settings from './Settings';
 import Round from './Round';
 import ls from 'local-storage';
 import loadingSpinner from './img/loading-spinner.svg';
-import {deleteTournament, saveTournament, getPlayers} from './api.js';
+import {deleteTournament, saveTournament, getPlayers, getPlayer, savePlayer} from './api.js';
 
 class App extends React.Component {
     constructor(props) {
@@ -300,6 +300,25 @@ class App extends React.Component {
         console.log('Player stats updated successfully');
     }
 
+    togglePlayerResult = async (playerId, round) => {
+        const player = await getPlayer(ls.get("tournamentId"), playerId);
+
+        const lastResult = player && player[round] ? player[round].result : null;
+        const allResults = ["W", "L", null];
+        const newResult = allResults[(allResults.indexOf(lastResult) + 1) % allResults.length];
+
+        const newPlayer = player ? {
+            ...player,
+            [round]: {
+                ...player[round],
+                result: newResult
+            }
+        } : {[round]: {result: newResult}};
+
+        await savePlayer(ls.get("tournamentId"), playerId, newPlayer);
+        this.updatePlayerStats();
+    }
+
     static getWins(importedPlayers, player) {
         if (importedPlayers && importedPlayers[player] && importedPlayers[player].wins) {
             return importedPlayers[player].wins;
@@ -349,7 +368,8 @@ class App extends React.Component {
                        showTenCourts={this.state.showTenCourts}
                        courtsToUse={this.state.courtsToUse}
                        importedPlayers={this.state.importedPlayers}
-                       playerStats={this.state.playerStats}/>
+                       playerStats={this.state.playerStats}
+                       onPlayerClick={this.togglePlayerResult}/>
             );
         }
 
