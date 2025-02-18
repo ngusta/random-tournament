@@ -146,7 +146,15 @@ const PlayerView = () => {
         setUpdateServer(true);
     }
 
-    const noCourtMessage = player === "" ? "Enter your player number above." : (allPlayerRounds && !allPlayerRounds[currentRoundIndex] && !allPlayerRounds[nextRoundIndex] ? "You are not playing this round, or your player number doesn't exist." : null);
+    const noCourtMessage = player === "" ? "Enter your player number above." : (allPlayerRounds && !allPlayerRounds[currentRoundIndex] && !allPlayerRounds[nextRoundIndex] ? "You are not playing this round." : null);
+
+    function getCourtName(courtIndex) {
+        const court = parseInt(courtIndex, 10);
+        if (tournament.showTenCourts && tournament.courtsToUse && tournament.courtsToUse[court]) {
+            return tournament.courtsToUse[court];
+        }
+        return court + 1;
+    }
 
     return (
         <div id="playerView">
@@ -162,10 +170,13 @@ const PlayerView = () => {
                         onChange={handlePlayerChange}
                         placeholder="Enter your player number"
                     />
+                    {
+                        <p className={`player color${player % 10}`}>{player}</p>
+                    }
                     {allPlayerRounds && allPlayerRounds[nextRoundIndex] &&
                         <>
                             <p className="roundInfo">Your next round is on <span
-                                className="courtInfo">Court {allPlayerRounds[nextRoundIndex].courtIndex + 1}</span></p>
+                                className="courtInfo">Court {getCourtName(allPlayerRounds[nextRoundIndex].courtIndex)}</span></p>
                             <Court teams={allPlayerRounds[nextRoundIndex].courtPlayers}
                                    key={allPlayerRounds[nextRoundIndex].courtIndex}
                                    courtNumber={allPlayerRounds[nextRoundIndex].courtIndex + 1}
@@ -175,7 +186,7 @@ const PlayerView = () => {
                     {allPlayerRounds && allPlayerRounds[currentRoundIndex] &&
                         <>
                             <p className="roundInfo">Your current round is on <span
-                                className="courtInfo">Court {allPlayerRounds[currentRoundIndex].courtIndex + 1}</span>
+                                className="courtInfo">Court {getCourtName(allPlayerRounds[currentRoundIndex].courtIndex)}</span>
                             </p>
                             <Court teams={allPlayerRounds[currentRoundIndex].courtPlayers}
                                    key={allPlayerRounds[currentRoundIndex].courtIndex}
@@ -191,7 +202,9 @@ const PlayerView = () => {
 
                     {allPlayerRounds && (
                         <>
-                            <h2>All rounds</h2>
+                            <h2>Report results</h2>
+                            <p>Click the <strong>?</strong> next to the round until you get <strong>W</strong> for Win
+                                or <strong>L</strong> if you lost.</p>
                             <ul id="allRounds">
                                 {Object.entries(allPlayerRounds)
                                     .sort(([roundIndexA], [roundIndexB]) => parseInt(roundIndexB) - parseInt(roundIndexA))
@@ -200,9 +213,9 @@ const PlayerView = () => {
                                             <div onClick={() => toggleResult(roundIndex)}
                                                  className={`circle ${result === null ? "neutral" : (result === "W" ? "win" : "lose")}`}>{result === null ? "?" : (result === "W" ? "W" : "L")}</div>
                                             <strong>Round {parseInt(roundIndex, 10) + 1}:&nbsp;</strong>
-                                            {courtPlayers.map(team => team.join(" & ")).join(" vs ")}
+                                            {tournament.paradiseMode ? courtPlayers.map(team => team.join(", ")).join(", ") : courtPlayers.map(team => team.join(" & ")).join(" vs ")}
                                             &nbsp;on
-                                            Court {courtIndex + 1} {currentRoundIndex === parseInt(roundIndex) ? " (current)" : (nextRoundIndex === parseInt(roundIndex) ? " (next)" : "")}
+                                            Court {getCourtName(courtIndex)} {currentRoundIndex === parseInt(roundIndex) ? " (current)" : (nextRoundIndex === parseInt(roundIndex) ? " (next)" : "")}
                                         </li>
                                     ))}
                             </ul>

@@ -4,6 +4,7 @@ import ls from 'local-storage';
 import deleteIcon from './img/delete.png';
 import emptyStar from './img/star_empty.png';
 import filledStar from './img/star_filled.png';
+import App from "./App";
 
 class Round extends React.Component {
 
@@ -116,6 +117,7 @@ class Round extends React.Component {
             const stopTime = performance.now();
             console.log("CreateRound took " + Math.round(stopTime - startTime) + " ms.");
         }
+        bestRound[1][1][0] = null;
         return bestRound;
     }
 
@@ -406,8 +408,7 @@ class Round extends React.Component {
     }
 
     static countOccurences(item, list) {
-        const index = list.indexOf(item);
-        if (index === -1) {
+        if (list == null || list.indexOf(item) === -1) {
             return 0;
         }
         return list.lastIndexOf(item) - list.indexOf(item) + 1;
@@ -436,20 +437,7 @@ class Round extends React.Component {
                 for (let p = 0; p < round[c][t].length; p++) {
                     const player = round[c][t][p];
                     if (!playerStats[player]) {
-                        playerStats[player] = {
-                            id: player,
-                            partners: [],
-                            opponents: [],
-                            courts: [],
-                            playedMatches: 0,
-                            mixedMatches: 0,
-                            mixedTeams: 0,
-                            paradiseMixedDiff: 0,
-                            wins: 0,
-                            losses: 0,
-                            draws: 0,
-                            results: {}
-                        };
+                        playerStats[player] = App.emptyPlayerStats(player);
                     }
                 }
             }
@@ -468,11 +456,14 @@ class Round extends React.Component {
                     const player = round[c][t][p];
 
                     const newPartners = Round.partners(round, c, t, p);
-                    playerStats[player].partners = [...playerStats[player].partners, ...newPartners].sort();
+                    playerStats[player].partners = [...(playerStats[player].partners ? playerStats[player].partners : []), ...newPartners].sort();
 
                     const newOpponents = Round.opponents(round, c, t);
-                    playerStats[player].opponents = [...playerStats[player].opponents, ...newOpponents].sort();
+                    playerStats[player].opponents = [...(playerStats[player].opponents ? playerStats[player].opponents : []), ...newOpponents].sort();
 
+                    if (!playerStats[player].courts) {
+                        playerStats[player].courts = [];
+                    }
                     playerStats[player].courts.push(c);
 
                     playerStats[player].playedMatches++;
@@ -575,13 +566,10 @@ class Round extends React.Component {
         const ranges = this.getRangeOfPlayers();
         let courts = [];
         if (this.props.courts && this.props.showTenCourts && this.props.courtsToUse && this.props.courts.length <= this.props.courtsToUse.length) {
-            const courtsToUse = this.props.courtsToUse.sort(function (a, b) {
-                return a - b
-            });
             let nextCourtFromRound = 0;
             for (let court = 1; court <= 10; court++) {
                 let teams = [];
-                if (courtsToUse.indexOf(court) > -1 && nextCourtFromRound < this.props.courts.length) {
+                if (this.props.courtsToUse.indexOf(court) > -1 && nextCourtFromRound < this.props.courts.length) {
                     teams = this.props.courts[nextCourtFromRound++];
                 }
                 if (teams.length > 0 || !this.props.hideUnusedCourts) {

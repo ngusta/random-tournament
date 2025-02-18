@@ -20,7 +20,7 @@ const Leaderboard = () => {
         return a.losses - b.losses;
     }) : [];
 
-    const playerTableRows = sortedPlayers.slice(0, 10).map((player, index) =>
+    const playerTableRows = sortedPlayers.slice(0, 20).map((player, index) =>
         <tr key={index}>
             <td>{index + 1}</td>
             <td>{player.name ? player.name : player.id}</td>

@@ -8,6 +8,13 @@ class Stats extends React.Component {
         this.state = {};
     }
 
+    noMatches(player) {
+        return player &&
+            (isNaN(player.wins) ? 0 : player.wins) +
+            (isNaN(player.losses) ? 0 : player.losses) +
+            (isNaN(player.draws) ? 0 : player.draws);
+    }
+
     render() {
         const playerStats = this.props.playerStats ? this.props.playerStats : {};
         const importedPlayers = this.props.importedPlayers;
@@ -15,14 +22,14 @@ class Stats extends React.Component {
             <tr key={index}>
                 <td>{index + 1}</td>
                 <td>{importedPlayers[index + 1] && importedPlayers[index + 1].name}</td>
-                <td>{playerStats[index + 1] && playerStats[index + 1].wins + playerStats[index + 1].losses + playerStats[index + 1].draws}</td>
+                <td>{this.noMatches(playerStats[index + 1])}</td>
                 <td>{playerStats[index + 1] && playerStats[index + 1].wins}</td>
                 <td>{playerStats[index + 1] && playerStats[index + 1].losses}</td>
                 <td>{playerStats[index + 1] && playerStats[index + 1].draws}</td>
                 <td>{playerStats[index + 1] && playerStats[index + 1].playedMatches}</td>
                 <td>{playerStats[index + 1] && new Set(playerStats[index + 1].partners).size}</td>
                 <td>{playerStats[index + 1] && new Set(playerStats[index + 1].opponents).size}</td>
-                <td>{playerStats[index + 1] && new Set(playerStats[index + 1].opponents.concat(playerStats[index + 1].partners)).size}</td>
+                <td>{playerStats[index + 1] && playerStats[index + 1].opponents && new Set(playerStats[index + 1].opponents.concat(playerStats[index + 1].partners)).size}</td>
                 <td>{playerStats[index + 1] && playerStats[index + 1].mixedMatches}</td>
                 <td>{playerStats[index + 1] && playerStats[index + 1].mixedTeams}</td>
                 <td>{playerStats[index + 1] && playerStats[index + 1].paradiseMixedDiff}</td>

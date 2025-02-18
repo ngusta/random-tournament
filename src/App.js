@@ -99,6 +99,7 @@ class App extends React.Component {
         } else if (!e.target.checked && courtsToUseCopy.indexOf(courtName) > -1) {
             courtsToUseCopy.splice(courtsToUseCopy.indexOf(courtName), 1);
         }
+        courtsToUseCopy.sort((a, b) => a - b);
         this.setState({courtsToUse: courtsToUseCopy});
         ls.set("courtsToUse", courtsToUseCopy);
         ls.set("updatePresentation", true);
@@ -226,6 +227,10 @@ class App extends React.Component {
             data.rounds = ls.get("rounds");
             data.presentationRoundIndex = ls.get("presentationRoundIndex");
             data.isLatestRoundStarted = ls.get("isLatestRoundStarted");
+            data.showTenCourts = ls.get("showTenCourts");
+            data.courtsToUse = ls.get("courtsToUse");
+            data.paradiseMode = ls.get("paradiseMode");
+            data.paradisePlayersPerCourt = ls.get("paradisePlayersPerCourt");
             saveTournament(ls.get("tournamentId"), data);
         }
     };
@@ -236,21 +241,7 @@ class App extends React.Component {
         const playerStats = ls.get("playerStats") || [];
         Object.keys(importedPlayers).forEach(player => {
             if (!playerStats[player]) {
-                playerStats[player] = {
-                    id: player,
-                    partners: [],
-                    opponents: [],
-                    courts: [],
-                    playedMatches: 0,
-                    mixedMatches: 0,
-                    mixedTeams: 0,
-                    paradiseMixedDiff: 0,
-                    name: 0,
-                    wins: 0,
-                    losses: 0,
-                    draws: 0,
-                    results: {}
-                };
+                playerStats[player] = App.emptyPlayerStats(player);
             }
             playerStats[player].name = importedPlayers[player].name;
             playerStats[player].wins = importedPlayers[player].wins;
@@ -272,6 +263,9 @@ class App extends React.Component {
 
             if (cloudPlayerRounds) {
                 cloudPlayerRounds.forEach(cloudPlayer => {
+                    if (!playerStats[cloudPlayer.playerId]) {
+                        playerStats[cloudPlayer.playerId] = App.emptyPlayerStats(cloudPlayer.playerId);
+                    }
                     const statsPlayer = playerStats[cloudPlayer.playerId];
                     statsPlayer.wins = 0;
                     statsPlayer.losses = 0;
@@ -338,6 +332,24 @@ class App extends React.Component {
             return importedPlayers[player].draws;
         }
         return 0;
+    }
+
+    static emptyPlayerStats(player) {
+        return {
+            id: player,
+            partners: [],
+            opponents: [],
+            courts: [],
+            playedMatches: 0,
+            mixedMatches: 0,
+            mixedTeams: 0,
+            paradiseMixedDiff: 0,
+            name: "Player " + player,
+            wins: 0,
+            losses: 0,
+            draws: 0,
+            results: {}
+        }
     }
 
     render() {
