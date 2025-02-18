@@ -117,7 +117,6 @@ class Round extends React.Component {
             const stopTime = performance.now();
             console.log("CreateRound took " + Math.round(stopTime - startTime) + " ms.");
         }
-        bestRound[1][1][0] = null;
         return bestRound;
     }
 
