@@ -20,34 +20,74 @@ const Leaderboard = () => {
         return a.losses - b.losses;
     }) : [];
 
-    const playerTableRows = sortedPlayers.slice(0, 20).map((player, index) =>
-        <tr key={index}>
-            <td>{index + 1}</td>
-            <td>{player.name ? player.name : player.id}</td>
-            <td>{player.wins + player.losses}</td>
-            <td>{player.wins}</td>
-            <td>{player.losses}</td>
-        </tr>
-    );
+    let rank = 1;
+    let previousWins = null;
+
+    const playerTableRows = sortedPlayers.slice(0, 20).map((player, index) => {
+        if (previousWins !== null && player.wins !== previousWins) {
+            rank = index + 1;
+        }
+
+        previousWins = player.wins;
+
+        return (
+            <tr key={player.id || index}>
+                <td className="numeric">{rank}</td>
+                <td>{player.name ? player.name : player.id}</td>
+                <td className="numeric">{player.wins + player.losses}</td>
+                <td className="numeric">{player.wins}</td>
+            </tr>
+        );
+    });
+    const playerTableRows2 = sortedPlayers.slice(20, 40).map((player, index) => {
+        if (previousWins !== null && player.wins !== previousWins) {
+            rank = 20 + index + 1;
+        }
+
+        previousWins = player.wins;
+
+        return (
+            <tr key={player.id || index}>
+                <td className="numeric">{rank}</td>
+                <td>{player.name ? player.name : player.id}</td>
+                <td className="numeric">{player.wins + player.losses}</td>
+                <td className="numeric">{player.wins}</td>
+            </tr>
+        );
+    });
 
     return (
         <div id="leaderboard">
             <div>
                 <h1>Leaderboard</h1>
+                <div className="leaderboard-tables">
                 <table>
                     <thead>
                     <tr>
-                        <th title="Position">Pos</th>
+                        <th title="Rank">Rank</th>
                         <th title="Name">Name</th>
-                        <th title="Matches">Matches</th>
+                        <th title="Rounds">Rounds</th>
                         <th title="Wins">Wins</th>
-                        <th title="Losses">Losses</th>
                     </tr>
                     </thead>
                     <tbody>
                     {playerTableRows}
                     </tbody>
                 </table>
+                <table>
+                    <thead>
+                    <tr>
+                        <th title="Rank">Rank</th>
+                        <th title="Name">Name</th>
+                        <th title="Rounds">Rounds</th>
+                        <th title="Wins">Wins</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {playerTableRows2}
+                    </tbody>
+                </table>
+                </div>
             </div>
         </div>
     );

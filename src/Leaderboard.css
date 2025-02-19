@@ -24,8 +24,19 @@ h1 {
 
 table {
     font-size: x-large;
+    border-collapse: collapse;
 }
 
 th {
     text-align: left;
+}
+
+th.numeric, td.numeric {
+    text-align: center;
+}
+
+.leaderboard-tables {
+    display: flex;
+    gap: 100px;
+    justify-content: center;
 }

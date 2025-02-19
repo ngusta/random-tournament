@@ -165,39 +165,71 @@ class App extends React.Component {
         ls.set("paradiseMode", e.target.checked);
     };
 
-    draw = () => {
-        this.setState({errors: [], showLoadingSpinner: true}, () => {
-            setTimeout(() => {
+    showLoadingSpinner = (show) => {
+        this.setState({ showLoadingSpinner: show });
+    }
+
+    draw = async () => {
+        this.setState({ errors: [], showLoadingSpinner: true });
+
+        setTimeout(async () => {
+            try {
                 ls.set("errors", []);
-                const round = this.createRound();
+
+                const round = await this.createRound();
                 if (round) {
                     const newRounds = [...this.state.rounds, round];
                     let pressIndex = this.state.presentationRoundIndex;
+
                     if (this.state.autoPresentNewRound) {
                         pressIndex = newRounds.length - 1;
                     }
 
-                    this.setState({rounds: newRounds, presentationRoundIndex: pressIndex});
+                    this.setState({
+                        rounds: newRounds,
+                        presentationRoundIndex: pressIndex
+                    });
+
                     ls.set("rounds", newRounds);
                     ls.set("presentationRoundIndex", pressIndex);
                     ls.set("isLatestRoundStarted", false);
-                    this.saveTournamentInCloud();
+
+                    await this.saveTournamentInCloud();
                 }
-                this.setState({showLoadingSpinner: false});
-            }, 100);
-        });
+            } catch (error) {
+                console.error("Error creating round:", error);
+                this.setState({ errors: [error.message] });
+            } finally {
+                this.setState({ showLoadingSpinner: false });
+            }
+        }, 100);
     };
 
-    createRound(dryRun = false) {
+    async createRound() {
         return Round.createRound(
             this.getAllAvailablePlayers(),
             this.state.noCourts,
             this.state.teamsPerCourt,
             this.state.playersPerTeam,
             this.state.useAllPlayers,
-            dryRun ? (error) => {
-            } : this.logError,
-            dryRun,
+            this.logError,
+            false,
+            this.state.rounds,
+            this.state.importedPlayers,
+            this.state.paradiseMode,
+            this.state.paradisePlayersPerCourt
+        );
+    }
+
+    createDryRound() {
+        return Round.createRound(
+            this.getAllAvailablePlayers(),
+            this.state.noCourts,
+            this.state.teamsPerCourt,
+            this.state.playersPerTeam,
+            this.state.useAllPlayers,
+            (error) => {},
+            true,
             this.state.rounds,
             this.state.importedPlayers,
             this.state.paradiseMode,
@@ -354,7 +386,7 @@ class App extends React.Component {
 
     render() {
         let dryRunRound;
-        const dryRunRoundDraw = this.createRound(true);
+        const dryRunRoundDraw = this.createDryRound();
         if (dryRunRoundDraw) {
             dryRunRound = <Round
                 courts={dryRunRoundDraw}
@@ -420,6 +452,7 @@ class App extends React.Component {
                               playerViewEnabled={this.state.playerViewEnabled}
                               tournamentId={ls.get("tournamentId")}
                               playerStats={this.state.playerStats}
+                              showLoadingSpinner={this.showLoadingSpinner}
                     />
                     <ul className="clear">
                         {errors}

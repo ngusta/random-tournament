@@ -181,7 +181,7 @@ class Settings extends React.Component {
                         <div className="col">
                             <fieldset className="googleImport">
                                 <legend>Import player data</legend>
-                                <GoogleSheets setImportedPlayers={this.props.setImportedPlayers}/>
+                                <GoogleSheets setImportedPlayers={this.props.setImportedPlayers} showLoadingSpinner={this.props.showLoadingSpinner}/>
                             </fieldset>
                             <fieldset className="tournamentSettings">
                                 <legend>Tournament settings</legend>
