@@ -370,7 +370,9 @@ class Settings extends React.Component {
                                     <>
                                         <span>Tournament id: {this.props.tournamentId}</span><br/>
                                         <Link to={`/playerView/${this.props.tournamentId}`} target="_blank">Open PlayerView</Link> or scan this<br/>
-                                        <QRCodeCanvas value={`${baseUrl}/playerView/${this.props.tournamentId}`} size={100} />
+                                        <QRCodeCanvas value={`${baseUrl}/playerView/${this.props.tournamentId}`} size={100} /><br/>
+
+                                        <Link to={`/playerViewPrint/${this.props.tournamentId}`} target="_blank">Printable Version</Link>
                                     </>
                                 }
                             </fieldset>

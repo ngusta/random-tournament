@@ -39,11 +39,19 @@ const PlayerView = () => {
         }, 200);
 
         document.addEventListener('visibilitychange', handleVisibilityChange);
+        document.addEventListener('resume', handleVisibilityChange);
         window.addEventListener('focus', handleVisibilityChange);
+        window.addEventListener('pageshow', handleVisibilityChange);
+        window.addEventListener('online', handleVisibilityChange);
+        window.addEventListener('popstate', handleVisibilityChange);
 
         return () => {
             document.removeEventListener('visibilitychange', handleVisibilityChange);
+            document.removeEventListener('resume', handleVisibilityChange);
             window.removeEventListener('focus', handleVisibilityChange);
+            window.removeEventListener('pageshow', handleVisibilityChange);
+            window.removeEventListener('online', handleVisibilityChange);
+            window.removeEventListener('popstate', handleVisibilityChange);
         };
         // eslint-disable-next-line
     }, []);

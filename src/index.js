@@ -5,6 +5,7 @@ import App from './App';
 import Presentation from './Presentation';
 import Leaderboard from './Leaderboard';
 import PlayerView from './PlayerView';
+import PlayerViewPrint from './PlayerViewPrint';
 import * as serviceWorker from './serviceWorker';
 import {createRoot} from 'react-dom/client';
 
@@ -18,6 +19,7 @@ const routing = (
             <Route path="/presentation" element={<Presentation/>}/>
             <Route path="/leaderboard" element={<Leaderboard/>}/>
             <Route path="/playerview/:tournamentId" element={<PlayerView/>}/>
+            <Route path="/playerViewPrint/:tournamentId" element={<PlayerViewPrint />} />
         </Routes>
     </Router>
 );
