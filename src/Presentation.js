@@ -12,6 +12,7 @@ class Presentation extends React.Component {
 			roundToShowIndex: ls.get("roundToShowIndex") || -1,
 			noRoundMessage: ls.get("noRoundMessage") || "",
 			showRoundName: ls.get("showRoundName") || false,
+			showNowPlaying: ls.get("showNowPlaying") || false,
 			width: 0,
 			height: 0,
 			showTenCourts: ls.get("showTenCourts") || false,
@@ -42,6 +43,7 @@ class Presentation extends React.Component {
 			}
 			this.setState({noRoundMessage: ls.get("noRoundMessage")});
 			this.setState({showRoundName: ls.get("showRoundName")});
+			this.setState({showNowPlaying: ls.get("showNowPlaying")});
 			this.setState({showTenCourts: ls.get("showTenCourts")});
 			this.setState({hideUnusedCourts: ls.get("hideUnusedCourts")});
 			this.setState({courtsToUse: ls.get("courtsToUse")});
@@ -102,11 +104,11 @@ class Presentation extends React.Component {
 					/>
 					}
 				</div>
-				{this.state.previousRound && !this.state.isLatestRoundStarted &&
+				{this.state.showNowPlaying && this.state.previousRound && !this.state.isLatestRoundStarted &&
 					<span id="previousRoundLabel">Now playing</span>
 				}
 				<div id="previousRound">
-					{this.state.previousRound && !this.state.isLatestRoundStarted &&
+					{this.state.showNowPlaying && this.state.previousRound && !this.state.isLatestRoundStarted &&
 					<Round
 						courts={this.state.previousRound}
 						courtClass="courtSize1"

@@ -15,6 +15,7 @@ class Settings extends React.Component {
             selectedNoRoundMessage: ls.get("selectedNoRoundMessage") || "goodGameEn",
             customMessage: ls.get("customMessage") || "",
             showRoundName: ls.get("showRoundName") || false,
+            showNowPlaying: ls.get("showNowPlaying") || false,
             editGender: false
         };
         if (!ls.get("selectedNoRoundMessage")) {
@@ -144,6 +145,12 @@ class Settings extends React.Component {
     onShowRoundName = (e) => {
         this.setState({showRoundName: e.target.checked});
         ls.set("showRoundName", e.target.checked);
+        ls.set("updatePresentation", true);
+    };
+
+    onShowNowPlaying = (e) => {
+        this.setState({showNowPlaying: e.target.checked});
+        ls.set("showNowPlaying", e.target.checked);
         ls.set("updatePresentation", true);
     };
 
@@ -289,6 +296,11 @@ class Settings extends React.Component {
                                     <span>Show round name</span>
                                     <input type="checkbox" checked={this.state.showRoundName}
                                            onChange={this.onShowRoundName}/>
+                                </label>
+                                <label>
+                                    <span>Show the "now playing" round</span>
+                                    <input type="checkbox" checked={this.state.showNowPlaying}
+                                           onChange={this.onShowNowPlaying}/>
                                 </label>
                                 <div className="noRoundMessageSetting">
                                     <span>Show message when no round is presented</span>
