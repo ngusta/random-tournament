@@ -14,52 +14,52 @@
 
 .player.color0 {
 	background-color: #ffb700;
-	color: #7b00ff;
+	color: black;
 }
 
 .player.color1 {
 	background-color: #ffee00;
-	color: #e600ff;
+	color: black;
 }
 
 .player.color2 {
 	background-color: #28ff02;
-	color: #ff0220;
+	color: black;
 }
 
 .player.color3 {
 	background-color: #04ffe2;
-	color: #ff3f04;
+	color: black;
 }
 
 .player.color4 {
 	background-color: #3f4040;
-	color: #dedcdb;
+	color: white;
 }
 
 .player.color5 {
 	background-color: #7b00ff;
-	color: #ffb700;
+	color: white;
 }
 
 .player.color6 {
 	background-color: #e600ff;
-	color: #ffee00;
+	color: white;
 }
 
 .player.color7 {
 	background-color: #ff0220;
-	color: #28ff02;
+	color: white;
 }
 
 .player.color8 {
 	background-color: #ff3f04;
-	color: #04ffe2;
+	color: black;
 }
 
 .player.color9 {
 	background-color: #dedcdb;
-	color: #3f4040;
+	color: black;
 }
 
 .court .courtName {

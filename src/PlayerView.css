@@ -1,3 +1,7 @@
+html {
+    scroll-behavior: smooth;
+}
+
 #playerView {
     display: flex;
     flex-direction: column;
@@ -7,19 +11,49 @@
     width: 100vw;
     min-width: fit-content;
     text-align: center;
-    background: linear-gradient(to bottom, #f4e1c1, #d2b48c);
+    background: linear-gradient(to bottom, #f0ebd8, #b3d9e0);
     color: #4b2e1f;
+}
+
+#playerView #playerInputRow {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
 }
 
 #playerView #playerInput {
     font-size: 1.5rem;
-    width: 60%;
+    width: 6em;
     max-width: 15em;
     padding: 10px;
     margin: 10px 0;
     border: 2px solid #ccc;
     border-radius: 8px;
     text-align: center;
+}
+
+#playerView #playerInputRow p {
+    margin-left: 10px;
+}
+
+#playerView a {
+    display: inline-block;
+    text-decoration: none;
+    background-color: #a5c3ca;
+    color: #2d3e40;
+    padding: 12px 10px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    transition: background 0.3s;
+    opacity: 0.9;
+}
+
+#playerView a:hover {
+    background-color: #0056b3;
 }
 
 /* Style the tournament details */
@@ -70,6 +104,7 @@
 
 #playerView .circle {
     display: flex;
+    flex: 0 0 50px;
     justify-content: center;
     align-items: center;
     width: 50px;
@@ -99,4 +134,20 @@
 #playerView .circle:hover {
     transform: scale(1.1);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+#playerView #explanation {
+    text-align: left;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+#playerView #explanation .circle {
+    display: inline-flex;
+    width: 1.2em;
+    height: 1.2em;
+    border-radius: 50%;
+    font-weight: bold;
+    cursor: default;
+    margin-right: 0;
 }

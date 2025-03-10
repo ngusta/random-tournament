@@ -169,29 +169,31 @@ const PlayerView = () => {
             {error && <p id="error">{error}</p>}
             {!error &&
                 <>
-                    <input
-                        id="playerInput"
-                        type="number"
-                        min="0"
-                        max="1000"
-                        value={player}
-                        onChange={handlePlayerChange}
-                        placeholder="Enter your player number"
-                    />
-                    {
+                    <div id="playerInputRow">
+                        <input
+                            id="playerInput"
+                            type="number"
+                            min="0"
+                            max="1000"
+                            value={player}
+                            onChange={handlePlayerChange}
+                            placeholder="Your number"
+                        />
                         <p className={`player color${player % 10}`}>{player}</p>
-                    }
+                        <a href="#playerResults">Report results</a>
+                    </div>
                     {allPlayerRounds && allPlayerRounds[nextRoundIndex] &&
                         <>
                             <p className="roundInfo">Your next round is on <span
-                                className="courtInfo">Court {getCourtName(allPlayerRounds[nextRoundIndex].courtIndex)}</span></p>
+                                className="courtInfo">Court {getCourtName(allPlayerRounds[nextRoundIndex].courtIndex)}</span>
+                            </p>
                             <Court teams={allPlayerRounds[nextRoundIndex].courtPlayers}
                                    key={allPlayerRounds[nextRoundIndex].courtIndex}
                                    courtNumber={allPlayerRounds[nextRoundIndex].courtIndex + 1}
                                    courtClass="courtSize3"/>
                         </>
                     }
-                    {allPlayerRounds && allPlayerRounds[currentRoundIndex] &&
+                    {allPlayerRounds && allPlayerRounds[currentRoundIndex] && !allPlayerRounds[nextRoundIndex] &&
                         <>
                             <p className="roundInfo">Your current round is on <span
                                 className="courtInfo">Court {getCourtName(allPlayerRounds[currentRoundIndex].courtIndex)}</span>
@@ -210,9 +212,9 @@ const PlayerView = () => {
 
                     {allPlayerRounds && (
                         <>
-                            <h2>Report results</h2>
-                            <p>Click the <strong>?</strong> next to the round until you get <strong>W</strong> for Win
-                                or <strong>L</strong> if you lost.</p>
+                            <h2 id="playerResults">Player results</h2>
+                            <p id="explanation">Click the <span class="circle neutral">?</span> next to the round until you get <span class="circle win">W</span> for Win
+                                or <span class="circle lose">L</span> if you lost.</p>
                             <ul id="allRounds">
                                 {Object.entries(allPlayerRounds)
                                     .sort(([roundIndexA], [roundIndexB]) => parseInt(roundIndexB) - parseInt(roundIndexA))

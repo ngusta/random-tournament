@@ -135,9 +135,10 @@ class App extends React.Component {
     };
 
     onResetState = () => {
-        deleteTournament(ls.get("tournamentId"))
+        const tournamentId = ls.get("tournamentId");
+        ls.clear();
+        deleteTournament(tournamentId)
             .then((response) => {
-                ls.clear();
                 window.location.reload()
             });
     };
