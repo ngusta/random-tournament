@@ -13,6 +13,7 @@ const PlayerView = () => {
     const [nextRoundIndex, setNextRoundIndex] = useState(null);
     const [player, setPlayer] = useState(ls.get("player") || "");
     const [allPlayerRounds, setAllPlayerRounds] = useState(null);
+    const [playerName, setPlayerName] = useState(null);
     const [error, setError] = useState(null);
     const [updateServer, setUpdateServer] = useState(false);
     const [debounceTimer, setDebounceTimer] = useState(null)
@@ -76,7 +77,7 @@ const PlayerView = () => {
     const updatePlayerData = async () => {
         if (playerRef.current !== "" && tournamentRef.current && tournamentRef.current.rounds) {
             const playerRounds = {};
-            const cloudPlayerRounds = await getPlayer(tournamentId, playerRef.current)
+            const cloudPlayer = await getPlayer(tournamentId, playerRef.current)
             const rounds = tournamentRef.current.rounds;
             for (let r = 0; r < rounds.length; r++) {
                 let foundInRound = false;
@@ -87,7 +88,7 @@ const PlayerView = () => {
                                 playerRounds[r] = {
                                     'courtIndex': c,
                                     'courtPlayers': rounds[r][c],
-                                    'result': cloudPlayerRounds && cloudPlayerRounds[r] ? cloudPlayerRounds[r].result : null
+                                    'result': cloudPlayer && cloudPlayer[r] ? cloudPlayer[r].result : null
                                 }
                                 foundInRound = true;
                             }
@@ -96,6 +97,7 @@ const PlayerView = () => {
                 }
             }
             setAllPlayerRounds(playerRounds);
+            setPlayerName((cloudPlayer && cloudPlayer.name) ? cloudPlayer.name : "");
         }
     };
 
@@ -177,11 +179,14 @@ const PlayerView = () => {
                             max="1000"
                             value={player}
                             onChange={handlePlayerChange}
-                            placeholder="Your number"
+                            placeholder="Your Number"
                         />
-                        <p className={`player color${player % 10}`}>{player}</p>
                         <a href="#playerResults">Report results</a>
                     </div>
+                    <p id="playerIdRow">
+                        <span className={`player color${player % 10}`}>{player}</span>
+                        <span className="playerName">{playerName}</span>
+                    </p>
                     {allPlayerRounds && allPlayerRounds[nextRoundIndex] &&
                         <>
                             <p className="roundInfo">Your next round is on <span
@@ -213,7 +218,8 @@ const PlayerView = () => {
                     {allPlayerRounds && (
                         <>
                             <h2 id="playerResults">Player results</h2>
-                            <p id="explanation">Click the <span class="circle neutral">?</span> next to the round until you get <span class="circle win">W</span> for Win
+                            <p id="explanation">Click the <span class="circle neutral">?</span> next to the round until
+                                you get <span class="circle win">W</span> for Win
                                 or <span class="circle lose">L</span> if you lost.</p>
                             <ul id="allRounds">
                                 {Object.entries(allPlayerRounds)

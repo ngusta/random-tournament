@@ -86,6 +86,20 @@ export async function savePlayer(tournamentId, playerId, playerData) {
     }
 }
 
+export async function  savePlayers(tournamentId, playerData) {
+    try {
+        const response = await fetch(`https://ztx5ai37rj.execute-api.eu-north-1.amazonaws.com/prod/random-partner/${tournamentId}/players`, {
+            method: 'PUT',
+            headers: getHeaders(),
+            body: JSON.stringify(playerData)
+        });
+        console.log(`Updated players in cloud.`);
+        return response;
+    } catch (err) {
+        console.error(err);
+    }
+}
+
 export async function getPlayer(tournamentId, playerId) {
     try {
         const response = await fetch(`https://ztx5ai37rj.execute-api.eu-north-1.amazonaws.com/prod/random-partner/${tournamentId}/player/${playerId}`, {

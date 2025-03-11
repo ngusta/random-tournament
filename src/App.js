@@ -4,7 +4,7 @@ import Settings from './Settings';
 import Round from './Round';
 import ls from 'local-storage';
 import loadingSpinner from './img/loading-spinner.svg';
-import {deleteTournament, saveTournament, getPlayers, getPlayer, savePlayer} from './api.js';
+import {deleteTournament, saveTournament, getPlayers, getPlayer, savePlayer, savePlayers} from './api.js';
 
 class App extends React.Component {
     constructor(props) {
@@ -67,6 +67,7 @@ class App extends React.Component {
             case "playerViewEnabled":
                 if (ls.get("playerViewEnabled")) {
                     this.saveTournamentInCloud();
+                    this.savePlayerDataToCloud(this.state.importedPlayers);
                     const intervalId = setInterval(this.updatePlayerStats, 5000);
                     this.setState({updateStatsIntervalId: intervalId});
                     setTimeout(() => {
@@ -167,11 +168,11 @@ class App extends React.Component {
     };
 
     showLoadingSpinner = (show) => {
-        this.setState({ showLoadingSpinner: show });
+        this.setState({showLoadingSpinner: show});
     }
 
     draw = async () => {
-        this.setState({ errors: [], showLoadingSpinner: true });
+        this.setState({errors: [], showLoadingSpinner: true});
 
         setTimeout(async () => {
             try {
@@ -199,9 +200,9 @@ class App extends React.Component {
                 }
             } catch (error) {
                 console.error("Error creating round:", error);
-                this.setState({ errors: [error.message] });
+                this.setState({errors: [error.message]});
             } finally {
-                this.setState({ showLoadingSpinner: false });
+                this.setState({showLoadingSpinner: false});
             }
         }, 100);
     };
@@ -229,7 +230,8 @@ class App extends React.Component {
             this.state.teamsPerCourt,
             this.state.playersPerTeam,
             this.state.useAllPlayers,
-            (error) => {},
+            (error) => {
+            },
             true,
             this.state.rounds,
             this.state.importedPlayers,
@@ -281,9 +283,20 @@ class App extends React.Component {
             playerStats[player].losses = importedPlayers[player].losses;
             playerStats[player].draws = importedPlayers[player].draws;
         });
+        if (this.state.playerViewEnabled) {
+            this.savePlayerDataToCloud(importedPlayers, playerStats);
+        }
         ls.set("playerStats", playerStats);
         ls.set("updatePresentation", true);
     };
+
+    savePlayerDataToCloud(importedPlayers) {
+        const playerWithNames = Object.values(importedPlayers).map(player => ({
+            playerId: player.id,
+            name: player.name
+        }));
+        savePlayers(ls.get("tournamentId"), playerWithNames);
+    }
 
     updatePlayerStats = async () => {
         if (this.state.showLoadingSpinner) {

@@ -2,6 +2,10 @@ html {
     scroll-behavior: smooth;
 }
 
+input {
+    font-family: Helvetica, sans-serif;
+}
+
 #playerView {
     display: flex;
     flex-direction: column;
@@ -13,6 +17,7 @@ html {
     text-align: center;
     background: linear-gradient(to bottom, #f0ebd8, #b3d9e0);
     color: #4b2e1f;
+    font-family: Helvetica, sans-serif;
 }
 
 #playerView #playerInputRow {
@@ -24,8 +29,8 @@ html {
 }
 
 #playerView #playerInput {
-    font-size: 1.5rem;
-    width: 6em;
+    font-size: 1.2rem;
+    width: 7em;
     max-width: 15em;
     padding: 10px;
     margin: 10px 0;
@@ -34,26 +39,35 @@ html {
     text-align: center;
 }
 
-#playerView #playerInputRow p {
-    margin-left: 10px;
-}
-
 #playerView a {
     display: inline-block;
     text-decoration: none;
     background-color: #a5c3ca;
     color: #2d3e40;
-    padding: 12px 10px;
+    padding: 10px;
     border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
+    font-size: 1.2rem;
     text-align: center;
     transition: background 0.3s;
     opacity: 0.9;
+    width: 7em;
 }
 
 #playerView a:hover {
     background-color: #0056b3;
+}
+
+#playerView #playerIdRow {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 0 auto;
+}
+
+#playerView #playerIdRow .playerName {
+    margin-left: 5px;
 }
 
 /* Style the tournament details */
