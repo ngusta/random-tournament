@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 
 const GoogleSheets = ({ setImportedPlayers, showLoadingSpinner }) => {
     const [sheetId, setSheetId] = useState('1uci8khgGfqnpKtkyQ4mSYIroeHmXfZd8ColINEwyP2I');
-    const [sheetRange, setSheetRange] = useState("'test'!A2:G");
+    const [sheetRange, setSheetRange] = useState("'test'!A2:H");
     const [error, setError] = useState(null);
 
     const handleImportData = (e) => {
@@ -17,12 +17,12 @@ const GoogleSheets = ({ setImportedPlayers, showLoadingSpinner }) => {
                     const playerData = data.values.map(player => {
                         if (player.length === 4 || player.length === 7) {
                             return {
-                                id: player[0],
-                                name: player[1] + ' ' + player[2],
-                                gender: player[3] === 'Tjej' || player[3] === 'W' ? 'W' : 'M',
-                                wins: player[4] ? Number(player[4]) : 0,
-                                losses: player[5] ? Number(player[5]) : 0,
-                                draws: player[6] ? Number(player[6]) : 0
+                                active: player[0] !== "No" && player[0] !== "Nej" && player[0] !== false && player[0] !== "N",
+                                id: player[1],
+                                name: player[2] + ' ' + player[3],
+                                gender: player[4] === 'Tjej' || player[4] === 'W' ? 'W' : 'M',
+                                wins: player[5] ? Number(player[5]) : 0,
+                                losses: player[6] ? Number(player[6]) : 0
                             };
                         }
                         return null;
@@ -50,7 +50,7 @@ const GoogleSheets = ({ setImportedPlayers, showLoadingSpinner }) => {
             <label>
                 <span>Player Range:</span>
                 <input type="text" value={sheetRange} onChange={(e) => setSheetRange(e.target.value)}/>
-                <span className="labelDetails">Sheet with seven columns in this order: Player number, First name, Last name, Gender (Tjej|Kille|W|M), Wins, Losses, Draws. <br />The sheet needs "Anyone with the link can view" access.</span>
+                <span className="labelDetails">Sheet with seven columns in this order: Active (Yes|No), Player number, First name, Last name, Gender (Tjej|Kille|W|M), Wins, Losses. <br />The sheet needs "Anyone with the link can view" access.</span>
             </label>
             {error && <p>{error}</p>}
             <button onClick={handleImportData}>Import Data</button>

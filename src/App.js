@@ -274,6 +274,7 @@ class App extends React.Component {
         this.setState({importedPlayers: importedPlayers});
         ls.set("importedPlayers", importedPlayers);
         const playerStats = ls.get("playerStats") || [];
+        const newAvailablePlayers  = this.state.availablePlayers;
         Object.keys(importedPlayers).forEach(player => {
             if (!playerStats[player]) {
                 playerStats[player] = App.emptyPlayerStats(player);
@@ -281,8 +282,9 @@ class App extends React.Component {
             playerStats[player].name = importedPlayers[player].name;
             playerStats[player].wins = importedPlayers[player].wins;
             playerStats[player].losses = importedPlayers[player].losses;
-            playerStats[player].draws = importedPlayers[player].draws;
+            newAvailablePlayers[player] = importedPlayers[player].active;
         });
+        this.setState({availablePlayers: newAvailablePlayers});
         if (this.state.playerViewEnabled) {
             this.savePlayerDataToCloud(importedPlayers, playerStats);
         }
@@ -373,13 +375,6 @@ class App extends React.Component {
         return 0;
     }
 
-    static getDraws(importedPlayers, player) {
-        if (importedPlayers && importedPlayers[player] && importedPlayers[player].draws) {
-            return importedPlayers[player].draws;
-        }
-        return 0;
-    }
-
     static emptyPlayerStats(player) {
         return {
             id: player,
@@ -393,7 +388,6 @@ class App extends React.Component {
             name: "Player " + player,
             wins: 0,
             losses: 0,
-            draws: 0,
             results: {}
         }
     }

@@ -26,6 +26,7 @@ input {
     align-items: center;
     justify-content: space-evenly;
     width: 100%;
+    max-width: 50em;
 }
 
 #playerView #playerInput {

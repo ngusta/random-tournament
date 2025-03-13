@@ -11,8 +11,7 @@ class Stats extends React.Component {
     noMatches(player) {
         return player &&
             (isNaN(player.wins) ? 0 : player.wins) +
-            (isNaN(player.losses) ? 0 : player.losses) +
-            (isNaN(player.draws) ? 0 : player.draws);
+            (isNaN(player.losses) ? 0 : player.losses)
     }
 
     render() {
@@ -25,7 +24,6 @@ class Stats extends React.Component {
                 <td>{this.noMatches(playerStats[index + 1])}</td>
                 <td>{playerStats[index + 1] && playerStats[index + 1].wins}</td>
                 <td>{playerStats[index + 1] && playerStats[index + 1].losses}</td>
-                <td>{playerStats[index + 1] && playerStats[index + 1].draws}</td>
                 <td>{playerStats[index + 1] && playerStats[index + 1].playedMatches}</td>
                 <td>{playerStats[index + 1] && new Set(playerStats[index + 1].partners).size}</td>
                 <td>{playerStats[index + 1] && new Set(playerStats[index + 1].opponents).size}</td>
@@ -47,7 +45,6 @@ class Stats extends React.Component {
                         <th title="Total matches">M</th>
                         <th title="Wins">W</th>
                         <th title="Losses">L</th>
-                        <th title="Draws">D</th>
                         <th title="Matches played">m</th>
                         <th title="Number of different partners">p</th>
                         <th title="Number of different opponents">o</th>
