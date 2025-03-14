@@ -37,7 +37,8 @@ class App extends React.Component {
             paradisePlayersPerCourt: ls.get("paradisePlayersPerCourt") === null ? 5 : ls.get("paradisePlayersPerCourt"),
             playerStats: ls.get("playerStats") === null ? null : ls.get("playerStats"),
             playerViewEnabled: ls.get("playerViewEnabled") === null ? false : ls.get("playerViewEnabled"),
-            updateStatsIntervalId: ls.get("playerViewEnabled") ? setInterval(this.updatePlayerStats, 5000) : null
+            updateStatsIntervalId: ls.get("playerViewEnabled") ? setInterval(this.updatePlayerStats, 5000) : null,
+            noOnLeaderboard: ls.get("noOnLeaderboard") === null ? 20 : ls.get("noOnLeaderboard")
         };
         setTimeout(() => {
             clearInterval(this.state.updateStatsIntervalId);
@@ -274,14 +275,17 @@ class App extends React.Component {
         this.setState({importedPlayers: importedPlayers});
         ls.set("importedPlayers", importedPlayers);
         const playerStats = ls.get("playerStats") || [];
-        const newAvailablePlayers  = this.state.availablePlayers;
+        const newAvailablePlayers  = [...this.state.availablePlayers];
         Object.keys(importedPlayers).forEach(player => {
-            if (!playerStats[player]) {
-                playerStats[player] = App.emptyPlayerStats(player);
+            const playerNumber = importedPlayers[player].id;
+            if (!playerStats[playerNumber]) {
+                playerStats[playerNumber] = App.emptyPlayerStats(playerNumber);
             }
-            playerStats[player].name = importedPlayers[player].name;
-            playerStats[player].wins = importedPlayers[player].wins;
-            playerStats[player].losses = importedPlayers[player].losses;
+            playerStats[playerNumber].name = importedPlayers[player].name;
+            playerStats[playerNumber].displayName = importedPlayers[player].displayName;
+            playerStats[playerNumber].wins = importedPlayers[player].wins;
+            playerStats[playerNumber].losses = importedPlayers[player].losses;
+
             newAvailablePlayers[player] = importedPlayers[player].active;
         });
         this.setState({availablePlayers: newAvailablePlayers});
@@ -289,8 +293,29 @@ class App extends React.Component {
             this.savePlayerDataToCloud(importedPlayers, playerStats);
         }
         ls.set("playerStats", playerStats);
+        ls.set("availablePlayers", newAvailablePlayers);
         ls.set("updatePresentation", true);
     };
+
+    updateImportedPlayers = (importedPlayers) => {
+        const newImportedPlayers = [...this.state.importedPlayers];
+        const playerStats = ls.get("playerStats") || [];
+        Object.keys(importedPlayers).forEach(player => {
+            const playerNumber = importedPlayers[player].id;
+            if (!playerStats[playerNumber]) {
+                playerStats[playerNumber] = App.emptyPlayerStats(playerNumber);
+            }
+            playerStats[playerNumber].displayName = importedPlayers[player].displayName;
+            newImportedPlayers[player].displayName = importedPlayers[player].displayName;
+        });
+        if (this.state.playerViewEnabled) {
+            this.savePlayerDataToCloud(newImportedPlayers, playerStats);
+        }
+        this.setState({importedPlayers: newImportedPlayers});
+        ls.set("importedPlayers", newImportedPlayers);
+        ls.set("playerStats", playerStats);
+        ls.set("updatePresentation", true);
+    }
 
     savePlayerDataToCloud(importedPlayers) {
         const playerWithNames = Object.values(importedPlayers).map(player => ({
@@ -386,6 +411,7 @@ class App extends React.Component {
             mixedTeams: 0,
             paradiseMixedDiff: 0,
             name: "Player " + player,
+            displayName: "Player " + player,
             wins: 0,
             losses: 0,
             results: {}
@@ -448,6 +474,7 @@ class App extends React.Component {
                               courtsToUse={this.state.courtsToUse}
                               onCourtsToUseChange={this.onCourtsToUseChange}
                               setImportedPlayers={this.setImportedPlayers}
+                              updateImportedPlayers={this.updateImportedPlayers}
                               importedPlayers={this.state.importedPlayers}
                               lastRoundCreationDate={this.state.lastRoundCreationDate}
                               secondLastRoundCreationDate={this.state.secondLastRoundCreationDate}
@@ -461,6 +488,7 @@ class App extends React.Component {
                               tournamentId={ls.get("tournamentId")}
                               playerStats={this.state.playerStats}
                               showLoadingSpinner={this.showLoadingSpinner}
+                              noOnLeaderboard={this.state.noOnLeaderboard}
                     />
                     <ul className="clear">
                         {errors}

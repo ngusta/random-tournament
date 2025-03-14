@@ -82,6 +82,16 @@ class Settings extends React.Component {
         this.props.onSettingChange("paradisePlayersPerCourt", this.props.paradisePlayersPerCourt - 1);
     };
 
+    addLeaderboardPlayer = (e) => {
+        e.preventDefault();
+        this.props.onSettingChange("noOnLeaderboard", this.props.noOnLeaderboard + 1);
+    };
+
+    removeLeaderboardPlayer = (e) => {
+        e.preventDefault();
+        this.props.onSettingChange("noOnLeaderboard", this.props.noOnLeaderboard - 1);
+    };
+
     handleSubmit = (e) => {
         this.props.onSubmit();
         e.preventDefault();
@@ -188,7 +198,7 @@ class Settings extends React.Component {
                         <div className="col">
                             <fieldset className="googleImport">
                                 <legend>Import player data</legend>
-                                <GoogleSheets setImportedPlayers={this.props.setImportedPlayers} showLoadingSpinner={this.props.showLoadingSpinner}/>
+                                <GoogleSheets setImportedPlayers={this.props.setImportedPlayers} updateImportedPlayers={this.props.updateImportedPlayers} showLoadingSpinner={this.props.showLoadingSpinner}/>
                             </fieldset>
                             <fieldset className="tournamentSettings">
                                 <legend>Tournament settings</legend>
@@ -351,6 +361,15 @@ class Settings extends React.Component {
                                         </div>
                                     }
                                 </div>
+
+                                <label>
+                                    <span>Number of players on leaderboard</span>
+                                    <input type="text" name="noOnLeaderboard"
+                                           value={this.props.noOnLeaderboard}
+                                           onChange={this.handleChange}/>
+                                    <button onClick={e => this.removeLeaderboardPlayer(e)}>-</button>
+                                    <button onClick={e => this.addLeaderboardPlayer(e)}>+</button>
+                                </label>
                                 <Link to="/presentation" target="_blank">Open Presentation</Link><br/>
                                 <Link to="/leaderboard" target="_blank">Open Leaderboard</Link>
                             </fieldset>

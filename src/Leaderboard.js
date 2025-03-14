@@ -1,96 +1,73 @@
-import React, {useEffect, useState} from 'react';
-import './Leaderboard.css';
-import ls from 'local-storage';
+import React, { useEffect, useState } from "react";
+import "./Leaderboard.css";
+import ls from "local-storage";
 
 const Leaderboard = () => {
-    const [playerStats, setPlayerStats] = useState(ls.get("playerStats"));
+    const [playerStats, setPlayerStats] = useState(ls.get("playerStats") || {});
+    const [noOnLeaderboard, setNoOnLeaderBoard] = useState(ls.get("noOnLeaderboard") || 20);
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setPlayerStats(ls.get("playerStats"));
+            setPlayerStats(ls.get("playerStats") || {});
+            setNoOnLeaderBoard(ls.get("noOnLeaderboard") || 20);
         }, 1000);
 
         return () => clearInterval(interval);
     }, []);
 
-    const sortedPlayers = playerStats ? Object.values(playerStats).filter(p => p !== null).sort((a, b) => {
-        if (a.wins !== b.wins) {
-            return b.wins - a.wins;
-        }
-        return a.losses - b.losses;
-    }) : [];
+    const sortedPlayers = Object.values(playerStats)
+        .filter((p) => p !== null)
+        .sort((a, b) => (b.wins !== a.wins ? b.wins - a.wins : a.losses - b.losses))
+        .slice(0, noOnLeaderboard);
 
     let rank = 1;
     let previousWins = null;
 
-    const playerTableRows = sortedPlayers.slice(0, 20).map((player, index) => {
-        if (previousWins !== null && player.wins !== previousWins) {
-            rank = index + 1;
-        }
+    const generateTableRows = (players, startRank) => {
+        return players.map((player, index) => {
+            if (previousWins !== null && player.wins !== previousWins) {
+                rank = startRank + index;
+            }
 
-        previousWins = player.wins;
+            previousWins = player.wins;
 
-        return (
-            <tr key={player.id || index}>
-                <td className="numeric">{rank}</td>
-                <td>{player.name ? player.name : player.id}</td>
-                <td className="numeric">{player.wins + player.losses}</td>
-                <td className="numeric">{player.wins}</td>
-            </tr>
+            return (
+                <tr key={player.id || startRank + index}>
+                    <td className="numeric">{rank}</td>
+                    <td>{player.displayName || player.id}</td>
+                    <td className="numeric">{player.playedMatches}</td>
+                    <td className="numeric">{player.wins}</td>
+                </tr>
+            );
+        });
+    };
+
+    const tables = [];
+    for (let i = 0; i < sortedPlayers.length; i += 20) {
+        const tableRows = generateTableRows(sortedPlayers.slice(i, i + 20), i + 1);
+        tables.push(
+            <table key={i}>
+                <thead>
+                <tr>
+                    <th title="Rank">Rank</th>
+                    <th title="Name">Name</th>
+                    <th title="Rounds">Rounds</th>
+                    <th title="Wins">Wins</th>
+                </tr>
+                </thead>
+                <tbody>{tableRows}</tbody>
+            </table>
         );
-    });
-    const playerTableRows2 = sortedPlayers.slice(20, 40).map((player, index) => {
-        if (previousWins !== null && player.wins !== previousWins) {
-            rank = 20 + index + 1;
-        }
-
-        previousWins = player.wins;
-
-        return (
-            <tr key={player.id || index}>
-                <td className="numeric">{rank}</td>
-                <td>{player.name ? player.name : player.id}</td>
-                <td className="numeric">{player.wins + player.losses}</td>
-                <td className="numeric">{player.wins}</td>
-            </tr>
-        );
-    });
+    }
 
     return (
         <div id="leaderboard">
             <div>
                 <h1>Leaderboard</h1>
-                <div className="leaderboard-tables">
-                <table>
-                    <thead>
-                    <tr>
-                        <th title="Rank">Rank</th>
-                        <th title="Name">Name</th>
-                        <th title="Rounds">Rounds</th>
-                        <th title="Wins">Wins</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {playerTableRows}
-                    </tbody>
-                </table>
-                <table>
-                    <thead>
-                    <tr>
-                        <th title="Rank">Rank</th>
-                        <th title="Name">Name</th>
-                        <th title="Rounds">Rounds</th>
-                        <th title="Wins">Wins</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {playerTableRows2}
-                    </tbody>
-                </table>
-                </div>
+                <div className="leaderboard-tables">{tables}</div>
             </div>
         </div>
     );
-}
+};
 
 export default Leaderboard;

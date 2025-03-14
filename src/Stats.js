@@ -20,7 +20,7 @@ class Stats extends React.Component {
         const players = this.props.players.map((playing, index) =>
             <tr key={index}>
                 <td>{index + 1}</td>
-                <td>{importedPlayers[index + 1] && importedPlayers[index + 1].name}</td>
+                <td>{importedPlayers[index] && importedPlayers[index].name}</td>
                 <td>{this.noMatches(playerStats[index + 1])}</td>
                 <td>{playerStats[index + 1] && playerStats[index + 1].wins}</td>
                 <td>{playerStats[index + 1] && playerStats[index + 1].losses}</td>
