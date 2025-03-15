@@ -19,6 +19,7 @@ const GoogleSheets = ({setImportedPlayers, updateImportedPlayers, showLoadingSpi
                 if (data.values && data.values.length > 0) {
                     const playerData = data.values.map(player => {
                         if (player.length === NUMBER_OF_COLUMNS) {
+                            //Keep same as Settings.emptyImportedPlayer
                             return {
                                 active: player[0] !== "No" && player[0] !== "Nej" && player[0] !== false && player[0] !== "N",
                                 id: player[1],

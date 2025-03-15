@@ -28,7 +28,7 @@ class App extends React.Component {
             showTenCourts: ls.get("showTenCourts") || false,
             hideUnusedCourts: ls.get("hideUnusedCourts") || false,
             courtsToUse: ls.get("courtsToUse") || [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-            importedPlayers: ls.get("importedPlayers") || [],
+            importedPlayers: ls.get("importedPlayers") || {},
             lastRoundCreationDate: ls.get("lastRoundCreationDate") || null,
             secondLastRoundCreationDate: ls.get("secondLastRoundCreationDate") || null,
             showLoadingSpinner: false,
@@ -271,42 +271,64 @@ class App extends React.Component {
         }
     };
 
-    setImportedPlayers = (importedPlayers) => {
-        this.setState({importedPlayers: importedPlayers});
-        ls.set("importedPlayers", importedPlayers);
+    setImportedPlayers = (importedPlayerData) => {
+        const importedPlayers = {};
         const playerStats = ls.get("playerStats") || [];
-        const newAvailablePlayers  = [...this.state.availablePlayers];
-        Object.keys(importedPlayers).forEach(player => {
-            const playerNumber = importedPlayers[player].id;
+        const newAvailablePlayers = [...this.state.availablePlayers];
+        Object.keys(importedPlayerData).forEach(index => {
+            const playerNumber = importedPlayerData[index].id;
+            const playerIndex = playerNumber - 1;
             if (!playerStats[playerNumber]) {
                 playerStats[playerNumber] = App.emptyPlayerStats(playerNumber);
             }
-            playerStats[playerNumber].name = importedPlayers[player].name;
-            playerStats[playerNumber].displayName = importedPlayers[player].displayName;
-            playerStats[playerNumber].wins = importedPlayers[player].wins;
-            playerStats[playerNumber].losses = importedPlayers[player].losses;
+            playerStats[playerNumber].name = importedPlayerData[index].name;
+            playerStats[playerNumber].displayName = importedPlayerData[index].displayName;
+            playerStats[playerNumber].wins = importedPlayerData[index].wins;
+            playerStats[playerNumber].losses = importedPlayerData[index].losses;
 
-            newAvailablePlayers[player] = importedPlayers[player].active;
+            newAvailablePlayers[playerIndex] = importedPlayerData[index].active;
+            importedPlayers[playerNumber] = importedPlayerData[index];
         });
         this.setState({availablePlayers: newAvailablePlayers});
         if (this.state.playerViewEnabled) {
-            this.savePlayerDataToCloud(importedPlayers, playerStats);
+            this.savePlayerDataToCloud(importedPlayers);
         }
+        this.setState({importedPlayers: importedPlayers});
+        ls.set("importedPlayers", importedPlayers);
         ls.set("playerStats", playerStats);
         ls.set("availablePlayers", newAvailablePlayers);
         ls.set("updatePresentation", true);
     };
 
+    updateGender = (playerNumber, newGender) => {
+        const newImportedPlayers = Object.assign({}, this.state.importedPlayers);
+        if (newImportedPlayers[playerNumber]) {
+            newImportedPlayers[playerNumber].gender = newGender;
+        } else {
+            newImportedPlayers[playerNumber] = {
+                active: null,
+                id: playerNumber,
+                name: null,
+                displayName: null,
+                gender: newGender,
+                wins: null,
+                losses: null
+            };
+        }
+        this.setState({importedPlayers: newImportedPlayers});
+        ls.set("importedPlayers", newImportedPlayers);
+    }
+
     updateImportedPlayers = (importedPlayers) => {
-        const newImportedPlayers = [...this.state.importedPlayers];
+        const newImportedPlayers = Object.assign({}, this.state.importedPlayers);
         const playerStats = ls.get("playerStats") || [];
-        Object.keys(importedPlayers).forEach(player => {
-            const playerNumber = importedPlayers[player].id;
+        Object.keys(importedPlayers).forEach(index => {
+            const playerNumber = importedPlayers[index].id;
             if (!playerStats[playerNumber]) {
                 playerStats[playerNumber] = App.emptyPlayerStats(playerNumber);
             }
-            playerStats[playerNumber].displayName = importedPlayers[player].displayName;
-            newImportedPlayers[player].displayName = importedPlayers[player].displayName;
+            playerStats[playerNumber].displayName = importedPlayers[index].displayName;
+            newImportedPlayers[playerNumber].displayName = importedPlayers[index].displayName;
         });
         if (this.state.playerViewEnabled) {
             this.savePlayerDataToCloud(newImportedPlayers, playerStats);
@@ -319,8 +341,9 @@ class App extends React.Component {
 
     savePlayerDataToCloud(importedPlayers) {
         const playerWithNames = Object.values(importedPlayers).map(player => ({
-            playerId: player.id,
-            name: player.name
+            playerId: String(player.id),
+            name: player.name,
+            displayName: player.displayName
         }));
         savePlayers(ls.get("tournamentId"), playerWithNames);
     }
@@ -476,6 +499,7 @@ class App extends React.Component {
                               setImportedPlayers={this.setImportedPlayers}
                               updateImportedPlayers={this.updateImportedPlayers}
                               importedPlayers={this.state.importedPlayers}
+                              updateGender={this.updateGender}
                               lastRoundCreationDate={this.state.lastRoundCreationDate}
                               secondLastRoundCreationDate={this.state.secondLastRoundCreationDate}
                               showExampleRound={this.state.showExampleRound}

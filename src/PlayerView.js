@@ -97,7 +97,7 @@ const PlayerView = () => {
                 }
             }
             setAllPlayerRounds(playerRounds);
-            setPlayerName((cloudPlayer && cloudPlayer.name) ? cloudPlayer.name : "");
+            setPlayerName((cloudPlayer && cloudPlayer.displayName) ? cloudPlayer.displayName : "");
         }
     };
 
@@ -218,9 +218,9 @@ const PlayerView = () => {
                     {allPlayerRounds && (
                         <>
                             <h2 id="playerResults">Player results</h2>
-                            <p id="explanation">Click the <span class="circle neutral">?</span> next to the round until
-                                you get <span class="circle win">W</span> for Win
-                                or <span class="circle lose">L</span> if you lost.</p>
+                            <p id="explanation">Click the <span className="circle neutral">?</span> next to the round until
+                                you get <span className="circle win">W</span> for Win
+                                or <span className="circle lose">L</span> if you lost.</p>
                             <ul id="allRounds">
                                 {Object.entries(allPlayerRounds)
                                     .sort(([roundIndexA], [roundIndexB]) => parseInt(roundIndexB) - parseInt(roundIndexA))
