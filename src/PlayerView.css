@@ -40,24 +40,6 @@ input {
     text-align: center;
 }
 
-#playerView a {
-    display: inline-block;
-    text-decoration: none;
-    background-color: #a5c3ca;
-    color: #2d3e40;
-    padding: 10px;
-    border-radius: 8px;
-    font-size: 1.2rem;
-    text-align: center;
-    transition: background 0.3s;
-    opacity: 0.9;
-    width: 7em;
-}
-
-#playerView a:hover {
-    background-color: #0056b3;
-}
-
 #playerView #playerIdRow {
     display: flex;
     flex-direction: row;

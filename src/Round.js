@@ -310,7 +310,7 @@ class Round extends React.Component {
                     if (Round.isWoman(importedPlayers, player)) {
                         noWomenInTeam++;
                     }
-                    wins = [...wins, Round.getWins(importedPlayers, player)];
+                    wins = [...wins, Round.getWins(playerStats, player)];
                 }
 
                 totalMenOnCourt += noMenInTeam;
@@ -370,14 +370,14 @@ class Round extends React.Component {
             }
 
             let diffInWinsPoints = (Math.max(...wins) - Math.min(...wins)) * 5;
-            //console.log("Win points: " + diffInWinsPoints + " Points before: " + points);
+            console.log("Win points: " + diffInWinsPoints + " Points before: " + points);
             points += diffInWinsPoints * diffInWinsPoints;
             //Add win points to all players on court
             const mean = wins.reduce((sum, value) => sum + value, 0) / wins.length;
             for (let t = 0; t < round[c].length; t++) {
                 for (let p = 0; p < round[c][t].length; p++) {
                     const player = round[c][t][p];
-                    allPlayerPoints[player] += Math.abs(Round.getWins(importedPlayers, player) - mean) * 5;
+                    allPlayerPoints[player] += Math.abs(Round.getWins(playerStats, player) - mean) * 5;
                 }
             }
         }
@@ -399,11 +399,8 @@ class Round extends React.Component {
         return "M";
     }
 
-    static getWins(importedPlayers, player) {
-        if (importedPlayers && importedPlayers[player] && importedPlayers[player].wins) {
-            return importedPlayers[player].wins;
-        }
-        return 0;
+    static getWins(playerStats, player) {
+        return playerStats[player] ? playerStats[player].wins : 0;
     }
 
     static countOccurences(item, list) {

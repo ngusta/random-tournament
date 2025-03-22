@@ -181,7 +181,6 @@ const PlayerView = () => {
                             onChange={handlePlayerChange}
                             placeholder="Your Number"
                         />
-                        <a href="#playerResults">Report results</a>
                     </div>
                     <p id="playerIdRow">
                         <span className={`player color${player % 10}`}>{player}</span>

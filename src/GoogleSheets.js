@@ -4,7 +4,7 @@ const GoogleSheets = ({setImportedPlayers, updateImportedPlayers, showLoadingSpi
     const [sheetId, setSheetId] = useState('1uci8khgGfqnpKtkyQ4mSYIroeHmXfZd8ColINEwyP2I');
     const [sheetRange, setSheetRange] = useState("'test'!A2:H");
     const [error, setError] = useState(null);
-    const NUMBER_OF_COLUMNS = 8;
+    const NUMBER_OF_COLUMNS = 6;
     const IMPORT_ALL = 1;
     const IMPORT_UPDATE_ONLY = 2;
 
@@ -26,8 +26,6 @@ const GoogleSheets = ({setImportedPlayers, updateImportedPlayers, showLoadingSpi
                                 name: player[2] + ' ' + player[3],
                                 displayName: player[4] ? player[4] : player[2] + ' ' + player[3],
                                 gender: player[5] === 'Tjej' || player[5] === 'W' ? 'W' : 'M',
-                                wins: player[6] ? Number(player[6]) : 0,
-                                losses: player[7] ? Number(player[7]) : 0
                             };
                         } else {
                             console.error(`Wrong number of columns in sheet. Expected ${NUMBER_OF_COLUMNS}, was: ${player.length}`);
@@ -41,6 +39,9 @@ const GoogleSheets = ({setImportedPlayers, updateImportedPlayers, showLoadingSpi
                             break;
                         case IMPORT_UPDATE_ONLY:
                             updateImportedPlayers(playerData);
+                            break;
+                        default:
+                            console.error("Invalid import type");
                             break;
                     }
                 }
@@ -58,13 +59,13 @@ const GoogleSheets = ({setImportedPlayers, updateImportedPlayers, showLoadingSpi
             <label>
                 <span>Google Sheet ID:</span>
                 <input type="text" value={sheetId} onChange={(e) => setSheetId(e.target.value)}/>
-                <span className="labelDetails">https://docs.google.com/spreadsheets/d/<span
-                    className="highlight">1uci8khgGfqnpKtkyQ4mSYIroeHmXfZd8ColINEwyP2I</span>/edit#gid=0</span>
+                <span className="labelDetails">Reference: <a rel="noreferrer" target="_blank" href="https://docs.google.com/spreadsheets/d/1uci8khgGfqnpKtkyQ4mSYIroeHmXfZd8ColINEwyP2I/edit#gid=0">https://docs.google.com/spreadsheets/d/<span
+                    className="highlight">1uci8khgGfqnpKtkyQ4mSYIroeHmXfZd8ColINEwyP2I</span>/edit#gid=0</a></span>
             </label>
             <label>
                 <span>Player Range:</span>
                 <input type="text" value={sheetRange} onChange={(e) => setSheetRange(e.target.value)}/>
-                <span className="labelDetails">Sheet with {NUMBER_OF_COLUMNS} columns in this order: Active (Yes|No), Player number, First name, Last name, Display Name, Gender (Tjej|Kille|W|M), Wins, Losses. <br/>The sheet needs "Anyone with the link can view" access.</span>
+                <span className="labelDetails">Sheet with {NUMBER_OF_COLUMNS} columns in this order: Active (Yes|No), Player number, First name, Last name, Display Name, Gender (Tjej|Kille|W|M). <br/>The sheet needs "Anyone with the link can view" access.</span>
             </label>
             {error && <p>{error}</p>}
             <button onClick={(event) => handleImportData(event, IMPORT_ALL)}>Import All Data</button>

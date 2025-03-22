@@ -283,8 +283,6 @@ class App extends React.Component {
             }
             playerStats[playerNumber].name = importedPlayerData[index].name;
             playerStats[playerNumber].displayName = importedPlayerData[index].displayName;
-            playerStats[playerNumber].wins = importedPlayerData[index].wins;
-            playerStats[playerNumber].losses = importedPlayerData[index].losses;
 
             newAvailablePlayers[playerIndex] = importedPlayerData[index].active;
             importedPlayers[playerNumber] = importedPlayerData[index];
@@ -311,8 +309,6 @@ class App extends React.Component {
                 name: null,
                 displayName: null,
                 gender: newGender,
-                wins: null,
-                losses: null
             };
         }
         this.setState({importedPlayers: newImportedPlayers});
@@ -407,20 +403,6 @@ class App extends React.Component {
 
         await savePlayer(ls.get("tournamentId"), playerId, newPlayer);
         this.updatePlayerStats();
-    }
-
-    static getWins(importedPlayers, player) {
-        if (importedPlayers && importedPlayers[player] && importedPlayers[player].wins) {
-            return importedPlayers[player].wins;
-        }
-        return 0;
-    }
-
-    static getLosses(importedPlayers, player) {
-        if (importedPlayers && importedPlayers[player] && importedPlayers[player].losses) {
-            return importedPlayers[player].losses;
-        }
-        return 0;
     }
 
     static emptyPlayerStats(player) {
