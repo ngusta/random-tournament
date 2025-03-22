@@ -9,7 +9,7 @@ import App from "./App";
 class Round extends React.Component {
 
     static createRound(allAvailablePlayers, noCourts, teamsPerCourt, playersPerTeam, useAllPlayers,
-                       onError, dryRun, earlierRounds, importedPlayers, paradiseMode, paradisePlayersPerCourt) {
+                       onError, dryRun, earlierRounds, importedPlayers, paradiseMode, paradisePlayersPerCourt, paradisePlayersPerRound) {
         const startTime = performance.now();
 
         const lastPlayerInRounds = ls.get("lastPlayerInRounds") ? ls.get("lastPlayerInRounds") : [];
@@ -18,10 +18,11 @@ class Round extends React.Component {
 
         if (!useAllPlayers) {
             let useableCourts = noCourts;
-            while (players.length < (useableCourts * 2 * playersPerTeam)) {
+            const maxNoOfPlayers = paradiseMode ? Math.min(players.length, paradisePlayersPerRound) : players.length;
+            while (maxNoOfPlayers < (useableCourts * 2 * playersPerTeam)) {
                 useableCourts--;
             }
-            players.splice(useableCourts * (paradiseMode ? paradisePlayersPerCourt : teamsPerCourt * playersPerTeam));
+            players.splice(Math.min(maxNoOfPlayers, useableCourts * (paradiseMode ? paradisePlayersPerCourt : teamsPerCourt * playersPerTeam)));
         }
 
         if (!dryRun) {
@@ -29,7 +30,7 @@ class Round extends React.Component {
             ls.set("lastPlayerInRounds", lastPlayerInRounds);
         }
 
-        const error = Round.validateInput(players, noCourts, teamsPerCourt, playersPerTeam, paradiseMode, paradisePlayersPerCourt);
+        const error = Round.validateInput(players, noCourts, teamsPerCourt, playersPerTeam, paradiseMode, paradisePlayersPerCourt, paradisePlayersPerRound);
         if (error) {
             onError(error);
             return;
@@ -145,7 +146,7 @@ class Round extends React.Component {
         return Math.floor(Math.random() * maxNumber);
     }
 
-    static validateInput(players, noCourts, teamsPerCourt, playersPerTeam, paradiseMode, paradisePlayersPerCourt) {
+    static validateInput(players, noCourts, teamsPerCourt, playersPerTeam, paradiseMode, paradisePlayersPerCourt, paradisePlayersPerRound) {
         if (players.length < 4) {
             return "noPlayers - Min: 4, Was: " + players.length;
         }
@@ -157,6 +158,9 @@ class Round extends React.Component {
         if (paradiseMode) {
             if (paradisePlayersPerCourt < 4 || paradisePlayersPerCourt > 12) {
                 return "paradisePlayersPerCourt - Min: 4, Max: 12, Was: " + paradisePlayersPerCourt;
+            }
+            if (paradisePlayersPerRound < 4) {
+                return "paradisePlayersPerCourt - Min: 4, Was: " + paradisePlayersPerRound;
             }
         } else {
             if (teamsPerCourt < 2 || teamsPerCourt > 4) {
@@ -370,7 +374,7 @@ class Round extends React.Component {
             }
 
             let diffInWinsPoints = (Math.max(...wins) - Math.min(...wins)) * 5;
-            console.log("Win points: " + diffInWinsPoints + " Points before: " + points);
+            //console.log("Win points: " + diffInWinsPoints + " Points before: " + points);
             points += diffInWinsPoints * diffInWinsPoints;
             //Add win points to all players on court
             const mean = wins.reduce((sum, value) => sum + value, 0) / wins.length;

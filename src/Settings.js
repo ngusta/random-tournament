@@ -82,6 +82,16 @@ class Settings extends React.Component {
         this.props.onSettingChange("paradisePlayersPerCourt", this.props.paradisePlayersPerCourt - 1);
     };
 
+    addParadisePlayersPerRound = (e) => {
+        e.preventDefault();
+        this.props.onSettingChange("paradisePlayersPerRound", this.props.paradisePlayersPerRound + 1);
+    };
+
+    removeParadisePlayersPerRound = (e) => {
+        e.preventDefault();
+        this.props.onSettingChange("paradisePlayersPerRound", this.props.paradisePlayersPerRound - 1);
+    };
+
     addLeaderboardPlayer = (e) => {
         e.preventDefault();
         this.props.onSettingChange("noOnLeaderboard", this.props.noOnLeaderboard + 1);
@@ -101,7 +111,7 @@ class Settings extends React.Component {
         if (this.state.editGender) {
             const importedPlayers = Object.assign({}, this.props.importedPlayers);
             const playerId = String(Number(e.target.name) + 1);
-            const newGender = playerId in importedPlayers ? (Round.isMan(importedPlayers, playerId) ? "W" : "M"): "W";
+            const newGender = playerId in importedPlayers ? (Round.isMan(importedPlayers, playerId) ? "W" : "M") : "W";
             this.props.updateGender(playerId, newGender);
         } else {
             const playersCopy = [...this.props.players];
@@ -190,7 +200,9 @@ class Settings extends React.Component {
                         <div className="col">
                             <fieldset className="googleImport">
                                 <legend>Import player data</legend>
-                                <GoogleSheets setImportedPlayers={this.props.setImportedPlayers} updateImportedPlayers={this.props.updateImportedPlayers} showLoadingSpinner={this.props.showLoadingSpinner}/>
+                                <GoogleSheets setImportedPlayers={this.props.setImportedPlayers}
+                                              updateImportedPlayers={this.props.updateImportedPlayers}
+                                              showLoadingSpinner={this.props.showLoadingSpinner}/>
                             </fieldset>
                             <fieldset className="tournamentSettings">
                                 <legend>Tournament settings</legend>
@@ -242,14 +254,24 @@ class Settings extends React.Component {
                                 }
 
                                 {!this.props.useAllPlayers && this.props.paradiseMode &&
-                                    <label>
-                                        <span>Max number of players per court</span>
-                                        <input type="text" name="paradisePlayersPerCourt"
-                                               value={this.props.paradisePlayersPerCourt === 0 ? "" : this.props.paradisePlayersPerCourt}
-                                               onChange={this.handleChange}/>
-                                        <button onClick={e => this.removeParadisePlayersPerCourt(e)}>-</button>
-                                        <button onClick={e => this.addParadisePlayersPerCourt(e)}>+</button>
-                                    </label>
+                                    <>
+                                        <label>
+                                            <span>Max number of players per round</span>
+                                            <input type="text" name="paradisePlayersPerRound"
+                                                   value={this.props.paradisePlayersPerRound === 0 ? "" : this.props.paradisePlayersPerRound}
+                                                   onChange={this.handleChange}/>
+                                            <button onClick={e => this.removeParadisePlayersPerRound(e)}>-</button>
+                                            <button onClick={e => this.addParadisePlayersPerRound(e)}>+</button>
+                                        </label>
+                                        <label>
+                                            <span>Max number of players per court</span>
+                                            <input type="text" name="paradisePlayersPerCourt"
+                                                   value={this.props.paradisePlayersPerCourt === 0 ? "" : this.props.paradisePlayersPerCourt}
+                                                   onChange={this.handleChange}/>
+                                            <button onClick={e => this.removeParadisePlayersPerCourt(e)}>-</button>
+                                            <button onClick={e => this.addParadisePlayersPerCourt(e)}>+</button>
+                                        </label>
+                                    </>
                                 }
                                 <label>Show example round
                                     <input type="checkbox" name="showExampleRound" checked={this.props.showExampleRound}
@@ -380,10 +402,13 @@ class Settings extends React.Component {
                                 {this.props.playerViewEnabled &&
                                     <>
                                         <span>Tournament id: {this.props.tournamentId}</span><br/>
-                                        <Link to={`/playerView/${this.props.tournamentId}`} target="_blank">Open PlayerView</Link> or scan this<br/>
-                                        <QRCodeCanvas value={`${baseUrl}/playerView/${this.props.tournamentId}`} size={100} /><br/>
+                                        <Link to={`/playerView/${this.props.tournamentId}`} target="_blank">Open
+                                            PlayerView</Link> or scan this<br/>
+                                        <QRCodeCanvas value={`${baseUrl}/playerView/${this.props.tournamentId}`}
+                                                      size={100}/><br/>
 
-                                        <Link to={`/playerViewPrint/${this.props.tournamentId}`} target="_blank">Printable Version</Link>
+                                        <Link to={`/playerViewPrint/${this.props.tournamentId}`} target="_blank">Printable
+                                            Version</Link>
                                     </>
                                 }
                             </fieldset>

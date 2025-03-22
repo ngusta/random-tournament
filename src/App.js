@@ -35,6 +35,7 @@ class App extends React.Component {
             showExampleRound: ls.get("showExampleRound") === null ? true : ls.get("showExampleRound"),
             paradiseMode: ls.get("paradiseMode") === null ? false : ls.get("paradiseMode"),
             paradisePlayersPerCourt: ls.get("paradisePlayersPerCourt") === null ? 5 : ls.get("paradisePlayersPerCourt"),
+            paradisePlayersPerRound: ls.get("paradisePlayersPerRound") === null ? 16 : ls.get("paradisePlayersPerRound"),
             playerStats: ls.get("playerStats") === null ? null : ls.get("playerStats"),
             playerViewEnabled: ls.get("playerViewEnabled") === null ? false : ls.get("playerViewEnabled"),
             updateStatsIntervalId: ls.get("playerViewEnabled") ? setInterval(this.updatePlayerStats, 5000) : null,
@@ -220,7 +221,8 @@ class App extends React.Component {
             this.state.rounds,
             this.state.importedPlayers,
             this.state.paradiseMode,
-            this.state.paradisePlayersPerCourt
+            this.state.paradisePlayersPerCourt,
+            this.state.paradisePlayersPerRound
         );
     }
 
@@ -237,7 +239,8 @@ class App extends React.Component {
             this.state.rounds,
             this.state.importedPlayers,
             this.state.paradiseMode,
-            this.state.paradisePlayersPerCourt
+            this.state.paradisePlayersPerCourt,
+            this.state.paradisePlayersPerRound
         );
     }
 
@@ -490,6 +493,7 @@ class App extends React.Component {
                               paradiseMode={this.state.paradiseMode}
                               onParadiseModeChange={this.onParadiseModeChange}
                               paradisePlayersPerCourt={this.state.paradisePlayersPerCourt}
+                              paradisePlayersPerRound={this.state.paradisePlayersPerRound}
                               playerViewEnabled={this.state.playerViewEnabled}
                               tournamentId={ls.get("tournamentId")}
                               playerStats={this.state.playerStats}
