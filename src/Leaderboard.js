@@ -16,7 +16,7 @@ const Leaderboard = () => {
     }, []);
 
     const sortedPlayers = Object.values(playerStats)
-        .filter((p) => p !== null)
+        .filter((p) => p !== null && p.wins > 0)
         .sort((a, b) => (b.wins !== a.wins ? b.wins - a.wins : a.losses - b.losses))
         .slice(0, noOnLeaderboard);
 
