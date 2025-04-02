@@ -118,10 +118,6 @@ body:has(#app) {
     float: right;
 }
 
-.createNewRound {
-    font-size: 1.3em;
-}
-
 #config button.clearData img {
     background-image: url('img/delete.png');
     width: 15px;
@@ -185,7 +181,7 @@ body:has(#app) {
 
 #config .googleImport label span {
     display: inline-block;
-    width: 8em;
+    width: 12em;
 }
 
 #config .googleImport label span.labelDetails {
@@ -217,3 +213,57 @@ body:has(#app) {
     margin-left: -100px;
     margin-top: -100px;
 }
+
+button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 0.8em;
+    margin: 5px 3px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button.clearData, button.createNewRound, button.import-button {
+    padding: 5px 10px;
+}
+
+.createNewRound {
+    font-size: 1em;
+}
+
+button:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+button:active {
+    background-color: #3e8e41;
+    transform: scale(0.95);
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.import-button {
+    background-color: #2196F3;
+}
+
+.import-button:hover {
+    background-color: #1976D2;
+}
+
+.clearData {
+    background-color: #f44336;
+}
+
+.clearData:hover {
+    background-color: #d32f2f;
+}
+

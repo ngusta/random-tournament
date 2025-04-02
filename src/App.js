@@ -173,14 +173,14 @@ class App extends React.Component {
         this.setState({showLoadingSpinner: show});
     }
 
-    draw = async () => {
+    draw = async (predefinedPlayers) => {
         this.setState({errors: [], showLoadingSpinner: true});
 
         setTimeout(async () => {
             try {
                 ls.set("errors", []);
 
-                const round = await this.createRound();
+                const round = predefinedPlayers ? await this.createPredefinedRound(predefinedPlayers) : await this.createRound();
                 if (round) {
                     const newRounds = [...this.state.rounds, round];
                     let pressIndex = this.state.presentationRoundIndex;
@@ -216,13 +216,15 @@ class App extends React.Component {
             this.state.teamsPerCourt,
             this.state.playersPerTeam,
             this.state.useAllPlayers,
-            this.logError,
+            (error) => {
+            },
             false,
             this.state.rounds,
             this.state.importedPlayers,
             this.state.paradiseMode,
             this.state.paradisePlayersPerCourt,
-            this.state.paradisePlayersPerRound
+            this.state.paradisePlayersPerRound,
+            false
         );
     }
 
@@ -240,7 +242,29 @@ class App extends React.Component {
             this.state.importedPlayers,
             this.state.paradiseMode,
             this.state.paradisePlayersPerCourt,
-            this.state.paradisePlayersPerRound
+            this.state.paradisePlayersPerRound,
+            false
+        );
+    }
+
+    async createPredefinedRound(predefinedPlayers) {
+        const allPlayers = predefinedPlayers.flat();
+        const noCourts = predefinedPlayers.length;
+        const paradisePlayersPerRound = allPlayers.length;
+        return Round.createRound(
+            allPlayers,
+            noCourts,
+            this.state.teamsPerCourt,
+            this.state.playersPerTeam,
+            false,
+            this.logError,
+            false,
+            this.state.rounds,
+            this.state.importedPlayers,
+            this.state.paradiseMode,
+            this.state.paradisePlayersPerCourt,
+            paradisePlayersPerRound,
+            true
         );
     }
 
@@ -336,6 +360,10 @@ class App extends React.Component {
         ls.set("importedPlayers", newImportedPlayers);
         ls.set("playerStats", playerStats);
         ls.set("updatePresentation", true);
+    }
+
+    importNextRound = (importedRound) => {
+        this.draw(importedRound);
     }
 
     savePlayerDataToCloud(importedPlayers) {
@@ -498,6 +526,7 @@ class App extends React.Component {
                               tournamentId={ls.get("tournamentId")}
                               playerStats={this.state.playerStats}
                               showLoadingSpinner={this.showLoadingSpinner}
+                              importNextRound={this.importNextRound}
                               noOnLeaderboard={this.state.noOnLeaderboard}
                     />
                     <ul className="clear">

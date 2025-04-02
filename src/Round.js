@@ -9,12 +9,12 @@ import App from "./App";
 class Round extends React.Component {
 
     static createRound(allAvailablePlayers, noCourts, teamsPerCourt, playersPerTeam, useAllPlayers,
-                       onError, dryRun, earlierRounds, importedPlayers, paradiseMode, paradisePlayersPerCourt, paradisePlayersPerRound) {
+                       onError, dryRun, earlierRounds, importedPlayers, paradiseMode, paradisePlayersPerCourt, paradisePlayersPerRound, predefinedRound) {
         const startTime = performance.now();
 
         const lastPlayerInRounds = ls.get("lastPlayerInRounds") ? ls.get("lastPlayerInRounds") : [];
         const lastPlayerInPreviousRound = lastPlayerInRounds.length > 0 ? lastPlayerInRounds[lastPlayerInRounds.length - 1] : 0;
-        let players = [...allAvailablePlayers.filter(player => player > lastPlayerInPreviousRound), ...allAvailablePlayers.filter(player => player <= lastPlayerInPreviousRound)];
+        let players = predefinedRound ? [...allAvailablePlayers] : [...allAvailablePlayers.filter(player => player > lastPlayerInPreviousRound), ...allAvailablePlayers.filter(player => player <= lastPlayerInPreviousRound)];
 
         if (!useAllPlayers) {
             let useableCourts = noCourts;
@@ -38,12 +38,12 @@ class Round extends React.Component {
 
         let bestRound = [];
         let bestPoints = Number.MAX_SAFE_INTEGER;
-        const noTries = dryRun ? 1 : 20000;
+        const noTries = (dryRun || predefinedRound) ? 1 : 20000;
         let nextPlayer = 0;
         let totalPoints = 0;
         const allPoints = [];
         let foundStopValue = false;
-        if (!dryRun) {
+        if (!(dryRun || predefinedRound)) {
             Round.shuffle(players);
             console.log("players: " + players);
         }
@@ -86,7 +86,7 @@ class Round extends React.Component {
                 console.log("Shuffle!");
                 players = Round.shuffle(players);
             }
-            if (!dryRun) {
+            if (!(dryRun || predefinedRound)) {
                 if (Object.keys(playerPoints).length > 0) {
                     Round.swapTwo(players, playerPoints);
                 } else {
