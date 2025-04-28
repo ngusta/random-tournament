@@ -14,6 +14,7 @@ const PlayerView = () => {
     const [player, setPlayer] = useState(ls.get("player") || "");
     const [allPlayerRounds, setAllPlayerRounds] = useState(null);
     const [playerName, setPlayerName] = useState(null);
+    const [active, setActive] = useState(true);
     const [error, setError] = useState(null);
     const [updateServer, setUpdateServer] = useState(false);
     const [debounceTimer, setDebounceTimer] = useState(null)
@@ -74,6 +75,7 @@ const PlayerView = () => {
         }
         updatePlayerData();
     }
+
     const updatePlayerData = async () => {
         if (playerRef.current !== "" && tournamentRef.current && tournamentRef.current.rounds) {
             const playerRounds = {};
@@ -98,6 +100,7 @@ const PlayerView = () => {
             }
             setAllPlayerRounds(playerRounds);
             setPlayerName((cloudPlayer && cloudPlayer.displayName) ? cloudPlayer.displayName : "");
+            setActive(cloudPlayer && cloudPlayer.active);
         }
     };
 
@@ -165,6 +168,33 @@ const PlayerView = () => {
         }
         return court + 1;
     }
+
+    const deactivatePlayer = async () => {
+        const confirmDeactivation = window.confirm(`Are you sure you want to withdraw player ${player} ${playerName}? This removes you from future rounds, but you can rejoin later.`);
+        if (!confirmDeactivation) return;
+
+        setActive(false);
+
+        try {
+            await savePlayer(tournamentId, player, {active: false});
+        } catch (error) {
+            console.error("Failed to deactivate player:", error);
+        }
+    };
+
+    const activatePlayer = async () => {
+        const confirmDeactivation = window.confirm(`Are you sure you want player ${player} ${playerName} to rejoin?`);
+        if (!confirmDeactivation) return;
+
+        setActive(true);
+
+        try {
+            await savePlayer(tournamentId, player, {active: true});
+        } catch (error) {
+            console.error("Failed to deactivate player:", error);
+        }
+    };
+
 
     return (
         <div id="playerView">
@@ -235,6 +265,16 @@ const PlayerView = () => {
                                     ))}
                             </ul>
                         </>
+                    )}
+                    {player && active && (
+                        <button onClick={deactivatePlayer} className="deactivate-button">
+                            I want to take a break
+                        </button>
+                    )}
+                    {player && !active && (
+                        <button onClick={activatePlayer} className="activate-button">
+                            I want to rejoin
+                        </button>
                     )}
                 </>}
         </div>

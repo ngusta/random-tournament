@@ -92,6 +92,20 @@ class App extends React.Component {
     onPlayersChange = (newAvailablePlayers) => {
         this.setState({availablePlayers: newAvailablePlayers});
         ls.set("availablePlayers", newAvailablePlayers);
+
+        console.log("testar");
+        console.log(newAvailablePlayers);
+        console.log(this.state.playerStats);
+        const playerStats = this.state.playerStats;
+
+        const playersWithData = Object.entries(newAvailablePlayers).map(([playerId, active]) => ({
+            playerId: String(Number(playerId) + 1),
+            name: playerStats && playerStats[Number(playerId) + 1] && playerStats[Number(playerId) + 1].name ? playerStats[Number(playerId) + 1].name : `Player ${Number(playerId) + 1}`,
+            displayName: playerStats && playerStats[Number(playerId) + 1] && playerStats[Number(playerId) + 1].displayName ? playerStats[Number(playerId) + 1].displayName : "",
+            active: active
+        }));
+        console.log(playersWithData);
+        savePlayers(ls.get("tournamentId"), playersWithData);
     };
 
     onCourtsToUseChange = (e) => {
@@ -367,12 +381,13 @@ class App extends React.Component {
     }
 
     savePlayerDataToCloud(importedPlayers) {
-        const playerWithNames = Object.values(importedPlayers).map(player => ({
+        const playerWithData = Object.values(importedPlayers).map(player => ({
+            active: player.active,
             playerId: String(player.id),
             name: player.name,
-            displayName: player.displayName
+            displayName: player.displayName,
         }));
-        savePlayers(ls.get("tournamentId"), playerWithNames);
+        savePlayers(ls.get("tournamentId"), playerWithData);
     }
 
     updatePlayerStats = async () => {
@@ -380,12 +395,14 @@ class App extends React.Component {
             //Skip updating while round creation ongoing
             return;
         }
+        const newAvailablePlayers = [...this.state.availablePlayers];
         let playerStats = ls.get("playerStats");
         if (playerStats) {
             const cloudPlayerRounds = await getPlayers(ls.get("tournamentId"));
 
             if (cloudPlayerRounds) {
                 cloudPlayerRounds.forEach(cloudPlayer => {
+                    newAvailablePlayers[cloudPlayer.playerId-1] = cloudPlayer.active;
                     if (!playerStats[cloudPlayer.playerId]) {
                         playerStats[cloudPlayer.playerId] = App.emptyPlayerStats(cloudPlayer.playerId);
                     }
@@ -414,6 +431,8 @@ class App extends React.Component {
 
         ls.set("playerStats", playerStats);
         this.setState({playerStats: playerStats});
+        ls.set("availablePlayers", newAvailablePlayers);
+        this.setState({availablePlayers: newAvailablePlayers});
         console.log('Player stats updated successfully');
     }
 

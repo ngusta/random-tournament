@@ -148,3 +148,33 @@ input {
     cursor: default;
     margin-right: 0;
 }
+
+#playerView .deactivate-button {
+    background-color: #ff4444;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+    font-size: 1em;
+}
+
+#playerView .activate-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+    font-size: 1em;
+}
+
+#playerView .deactivate-button:hover {
+    background-color: #cc0000;
+}
+
+#playerView .activate-button:hover {
+    background-color: #45a049;
+}

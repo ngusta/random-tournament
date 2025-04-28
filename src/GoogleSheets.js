@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 
 const GoogleSheets = ({setImportedPlayers, updateImportedPlayers, showLoadingSpinner, importNextRound}) => {
     const [sheetId, setSheetId] = useState('1uci8khgGfqnpKtkyQ4mSYIroeHmXfZd8ColINEwyP2I');
-    const [playersSheetRange, setPlayersSheetRange] = useState("'players'!B2:H");
+    const [playersSheetRange, setPlayersSheetRange] = useState("'players'!A2:F");
     const [predefinedRoundSheetRange, setPredefinedRoundSheetRange] = useState("'start games'!B2:E");
     const [error, setError] = useState(null);
     const NUMBER_OF_COLUMNS = 6;
