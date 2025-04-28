@@ -100,10 +100,6 @@ body:has(#app) {
     display: block;
 }
 
-#app .courtsToUse div.showTenCourts {
-    margin-left: 1em;
-}
-
 #app .players label,
 #app .courtsToUse label {
     display: inline-block;

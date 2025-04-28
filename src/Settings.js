@@ -6,6 +6,7 @@ import GoogleSheets from './GoogleSheets';
 import Timer from './Timer.js';
 import Round from './Round.js';
 import Stats from "./Stats";
+import './Settings.css';
 import {QRCodeCanvas} from 'qrcode.react';
 
 class Settings extends React.Component {
@@ -176,19 +177,14 @@ class Settings extends React.Component {
         );
         const numberOfActivePlayers = this.props.players.filter(playing => playing).length;
         const useCourtsOptions = [];
-        for (let court = 1; court <= 10; court++) {
+        for (let court = 1; court <= 60; court++) {
             useCourtsOptions.push(
-                <label key={court}>
-                    {court}
+                <label key={court} style={{marginRight: '10px'}}>
                     <input type="checkbox" name={court} checked={this.props.courtsToUse.indexOf(court) > -1}
                            onChange={this.props.onCourtsToUseChange}/>
+                    {court}
                 </label>
             );
-            if (court === 5) {
-                useCourtsOptions.push(
-                    <br key="middleBreak"/>
-                );
-            }
         }
 
         const baseUrl = `${window.location.protocol}//${window.location.host}`;
@@ -356,23 +352,29 @@ class Settings extends React.Component {
                                     </label>
                                 </div>
                                 <div className="courtsToUse">
+                                    {/*
                                     <label className="showTenCourts">
                                         <span>Show 10 courts</span>
                                         <input type="checkbox" name="showTenCourts"
                                                checked={this.props.showTenCourts} onChange={this.handleChange}/>
                                     </label>
-                                    {this.props.showTenCourts &&
-                                        <div className="showTenCourts">
+                                    */}
+                                    {/*this.props.showTenCourts &&*/
+                                        <div className="courtsToUse">
                                             <label>Courts to use for the tournament</label>
                                             <br/>
+                                            {this.props.courtsToUse.length < this.props.noCourts && 
+                                            <p className="error-message">Error: Number of courts to use is less than the number of courts in the tournament. Select at least {this.props.noCourts} courts.</p>}
                                             {useCourtsOptions}
                                             <br/>
+                                            {/*
                                             <label>
                                                 <span>Hide unused courts</span>
                                                 <input type="checkbox" name="hideUnusedCourts"
                                                        checked={this.props.hideUnusedCourts}
                                                        onChange={this.handleChange}/>
                                             </label>
+                                            */}
                                         </div>
                                     }
                                 </div>

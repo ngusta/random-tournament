@@ -579,7 +579,7 @@ class Round extends React.Component {
             }
         } else {
             courts = this.props.courts.map((teamsOnCourt, index) =>
-                <Court teams={teamsOnCourt} key={index} courtNumber={index + 1} courtClass={this.props.courtClass}
+                <Court teams={teamsOnCourt} key={index} courtNumber={this.props.courtsToUse.length > this.props.courts.length ? this.props.courtsToUse[index] : index + 1} courtClass={this.props.courtClass}
                        importedPlayers={this.props.importedPlayers} round={this.props.roundIndex} playerStats={this.props.playerStats} onPlayerClick={this.props.onPlayerClick}/>
             );
         }

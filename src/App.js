@@ -26,7 +26,7 @@ class App extends React.Component {
             presentationRoundIndex: ls.get("presentationRoundIndex") || -1,
             autoPresentNewRound: ls.get("autoPresentNewRound") || true,
             showTenCourts: ls.get("showTenCourts") || false,
-            hideUnusedCourts: ls.get("hideUnusedCourts") || false,
+            hideUnusedCourts: ls.get("hideUnusedCourts") || true,
             courtsToUse: ls.get("courtsToUse") || [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
             importedPlayers: ls.get("importedPlayers") || {},
             lastRoundCreationDate: ls.get("lastRoundCreationDate") || null,
@@ -93,9 +93,6 @@ class App extends React.Component {
         this.setState({availablePlayers: newAvailablePlayers});
         ls.set("availablePlayers", newAvailablePlayers);
 
-        console.log("testar");
-        console.log(newAvailablePlayers);
-        console.log(this.state.playerStats);
         const playerStats = this.state.playerStats;
 
         const playersWithData = Object.entries(newAvailablePlayers).map(([playerId, active]) => ({
@@ -104,7 +101,6 @@ class App extends React.Component {
             displayName: playerStats && playerStats[Number(playerId) + 1] && playerStats[Number(playerId) + 1].displayName ? playerStats[Number(playerId) + 1].displayName : "",
             active: active
         }));
-        console.log(playersWithData);
         savePlayers(ls.get("tournamentId"), playersWithData);
     };
 
@@ -304,7 +300,6 @@ class App extends React.Component {
             data.rounds = ls.get("rounds");
             data.presentationRoundIndex = ls.get("presentationRoundIndex");
             data.isLatestRoundStarted = ls.get("isLatestRoundStarted");
-            data.showTenCourts = ls.get("showTenCourts");
             data.courtsToUse = ls.get("courtsToUse");
             data.paradiseMode = ls.get("paradiseMode");
             data.paradisePlayersPerCourt = ls.get("paradisePlayersPerCourt");

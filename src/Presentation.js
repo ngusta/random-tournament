@@ -16,7 +16,7 @@ class Presentation extends React.Component {
 			width: 0,
 			height: 0,
 			showTenCourts: ls.get("showTenCourts") || false,
-			hideUnusedCourts: ls.get("hideUnusedCourts") || false,
+			hideUnusedCourts: ls.get("hideUnusedCourts") || true,
 			courtsToUse: ls.get("courtsToUse") || [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
 			isLatestRoundStarted: ls.get("isLatestRoundStarted") || false
 		};
@@ -73,7 +73,8 @@ class Presentation extends React.Component {
 		if (!this.state.roundToShow) {
 			return;
 		}
-		const noCourts = (this.state.showTenCourts && !this.state.hideUnusedCourts) ? 10 : this.state.roundToShow.length;
+		const noCourts = Math.max(this.state.courtsToUse.length, this.state.roundToShow.length); //TODO: Consider showTenCourts and/or hideUnsuedCourts here
+		console.log(this.state.courtsToUse.length);
 		const availableCourtWidths = [50, 100, 150, 200, 220, 300, 400, 500, 600];
 		const availableCourtHeights = [82, 166, 248, 332, 365, 498, 663, 830, 945];
 

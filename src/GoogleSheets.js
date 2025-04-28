@@ -87,15 +87,15 @@ const GoogleSheets = ({setImportedPlayers, updateImportedPlayers, showLoadingSpi
                 <input type="text" value={playersSheetRange} onChange={(e) => setPlayersSheetRange(e.target.value)}/>
                 <span className="labelDetails">Sheet with {NUMBER_OF_COLUMNS} columns in this order: Active (Yes|No), Player number, First name, Last name, Display Name, Gender (Tjej|Kille|W|M).</span>
             </label>
+            <button className="import-button" onClick={(event) => handleImportPlayerData(event, IMPORT_ALL)}>Import player data</button>
+            <button className="import-button" onClick={(event) => handleImportPlayerData(event, IMPORT_UPDATE_ONLY)}>Only import player display name
+            </button>
             <label>
                 <span>Predefined Round Range:</span>
                 <input type="text" value={predefinedRoundSheetRange} onChange={(e) => setPredefinedRoundSheetRange(e.target.value)}/>
                 <span className="labelDetails">Sheet with players in columns and courts in rows. Configure wanted settings below before creating the round.</span>
             </label>
             {error && <p>{error}</p>}
-            <button className="import-button" onClick={(event) => handleImportPlayerData(event, IMPORT_ALL)}>Import player data</button>
-            <button className="import-button" onClick={(event) => handleImportPlayerData(event, IMPORT_UPDATE_ONLY)}>Only import player display name
-            </button>
             <button className="import-button" onClick={(event) => handleImportNextRound(event)}>Create predefined round</button>
         </div>
     );

@@ -163,7 +163,7 @@ const PlayerView = () => {
 
     function getCourtName(courtIndex) {
         const court = parseInt(courtIndex, 10);
-        if (tournament.showTenCourts && tournament.courtsToUse && tournament.courtsToUse[court]) {
+        if (tournament.courtsToUse && tournament.courtsToUse[court]) {
             return tournament.courtsToUse[court];
         }
         return court + 1;
@@ -191,7 +191,7 @@ const PlayerView = () => {
         try {
             await savePlayer(tournamentId, player, {active: true});
         } catch (error) {
-            console.error("Failed to deactivate player:", error);
+            console.error("Failed to activate player:", error);
         }
     };
 
