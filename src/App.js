@@ -365,6 +365,12 @@ class App extends React.Component {
             }
             playerStats[playerNumber].displayName = importedPlayers[index].displayName;
             newImportedPlayers[playerNumber].displayName = importedPlayers[index].displayName;
+            
+            playerStats[playerNumber].name = importedPlayers[index].name;
+            newImportedPlayers[playerNumber].name = importedPlayers[index].name;
+            
+            playerStats[playerNumber].gender = importedPlayers[index].gender;
+            newImportedPlayers[playerNumber].gender = importedPlayers[index].gender;
         });
         if (this.state.playerViewEnabled) {
             this.savePlayerDataToCloud(newImportedPlayers, playerStats);

@@ -88,8 +88,7 @@ const GoogleSheets = ({setImportedPlayers, updateImportedPlayers, showLoadingSpi
                 <span className="labelDetails">Sheet with {NUMBER_OF_COLUMNS} columns in this order: Active (Yes|No), Player number, First name, Last name, Display Name, Gender (Tjej|Kille|W|M).</span>
             </label>
             <button className="import-button" onClick={(event) => handleImportPlayerData(event, IMPORT_ALL)}>Import player data</button>
-            <button className="import-button" onClick={(event) => handleImportPlayerData(event, IMPORT_UPDATE_ONLY)}>Only import player display name
-            </button>
+            <button className="import-button" onClick={(event) => handleImportPlayerData(event, IMPORT_UPDATE_ONLY)}>Only import static data (Name, Alias, Gender)</button>
             <label>
                 <span>Predefined Round Range:</span>
                 <input type="text" value={predefinedRoundSheetRange} onChange={(e) => setPredefinedRoundSheetRange(e.target.value)}/>
