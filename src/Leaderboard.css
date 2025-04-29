@@ -1,7 +1,10 @@
-h1 {
+#leaderboard h1 {
     text-align: center;
     font-size: 3em;
     font-weight: bold;
+    margin: 10px 0;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 #leaderboard {
@@ -15,14 +18,14 @@ h1 {
     align-items: center;
 }
 
-.leaderboard-tables {
+#leaderboard .leaderboard-tables {
     display: flex;
     gap: 40px;
     justify-content: center;
     align-items: flex-start;
 }
 
-table {
+#leaderboard table {
     font-size: 1.5rem;
     border-collapse: collapse;
     background: rgba(0, 0, 0, 0.7);
@@ -32,27 +35,90 @@ table {
     min-width: 300px;
 }
 
-th, td {
+#leaderboard th, td {
     padding: 10px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-th {
+#leaderboard th {
     text-align: left;
+    background: rgba(0, 0, 0, 0.5);
 }
 
-th.numeric, td.numeric {
+#leaderboard th.numeric, td.numeric {
     text-align: center;
 }
 
+#leaderboard tr:last-child td {
+    border-bottom: none;
+}
+
+#leaderboard tr:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
 @media (max-width: 1024px) {
-    .leaderboard-tables {
+    #leaderboard .leaderboard-tables {
         flex-direction: column;
         align-items: center;
         gap: 20px;
     }
 
-    table {
+    #leaderboard table {
         width: 90%;
     }
+}
+
+@media (max-width: 768px) {
+    #leaderboard {
+        position: relative;
+        min-height: 100vh;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+
+    #leaderboard h1 {
+        font-size: 1.5em;
+        margin-top: 20px;
+    }
+
+    #leaderboard .leaderboard-tables {
+        width: 100%;
+        padding: 10px;
+        gap: 15px;
+    }
+
+    #leaderboard table {
+        font-size: 0.9rem;
+        width: 100%;
+        min-width: unset;
+    }
+
+    #leaderboard th, td {
+        padding: 8px 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    #leaderboard h1 {
+        font-size: 1.2em;
+    }
+
+    #leaderboard table {
+        font-size: 0.8rem;
+    }
+
+    #leaderboard th, td {
+        padding: 6px 4px;
+    }
+}
+
+#leaderboard #error {
+    color: white;
+    text-align: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 10px;
+    margin: 20px auto;
+    max-width: 600px;
 }

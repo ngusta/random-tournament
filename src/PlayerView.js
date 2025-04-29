@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {useParams} from 'react-router-dom';
+import {useParams, Link} from 'react-router-dom';
 import './PlayerView.css';
 import {getTournament, savePlayer, getPlayer} from './api.js';
 import ls from 'local-storage';
@@ -266,6 +266,9 @@ const PlayerView = () => {
                             </ul>
                         </>
                     )}
+                    <Link to={`/leaderboard/${tournamentId}`} target="_blank" className="leaderboard-link">
+                        Leaderboard
+                    </Link>
                     {player && active && (
                         <button onClick={deactivatePlayer} className="deactivate-button">
                             I want to take a break

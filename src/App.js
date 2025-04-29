@@ -85,6 +85,9 @@ class App extends React.Component {
                 ls.set("courtsToUse", this.state.courtsToUse);
                 ls.set("updatePresentation", true);
                 break;
+            case "noOnLeaderboard":
+                this.saveTournamentInCloud();
+                break;
             default:
         }
     };
@@ -303,6 +306,7 @@ class App extends React.Component {
             data.courtsToUse = ls.get("courtsToUse");
             data.paradiseMode = ls.get("paradiseMode");
             data.paradisePlayersPerCourt = ls.get("paradisePlayersPerCourt");
+            data.noOnLeaderboard = ls.get("noOnLeaderboard");
             saveTournament(ls.get("tournamentId"), data);
         }
     };

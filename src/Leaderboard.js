@@ -1,23 +1,90 @@
 import React, { useEffect, useState } from "react";
 import "./Leaderboard.css";
+import { useParams } from 'react-router-dom';
 import ls from "local-storage";
+import { getPlayers, getTournament } from "./api";
 
 const Leaderboard = () => {
-    const [playerStats, setPlayerStats] = useState(ls.get("playerStats") || {});
+    const { tournamentId } = useParams();
+    const [leaderboard, setLeaderboard] = useState([]);
+    const [tournament, setTournament] = useState(null);
     const [noOnLeaderboard, setNoOnLeaderBoard] = useState(ls.get("noOnLeaderboard") || 20);
 
+    const debounce = (func, delay) => {
+        let timeout;
+        return (...args) => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func(...args), delay);
+        };
+    };
+
     useEffect(() => {
+        if (tournamentId == null) {
+            return;
+        }
+        updateLeaderboardFromServer();
+
+        const handleVisibilityChange = debounce(() => {
+            if (document.visibilityState === 'visible') {
+                updateLeaderboardFromServer();
+            }
+        }, 200);
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        document.addEventListener('resume', handleVisibilityChange);
+        window.addEventListener('focus', handleVisibilityChange);
+        window.addEventListener('pageshow', handleVisibilityChange);
+        window.addEventListener('online', handleVisibilityChange);
+        window.addEventListener('popstate', handleVisibilityChange);
+
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            document.removeEventListener('resume', handleVisibilityChange);
+            window.removeEventListener('focus', handleVisibilityChange);
+            window.removeEventListener('pageshow', handleVisibilityChange);
+            window.removeEventListener('online', handleVisibilityChange);
+            window.removeEventListener('popstate', handleVisibilityChange);
+        };
+        // eslint-disable-next-line
+    }, []);
+
+    const updateLeaderboardFromServer = async () => {
+        const tournament = await getTournament(tournamentId);
+        if (!tournament) {
+            return;
+        }
+        setTournament(tournament);
+        setNoOnLeaderBoard(tournament.noOnLeaderboard);
+        const players = await getPlayers(tournamentId);
+        setLeaderboard(players.map(player => ({
+            id: player.playerId,
+            displayName: player.displayName ? player.displayName : player.name,
+            wins: Object.entries(player).filter(([key, value]) => !isNaN(key) && value.result === "W").length,
+            playedMatches: Object.entries(player).filter(([key]) => !isNaN(key)).length
+        })));
+    }
+
+    useEffect(() => {
+        if (tournamentId) {
+            return;
+        }
         const interval = setInterval(() => {
-            setPlayerStats(ls.get("playerStats") || {});
+            const playerStats = ls.get("playerStats");
+            setLeaderboard(Object.values(playerStats).filter(player => player !== null).map(player => ({
+                id: player.id,
+                displayName: player.displayName ? player.displayName : player.name,
+                wins: player.wins,
+                playedMatches: player.playedMatches
+            })));
             setNoOnLeaderBoard(ls.get("noOnLeaderboard") || 20);
         }, 1000);
 
         return () => clearInterval(interval);
     }, []);
 
-    const sortedPlayers = Object.values(playerStats)
-        .filter((p) => p !== null && p.wins > 0)
-        .sort((a, b) => (b.wins !== a.wins ? b.wins - a.wins : a.losses - b.losses))
+    const sortedPlayers = Object.values(leaderboard)
+        .filter((p) => p !== null && p.wins >= 0)
+        .sort((a, b) => (b.wins !== a.wins ? b.wins - a.wins : b.playedMatches - a.playedMatches))
         .slice(0, noOnLeaderboard);
 
     let rank = 1;
@@ -48,12 +115,12 @@ const Leaderboard = () => {
         tables.push(
             <table key={i}>
                 <thead>
-                <tr>
-                    <th title="Rank">Rank</th>
-                    <th title="Name">Name</th>
-                    <th title="Rounds">Rounds</th>
-                    <th title="Wins">Wins</th>
-                </tr>
+                    <tr>
+                        <th title="Rank">Rank</th>
+                        <th title="Name">Name</th>
+                        <th title="Rounds">Rounds</th>
+                        <th title="Wins">Wins</th>
+                    </tr>
                 </thead>
                 <tbody>{tableRows}</tbody>
             </table>
@@ -64,6 +131,7 @@ const Leaderboard = () => {
         <div id="leaderboard">
             <div>
                 <h1>Leaderboard</h1>
+                {tournamentId && !tournament && <p id="error">Nothing to be found here yet. Are you early? Are you using the right link?</p>}
                 <div className="leaderboard-tables">{tables}</div>
             </div>
         </div>

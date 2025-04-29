@@ -18,6 +18,7 @@ const routing = (
             <Route exact path="/" element={<App/>}/>
             <Route path="/presentation" element={<Presentation/>}/>
             <Route path="/leaderboard" element={<Leaderboard/>}/>
+            <Route path="/leaderboard/:tournamentId" element={<Leaderboard/>}/>
             <Route path="/playerview/:tournamentId" element={<PlayerView/>}/>
             <Route path="/playerViewPrint/:tournamentId" element={<PlayerViewPrint />} />
         </Routes>

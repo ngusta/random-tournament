@@ -388,7 +388,8 @@ class Settings extends React.Component {
                                     <button onClick={e => this.addLeaderboardPlayer(e)}>+</button>
                                 </label>
                                 <Link to="/presentation" target="_blank">Open Presentation</Link><br/>
-                                <Link to="/leaderboard" target="_blank">Open Leaderboard</Link>
+                                <Link to="/leaderboard" target="_blank">Open Leaderboard (Local)</Link><br/>
+                                <Link to={`/leaderboard/${this.props.tournamentId}`} target="_blank">Open Leaderboard (Public)</Link>
                             </fieldset>
                             <fieldset className="playerViewSettings">
                                 <legend>Player View Settings</legend>
