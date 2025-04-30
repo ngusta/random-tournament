@@ -101,7 +101,7 @@ const PlayerView = () => {
             }
             setAllPlayerRounds(playerRounds);
             setPlayerName((cloudPlayer && cloudPlayer.displayName) ? cloudPlayer.displayName : "");
-            setActive(cloudPlayer && cloudPlayer.active);
+            setActive(cloudPlayer ? cloudPlayer.active : true);
         }
     };
 
@@ -196,6 +196,9 @@ const PlayerView = () => {
         }
     };
 
+    const playerInstructions = (tournament && tournament.playerInstructions)
+        ? <Link to={tournament.playerInstructions} target="_blank" className="player-instructions-link">Player Instructions</Link>
+        : null;
 
     return (
         <div id="playerView">
@@ -271,6 +274,7 @@ const PlayerView = () => {
                     <Link to={`/leaderboard/${tournamentId}`} target="_blank" className="leaderboard-link">
                         Leaderboard
                     </Link>
+                    {playerInstructions}
                     {player && active && (
                         <button onClick={deactivatePlayer} className="deactivate-button">
                             I want to take a break

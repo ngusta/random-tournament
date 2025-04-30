@@ -207,3 +207,20 @@ input {
     height: auto;
     margin-bottom: 20px;
 }
+
+.player-instructions-link {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #1976d2;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  margin: 10px 0;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.player-instructions-link:hover {
+  background-color: #125ea2;
+}

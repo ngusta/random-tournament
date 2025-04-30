@@ -38,7 +38,8 @@ class App extends React.Component {
             playerStats: ls.get("playerStats") === null ? null : ls.get("playerStats"),
             playerViewEnabled: ls.get("playerViewEnabled") === null ? false : ls.get("playerViewEnabled"),
             updateStatsIntervalId: ls.get("playerViewEnabled") ? setInterval(this.updatePlayerStats, 5000) : null,
-            noOnLeaderboard: ls.get("noOnLeaderboard") === null ? 20 : ls.get("noOnLeaderboard")
+            noOnLeaderboard: ls.get("noOnLeaderboard") === null ? 20 : ls.get("noOnLeaderboard"),
+            playerInstructions: ls.get("playerInstructions") ? ls.get("playerInstructions") : null
         };
         setTimeout(() => {
             clearInterval(this.state.updateStatsIntervalId);
@@ -85,6 +86,7 @@ class App extends React.Component {
                 ls.set("updatePresentation", true);
                 break;
             case "noOnLeaderboard":
+            case "playerInstructions":
                 this.saveTournamentInCloud();
                 break;
             default:
@@ -301,6 +303,7 @@ class App extends React.Component {
             data.paradiseMode = ls.get("paradiseMode");
             data.paradisePlayersPerCourt = ls.get("paradisePlayersPerCourt");
             data.noOnLeaderboard = ls.get("noOnLeaderboard");
+            data.playerInstructions = ls.get("playerInstructions");
             saveTournament(ls.get("tournamentId"), data);
         }
     };
@@ -544,6 +547,7 @@ class App extends React.Component {
                               showLoadingSpinner={this.showLoadingSpinner}
                               importNextRound={this.importNextRound}
                               noOnLeaderboard={this.state.noOnLeaderboard}
+                              playerInstructions={this.state.playerInstructions}
                     />
                     <ul className="clear">
                         {errors}
