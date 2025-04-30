@@ -88,9 +88,6 @@ class Presentation extends React.Component {
 	render() {
 		return (
 			<div id="presentation">
-				{this.state.roundToShow &&
-				<span id="currentRoundLabel">{this.state.isLatestRoundStarted ? "Now playing" : "Next round"}</span>
-				}
 				<div id="currentRound">
 					{!this.state.roundToShow && <p className="noRoundMessage">{this.state.noRoundMessage}</p>}
 					{this.state.roundToShow &&

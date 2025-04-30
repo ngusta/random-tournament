@@ -32,7 +32,6 @@ class App extends React.Component {
             lastRoundCreationDate: ls.get("lastRoundCreationDate") || null,
             secondLastRoundCreationDate: ls.get("secondLastRoundCreationDate") || null,
             showLoadingSpinner: false,
-            showExampleRound: ls.get("showExampleRound") === null ? true : ls.get("showExampleRound"),
             paradiseMode: ls.get("paradiseMode") === null ? false : ls.get("paradiseMode"),
             paradisePlayersPerCourt: ls.get("paradisePlayersPerCourt") === null ? 5 : ls.get("paradisePlayersPerCourt"),
             paradisePlayersPerRound: ls.get("paradisePlayersPerRound") === null ? 16 : ls.get("paradisePlayersPerRound"),
@@ -161,11 +160,6 @@ class App extends React.Component {
 
     onAutoPresentNewRoundChange = (value) => {
         this.setState({autoPresentNewRound: value});
-    };
-
-    onShowExampleRoundChange = (e) => {
-        this.setState({showExampleRound: e.target.checked});
-        ls.set("showExampleRound", e.target.checked)
     };
 
     onStartRound = () => {
@@ -539,8 +533,6 @@ class App extends React.Component {
                               updateGender={this.updateGender}
                               lastRoundCreationDate={this.state.lastRoundCreationDate}
                               secondLastRoundCreationDate={this.state.secondLastRoundCreationDate}
-                              showExampleRound={this.state.showExampleRound}
-                              onShowExampleRoundChange={this.onShowExampleRoundChange}
                               onStartRound={this.onStartRound}
                               paradiseMode={this.state.paradiseMode}
                               onParadiseModeChange={this.onParadiseModeChange}
@@ -559,7 +551,7 @@ class App extends React.Component {
                 </div>
 
                 <div>
-                    {this.state.showExampleRound && dryRunRound}
+                    {dryRunRound}
                     {!dryRunRound &&
                         <p className="exampleRoundError">The example run couldn't be generated. Check your input values
                             or

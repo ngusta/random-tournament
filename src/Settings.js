@@ -270,10 +270,6 @@ class Settings extends React.Component {
                                         </label>
                                     </>
                                 }
-                                <label>Show example round
-                                    <input type="checkbox" name="showExampleRound" checked={this.props.showExampleRound}
-                                           onChange={this.props.onShowExampleRoundChange}/>
-                                </label>
                                 <div className="players">
                                     <span>Players ({numberOfActivePlayers} currently active)</span>
                                     <span>

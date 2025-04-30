@@ -4,6 +4,7 @@ import './PlayerView.css';
 import {getTournament, savePlayer, getPlayer} from './api.js';
 import ls from 'local-storage';
 import Court from "./Court";
+import logo from './img/2025/logo.jpeg';
 
 const PlayerView = () => {
 
@@ -198,7 +199,8 @@ const PlayerView = () => {
 
     return (
         <div id="playerView">
-            {error && <p id="error">{error}</p>}
+            <img src={logo} alt="Tournament Logo" className="logo" />
+            {error && <p>{error}</p>}
             {!error &&
                 <>
                     <div id="playerInputRow">

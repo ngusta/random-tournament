@@ -80,7 +80,7 @@ const Leaderboard = () => {
         }, 1000);
 
         return () => clearInterval(interval);
-    }, []);
+    }, [tournamentId]);
 
     const sortedPlayers = Object.values(leaderboard)
         .filter((p) => p !== null && p.wins >= 0)

@@ -22,11 +22,11 @@ const GoogleSheets = ({setImportedPlayers, updateImportedPlayers, showLoadingSpi
                         if (player.length === NUMBER_OF_COLUMNS) {
                             //Keep same as Settings.emptyImportedPlayer
                             return {
-                                active: player[0] !== "No" && player[0] !== "Nej" && player[0] !== false && player[0] !== "N",
+                                active: player[0] !== "No" && player[0] !== "Nej" && player[0] !== false && player[0] !== "N" && player[0] !== "",
                                 id: player[1],
                                 name: player[2] + ' ' + player[3],
                                 displayName: player[4] ? player[4] : player[2] + ' ' + player[3],
-                                gender: player[5] === 'Tjej' || player[5] === 'W' ? 'W' : 'M',
+                                gender: (player[5] === 'Tjej' || player[5] === 'W' || player[5] === 'Female' || player[5] === 'F' || player[5] === 'female') ? 'W' : 'M',
                             };
                         } else {
                             console.error(`Wrong number of columns in sheet. Expected ${NUMBER_OF_COLUMNS}, was: ${player.length}`);

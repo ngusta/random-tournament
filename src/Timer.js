@@ -3,7 +3,7 @@ import React from 'react';
 class Timer extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {seconds: 0};
+        this.state = { seconds: 0 };
     }
 
     tick() {
@@ -34,15 +34,16 @@ class Timer extends React.Component {
         if (secondLastRoundCreatedSecondsDiff <= 9) {
             secondLastRoundCreatedSecondsDiff = "0" + secondLastRoundCreatedSecondsDiff;
         }
+
+        const secondLastRound = secondLastRoundCreatedMinDiff < 100000 ? <p>Second last round started <span className="time">{secondLastRoundCreatedMinDiff}:{secondLastRoundCreatedSecondsDiff}</span> min ago.</p> :
+            <p>No second last round started.</p>
+
+        const lastRound = lastRoundCreatedMinDiff < 100000 ? <p>Last round started <span className="time">{lastRoundCreatedMinDiff}:{lastRoundCreatedSecondsDiff}</span> min ago.</p> :
+            <p>No round started.</p>
         return (
             <div>
-                <p>
-                    Second last round started <span
-                    className="time">{secondLastRoundCreatedMinDiff}:{secondLastRoundCreatedSecondsDiff}</span> min ago.
-                    <br/>
-                    Last round started <span
-                    className="time">{lastRoundCreatedMinDiff}:{lastRoundCreatedSecondsDiff}</span> min ago.
-                </p>
+                {secondLastRound}
+                {lastRound}
             </div>
         );
     }
