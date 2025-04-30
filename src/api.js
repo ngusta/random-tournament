@@ -19,9 +19,9 @@ export async function getTournament(tournamentId) {
             headers: getHeaders()
         });
         checkStatus(response);
-        const tournament = await response.json();
-        console.log("Fetched tournament: " + JSON.stringify(tournament));
-        return tournament;
+        const tournaments = await response.json();
+        console.log("Fetched tournament: " + JSON.stringify(tournaments));
+        return tournaments;
     } catch (err) {
         console.error(err);
         return null;

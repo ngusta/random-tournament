@@ -210,7 +210,7 @@ class Settings extends React.Component {
                             <fieldset className="tournamentSettings">
                                 <legend>Tournament settings</legend>
                                 <label>
-                                    <span>Paradise Mode</span>
+                                    <span>Paradise mode</span>
                                     <input type="checkbox" name="paradiseMode" checked={this.props.paradiseMode}
                                         onChange={this.props.onParadiseModeChange} />
                                 </label>
@@ -344,7 +344,7 @@ class Settings extends React.Component {
                                             checked={this.state.selectedNoRoundMessage === "custom"}
                                             onChange={this.onNoRoundMessageChange} />
                                         <input type="text" name="customNoRoundMessage" value={this.state.customMessage}
-                                            onChange={this.onNoRoundMessageChange} />
+                                            onChange={this.onNoRoundMessageChange} className="long" />
                                     </label>
                                     <label>
                                         <input type="radio" name="noMessage"
@@ -389,14 +389,14 @@ class Settings extends React.Component {
                                     <button onClick={e => this.removeLeaderboardPlayer(e)}>-</button>
                                     <button onClick={e => this.addLeaderboardPlayer(e)}>+</button>
                                 </label>
-                                <Link to="/presentation" target="_blank">Open Presentation</Link><br />
-                                <Link to="/leaderboard" target="_blank">Open Leaderboard (Local)</Link><br />
-                                <Link to={`/leaderboard/${this.props.tournamentId}`} target="_blank">Open Leaderboard (Public)</Link>
+                                <Link to="/presentation" target="_blank">Open presentation</Link><br />
+                                <Link to="/leaderboard" target="_blank">Open leaderboard (local)</Link><br />
+                                <Link to={`/leaderboard/${this.props.tournamentId}`} target="_blank">Open leaderboard (public)</Link>
                             </fieldset>
                             <fieldset className="playerViewSettings">
                                 <legend>Player View Settings</legend>
                                 <label>
-                                    <span>Enable Player View</span>
+                                    <span>Enable player view</span>
                                     <input
                                         type="checkbox"
                                         checked={this.props.playerViewEnabled}
@@ -409,32 +409,62 @@ class Settings extends React.Component {
                                     <>
                                         <span>Tournament id: {this.props.tournamentId}</span><br />
                                         <Link to={`/playerView/${this.props.tournamentId}`} target="_blank">Open
-                                            PlayerView</Link>, scan the QR code or use the <Link to={`/playerViewPrint/${this.props.tournamentId}`} target="_blank">Printable
-                                            Version</Link><br />
-                                        <QRCodeCanvas value={`${baseUrl}/playerView/${this.props.tournamentId}`}
-                                            size={100} /><br />
+                                            the player view</Link>, scan the QR code or use the <Link to={`/playerViewPrint/${this.props.tournamentId}`} target="_blank">printable
+                                                version</Link><br />
+                                        <QRCodeCanvas value={`${baseUrl}/playerView/${this.props.tournamentId}`} size={100} /><br />
 
                                         <label>
-                                            <span style={{ width: "9em" }}>Player instructions</span>
+                                            <span style={{ width: "9em" }}>Player Iistructions URL</span>
                                             <input
                                                 type="text"
                                                 name="playerInstructions"
                                                 value={this.props.playerInstructions}
                                                 onChange={this.handleStringChange}
                                                 placeholder="Enter player instruction link here"
-                                                style={{ width: "25em", marginRight: "1em" }}
+                                                className="long"
+                                                style={{ marginRight: "1em" }}
                                             />
                                             {this.props.playerInstructions && <Link to={this.props.playerInstructions} target="_blank">View link</Link>}
                                         </label>
-                                        
-                                    </>
-                                }
+
+
+                                        <hr />
+                                        <p className='info'>The group id is used to group tournaments together to be listed in the group view. Hence, use the same id for all tournaments you want grouped together. The name is used for players to identify which tournament they belong to.</p>
+                                        <label>
+                                            <span>Tournament group id:</span>
+                                            <input
+                                                type="text"
+                                                name="groupId"
+                                                value={this.props.groupId}
+                                                onChange={this.handleStringChange}
+                                                placeholder="Enter group name here (e.g. 'monday')"
+                                                className="long"
+                                            />
+                                        </label>
+                                        <label>
+                                            <span>Tournament name:</span>
+                                            <input
+                                                type="text"
+                                                name="tournamentName"
+                                                value={this.props.tournamentName}
+                                                onChange={this.handleStringChange}
+                                                placeholder="Enter tournament name here (e.g. 'Men Low')"
+                                                className="long"
+                                            />
+                                        </label>
+                                        {this.props.groupId && <>
+                                            <Link to={`/group/${this.props.groupId}`} target="_blank">Open the group page</Link>, scan the QR code or use the <Link to={`/groupPrint/${this.props.groupId}`} target="_blank">printable
+                                                version</Link><br />
+                                            <QRCodeCanvas value={`${baseUrl}/group/${this.props.groupId}`} size={100} />
+                                        </>}
+
+                                    </>}
                             </fieldset>
                             <fieldset className="timeSettings">
                                 <legend>Time</legend>
-                                    <Timer lastRoundCreationDate={this.props.lastRoundCreationDate}
-                                        secondLastRoundCreationDate={this.props.secondLastRoundCreationDate} />
-                                </fieldset>
+                                <Timer lastRoundCreationDate={this.props.lastRoundCreationDate}
+                                    secondLastRoundCreationDate={this.props.secondLastRoundCreationDate} />
+                            </fieldset>
                         </div>
 
                         <Stats

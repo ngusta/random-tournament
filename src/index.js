@@ -6,6 +6,8 @@ import Presentation from './Presentation';
 import Leaderboard from './Leaderboard';
 import PlayerView from './PlayerView';
 import PlayerViewPrint from './PlayerViewPrint';
+import TournamentGroup from './TournamentGroup';
+import GroupPrint from './GroupPrint';
 import * as serviceWorker from './serviceWorker';
 import {createRoot} from 'react-dom/client';
 
@@ -21,6 +23,8 @@ const routing = (
             <Route path="/leaderboard/:tournamentId" element={<Leaderboard/>}/>
             <Route path="/playerview/:tournamentId" element={<PlayerView/>}/>
             <Route path="/playerViewPrint/:tournamentId" element={<PlayerViewPrint />} />
+            <Route path="/group/:groupId" element={<TournamentGroup />} />
+            <Route path="/groupPrint/:groupId" element={<GroupPrint />} />
         </Routes>
     </Router>
 );

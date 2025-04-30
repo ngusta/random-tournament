@@ -76,21 +76,21 @@ const GoogleSheets = ({setImportedPlayers, updateImportedPlayers, showLoadingSpi
     return (
         <div>
             <label>
-                <span>Google Sheet ID:</span>
+                <span>Google sheet id:</span>
                 <input type="text" value={sheetId} onChange={(e) => setSheetId(e.target.value)}/>
                 <span className="labelDetails">Reference: <a rel="noreferrer" target="_blank"
                                                              href="https://docs.google.com/spreadsheets/d/1uci8khgGfqnpKtkyQ4mSYIroeHmXfZd8ColINEwyP2I/edit#gid=0">https://docs.google.com/spreadsheets/d/<span
                     className="highlight">1uci8khgGfqnpKtkyQ4mSYIroeHmXfZd8ColINEwyP2I</span>/edit#gid=0</a><br/>The sheet needs "Anyone with the link can view" access.</span>
             </label>
             <label>
-                <span>Player Range:</span>
+                <span>Player range:</span>
                 <input type="text" value={playersSheetRange} onChange={(e) => setPlayersSheetRange(e.target.value)}/>
                 <span className="labelDetails">Sheet with {NUMBER_OF_COLUMNS} columns in this order: Active (Yes|No), Player number, First name, Last name, Display Name, Gender (Tjej|Kille|W|M).</span>
             </label>
             <button className="import-button" onClick={(event) => handleImportPlayerData(event, IMPORT_ALL)}>Import player data</button>
             <button className="import-button" onClick={(event) => handleImportPlayerData(event, IMPORT_UPDATE_ONLY)}>Only import static data (Name, Alias, Gender)</button>
             <label>
-                <span>Predefined Round Range:</span>
+                <span>Predefined round range:</span>
                 <input type="text" value={predefinedRoundSheetRange} onChange={(e) => setPredefinedRoundSheetRange(e.target.value)}/>
                 <span className="labelDetails">Sheet with players in columns and courts in rows. Configure wanted settings below before creating the round.</span>
             </label>

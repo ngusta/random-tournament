@@ -166,7 +166,7 @@ body:has(#app) {
     width: 27em;
 }
 
-#config .noRoundMessageSetting input[type=text] {
+#config input[type=text].long {
     width: 20em;
 }
 

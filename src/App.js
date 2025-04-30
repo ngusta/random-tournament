@@ -39,7 +39,9 @@ class App extends React.Component {
             playerViewEnabled: ls.get("playerViewEnabled") === null ? false : ls.get("playerViewEnabled"),
             updateStatsIntervalId: ls.get("playerViewEnabled") ? setInterval(this.updatePlayerStats, 5000) : null,
             noOnLeaderboard: ls.get("noOnLeaderboard") === null ? 20 : ls.get("noOnLeaderboard"),
-            playerInstructions: ls.get("playerInstructions") ? ls.get("playerInstructions") : null
+            playerInstructions: ls.get("playerInstructions") || "",
+            groupId: ls.get("groupId") || "",
+            tournamentName: ls.get("tournamentName") || ""
         };
         setTimeout(() => {
             clearInterval(this.state.updateStatsIntervalId);
@@ -87,6 +89,8 @@ class App extends React.Component {
                 break;
             case "noOnLeaderboard":
             case "playerInstructions":
+            case "groupId":
+            case "tournamentName":
                 this.saveTournamentInCloud();
                 break;
             default:
@@ -154,6 +158,7 @@ class App extends React.Component {
     onResetState = () => {
         const tournamentId = ls.get("tournamentId");
         ls.clear();
+        this.showLoadingSpinner(true);
         deleteTournament(tournamentId)
             .then((response) => {
                 window.location.reload()
@@ -296,14 +301,16 @@ class App extends React.Component {
     saveTournamentInCloud = () => {
         if (ls.get("playerViewEnabled")) {
             let data = {};
-            data.rounds = ls.get("rounds");
-            data.presentationRoundIndex = ls.get("presentationRoundIndex");
-            data.isLatestRoundStarted = ls.get("isLatestRoundStarted");
-            data.courtsToUse = ls.get("courtsToUse");
-            data.paradiseMode = ls.get("paradiseMode");
-            data.paradisePlayersPerCourt = ls.get("paradisePlayersPerCourt");
-            data.noOnLeaderboard = ls.get("noOnLeaderboard");
-            data.playerInstructions = ls.get("playerInstructions");
+            data.rounds = ls.get("rounds") || this.state.rounds;
+            data.presentationRoundIndex = ls.get("presentationRoundIndex") || this.state.presentationRoundIndex;
+            data.isLatestRoundStarted = ls.get("isLatestRoundStarted") || this.state.isLatestRoundStarted;
+            data.courtsToUse = ls.get("courtsToUse") || this.state.courtsToUse;
+            data.paradiseMode = ls.get("paradiseMode") || this.state.paradiseMode;
+            data.paradisePlayersPerCourt = ls.get("paradisePlayersPerCourt") || this.state.paradisePlayersPerCourt;
+            data.noOnLeaderboard = ls.get("noOnLeaderboard") || this.state.noOnLeaderboard;
+            data.playerInstructions = ls.get("playerInstructions") || this.state.playerInstructions;
+            data.groupId = ls.get("groupId") || this.state.groupId;
+            data.tournamentName = ls.get("tournamentName") || this.state.tournamentName;
             saveTournament(ls.get("tournamentId"), data);
         }
     };
@@ -548,6 +555,8 @@ class App extends React.Component {
                               importNextRound={this.importNextRound}
                               noOnLeaderboard={this.state.noOnLeaderboard}
                               playerInstructions={this.state.playerInstructions}
+                              groupId={this.state.groupId}
+                              tournamentName={this.state.tournamentName}
                     />
                     <ul className="clear">
                         {errors}
