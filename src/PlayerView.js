@@ -4,7 +4,7 @@ import './PlayerView.css';
 import {getTournament, savePlayer, getPlayer} from './api.js';
 import ls from 'local-storage';
 import Court from "./Court";
-import logo from './img/2025/logo.jpeg';
+import logo from './img/2025/BT-logga-med-vit-kant.webp';
 
 const PlayerView = () => {
 
@@ -61,9 +61,11 @@ const PlayerView = () => {
 
     const updateTournament = async () => {
         const tournament = await getTournament(tournamentId);
-        if (tournament === null || tournament.rounds === null) {
+        if (tournament === null || tournament.rounds.length === 0) {
             setError("Nothing to be found here yet. Are you early? Did you use the correct link/QR code?");
             return;
+        } else {
+            setError(null);
         }
         setTournament(tournament);
         tournamentRef.current = tournament;

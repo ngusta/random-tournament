@@ -4,6 +4,7 @@ import Settings from './Settings';
 import Round from './Round';
 import ls from 'local-storage';
 import loadingSpinner from './img/loading-spinner.svg';
+import logo from './img/2025/BT-logga-med-vit-kant.webp';
 import {deleteTournament, saveTournament, getPlayers, getPlayer, savePlayer, savePlayers} from './api.js';
 
 class App extends React.Component {
@@ -521,6 +522,7 @@ class App extends React.Component {
 
         return (
             <div id="app">
+                <img src={logo} alt="Tournament Logo" className="logo" />
                 <div id="config">
                     <Settings noCourts={this.state.noCourts}
                               teamsPerCourt={this.state.teamsPerCourt}

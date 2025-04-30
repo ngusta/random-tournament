@@ -1,5 +1,5 @@
 body:has(#app) {
-    background: url('img/erika/bg1-new-high.jpg') no-repeat fixed center top;
+    background: url('img/2025/bg.jpeg') no-repeat fixed center top;
     background-size: cover;
     font-family: Helvetica, sans-serif;
     margin: 0;
@@ -7,7 +7,7 @@ body:has(#app) {
 }
 
 #app {
-    padding: 9% 3% 0 6%;
+    padding: 4% 3% 0 6%;
 }
 
 #config {
@@ -263,3 +263,17 @@ button:disabled {
     background-color: #d32f2f;
 }
 
+.logo {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 180px;
+    height: auto;
+    margin: 0;
+}
+
+@media (max-width: 600px) {
+    .logo {
+        width: 80px;
+    }
+}

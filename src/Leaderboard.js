@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./Leaderboard.css";
 import { useParams } from 'react-router-dom';
 import ls from "local-storage";
+import logo from './img/2025/BT-logga-med-vit-kant.webp';
 import { getPlayers, getTournament } from "./api";
 
 const Leaderboard = () => {
@@ -129,6 +130,7 @@ const Leaderboard = () => {
 
     return (
         <div id="leaderboard">
+            <img src={logo} alt="Tournament Logo" className="logo" />
             <div>
                 <h1>Leaderboard</h1>
                 {tournamentId && !tournament && <p id="error">Nothing to be found here yet. Are you early? Are you using the right link?</p>}

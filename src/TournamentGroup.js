@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getTournaments } from './api';
+import logo from './img/2025/BT-logga-med-vit-kant.webp';
 import './TournamentGroup.css';
 
 const TournamentGroup = () => {
@@ -20,6 +21,7 @@ const TournamentGroup = () => {
 
     return (
         <div id="tournamentGroup">
+            <img src={logo} alt="Tournament Logo" className="logo" />
             <div className="tournament-container">
                 <h2>Choose your tournament</h2>
                 <ul>

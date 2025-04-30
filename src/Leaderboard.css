@@ -3,8 +3,6 @@
     font-size: 3em;
     font-weight: bold;
     margin: 10px 0;
-    color: white;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 #leaderboard {
@@ -16,6 +14,7 @@
     background-size: cover;
     justify-content: center;
     align-items: center;
+    z-index: 0;
 }
 
 #leaderboard .leaderboard-tables {
@@ -121,4 +120,8 @@
     border-radius: 10px;
     margin: 20px auto;
     max-width: 600px;
+}
+
+#leaderboard .logo {
+    z-index: -1;
 }
