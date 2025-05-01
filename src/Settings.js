@@ -115,15 +115,13 @@ class Settings extends React.Component {
     };
 
     onPlayerCheckbox = (e) => {
+        const playerId = String(Number(e.target.name) + 1);
         if (this.state.editGender) {
             const importedPlayers = Object.assign({}, this.props.importedPlayers);
-            const playerId = String(Number(e.target.name) + 1);
             const newGender = playerId in importedPlayers ? (Round.isMan(importedPlayers, playerId) ? "W" : "M") : "W";
             this.props.updateGender(playerId, newGender);
         } else {
-            const playersCopy = [...this.props.players];
-            playersCopy[e.target.name] = e.target.checked;
-            this.props.onPlayersChange(playersCopy);
+            this.props.onPlayerActiveChange(playerId, e.target.checked);
         }
     };
 

@@ -98,19 +98,12 @@ class App extends React.Component {
         }
     };
 
-    onPlayersChange = (newAvailablePlayers) => {
+    onPlayerActiveChange = (playerId, active) => {
+        const newAvailablePlayers = [...this.state.availablePlayers];
+        newAvailablePlayers[playerId - 1] = active;
         this.setState({availablePlayers: newAvailablePlayers});
         ls.set("availablePlayers", newAvailablePlayers);
-
-        const playerStats = this.state.playerStats;
-
-        const playersWithData = Object.entries(newAvailablePlayers).map(([playerId, active]) => ({
-            playerId: String(Number(playerId) + 1),
-            name: playerStats && playerStats[Number(playerId) + 1] && playerStats[Number(playerId) + 1].name ? playerStats[Number(playerId) + 1].name : `Player ${Number(playerId) + 1}`,
-            displayName: playerStats && playerStats[Number(playerId) + 1] && playerStats[Number(playerId) + 1].displayName ? playerStats[Number(playerId) + 1].displayName : "",
-            active: active
-        }));
-        savePlayers(ls.get("tournamentId"), playersWithData);
+        savePlayer(ls.get("tournamentId"), playerId, {active: active});
     };
 
     onCourtsToUseChange = (e) => {
@@ -393,7 +386,7 @@ class App extends React.Component {
 
     updatePlayerStats = async () => {
         if (this.state.showLoadingSpinner) {
-            //Skip updating while round creation ongoing
+            //Skip updating while e.g. round creation ongoing
             return;
         }
         const newAvailablePlayers = [...this.state.availablePlayers];
@@ -521,7 +514,7 @@ class App extends React.Component {
                               useAllPlayers={this.state.useAllPlayers}
                               players={this.state.availablePlayers}
                               onSettingChange={this.onSettingChange}
-                              onPlayersChange={this.onPlayersChange}
+                              onPlayerActiveChange={this.onPlayerActiveChange}
                               onSubmit={this.draw}
                               onResetState={this.onResetState}
                               autoPesentNewRound={this.state.autoPresentNewRound}

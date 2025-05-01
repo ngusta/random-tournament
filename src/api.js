@@ -86,7 +86,7 @@ export async function savePlayer(tournamentId, playerId, playerData) {
     }
 }
 
-export async function  savePlayers(tournamentId, playerData) {
+export async function savePlayers(tournamentId, playerData) {
     try {
         const response = await fetch(`https://ztx5ai37rj.execute-api.eu-north-1.amazonaws.com/prod/random-partner/${tournamentId}/players`, {
             method: 'PUT',
