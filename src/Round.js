@@ -8,13 +8,22 @@ import App from "./App";
 
 class Round extends React.Component {
 
+    static createPredefinedRound(importedRound, importedPlayers) {
+        let round = [];
+        for (let court of importedRound) {
+            round.push([court.slice(0, 2), court.slice(2, 4), court.slice(4)].filter(team => team.length > 0));
+        }
+        Round.updatePlayerStats(round, importedPlayers);
+        return round;
+    }
+
     static createRound(allAvailablePlayers, noCourts, teamsPerCourt, playersPerTeam, useAllPlayers,
-                       onError, dryRun, earlierRounds, importedPlayers, paradiseMode, paradisePlayersPerCourt, paradisePlayersPerRound, predefinedRound) {
+                       onError, dryRun, earlierRounds, importedPlayers, paradiseMode, paradisePlayersPerCourt, paradisePlayersPerRound) {
         const startTime = performance.now();
 
         const lastPlayerInRounds = ls.get("lastPlayerInRounds") ? ls.get("lastPlayerInRounds") : [];
         const lastPlayerInPreviousRound = lastPlayerInRounds.length > 0 ? lastPlayerInRounds[lastPlayerInRounds.length - 1] : 0;
-        let players = predefinedRound ? [...allAvailablePlayers] : [...allAvailablePlayers.filter(player => player > lastPlayerInPreviousRound), ...allAvailablePlayers.filter(player => player <= lastPlayerInPreviousRound)];
+        let players = [...allAvailablePlayers.filter(player => player > lastPlayerInPreviousRound), ...allAvailablePlayers.filter(player => player <= lastPlayerInPreviousRound)];
 
         if (!useAllPlayers) {
             let useableCourts = noCourts;
@@ -38,12 +47,12 @@ class Round extends React.Component {
 
         let bestRound = [];
         let bestPoints = Number.MAX_SAFE_INTEGER;
-        const noTries = (dryRun || predefinedRound) ? 1 : 20000;
+        const noTries = dryRun ? 1 : 20000;
         let nextPlayer = 0;
         let totalPoints = 0;
         const allPoints = [];
         let foundStopValue = false;
-        if (!(dryRun || predefinedRound)) {
+        if (!dryRun) {
             Round.shuffle(players);
             console.log("players: " + players);
         }
@@ -86,7 +95,7 @@ class Round extends React.Component {
                 console.log("Shuffle!");
                 players = Round.shuffle(players);
             }
-            if (!(dryRun || predefinedRound)) {
+            if (!dryRun) {
                 if (Object.keys(playerPoints).length > 0) {
                     Round.swapTwo(players, playerPoints);
                 } else {

@@ -262,24 +262,15 @@ class App extends React.Component {
         );
     }
 
-    async createPredefinedRound(predefinedPlayers) {
-        const allPlayers = predefinedPlayers.flat();
-        const noCourts = predefinedPlayers.length;
-        const paradisePlayersPerRound = allPlayers.length;
-        return Round.createRound(
-            allPlayers,
-            noCourts,
-            this.state.teamsPerCourt,
-            this.state.playersPerTeam,
-            false,
-            this.logError,
-            false,
-            this.state.rounds,
-            this.state.importedPlayers,
-            this.state.paradiseMode,
-            this.state.paradisePlayersPerCourt,
-            paradisePlayersPerRound,
-            true
+    async createPredefinedRound(predefinedRound) {
+        const courts = predefinedRound.map(row => row[0]);
+        const round = predefinedRound.map(row => row.slice(1));
+        this.setState({courtsToUse: courts, noCourts: courts.length});
+        ls.set("courtsToUse", courts);
+        ls.set("noCourts", courts.length);
+        return Round.createPredefinedRound(
+            round,
+            this.state.importedPlayers
         );
     }
 

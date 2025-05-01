@@ -92,7 +92,9 @@ const GoogleSheets = ({setImportedPlayers, updateImportedPlayers, showLoadingSpi
             <label>
                 <span>Predefined round range:</span>
                 <input type="text" value={predefinedRoundSheetRange} onChange={(e) => setPredefinedRoundSheetRange(e.target.value)}/>
-                <span className="labelDetails">Sheet with players in columns and courts in rows. Configure wanted settings below before creating the round.</span>
+                <span className="labelDetails">Sheet with players in columns and courts in rows.<br/>
+                The first column should be the courts and remaining columns should be the players (No. of courts and Courts to use below will be updated).<br/>
+                The tournament settings below will be ignored, the sheet is king.</span>
             </label>
             {error && <p>{error}</p>}
             <button className="import-button" onClick={(event) => handleImportNextRound(event)}>Create predefined round</button>
