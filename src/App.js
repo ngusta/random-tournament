@@ -5,7 +5,7 @@ import Round from './Round';
 import ls from 'local-storage';
 import loadingSpinner from './img/loading-spinner.svg';
 import logo from './img/2025/BT-logga-med-vit-kant.webp';
-import {deleteTournament, saveTournament, getPlayers, getPlayer, savePlayer, savePlayers} from './api.js';
+import { deleteTournament, saveTournament, getPlayers, getPlayer, savePlayer, savePlayers } from './api.js';
 
 class App extends React.Component {
     constructor(props) {
@@ -62,10 +62,10 @@ class App extends React.Component {
                 const newElements = new Array(value - this.state.availablePlayers.length).fill(true);
                 newAvailablePlayers = [...newAvailablePlayers, ...newElements];
             }
-            this.setState({availablePlayers: newAvailablePlayers});
+            this.setState({ availablePlayers: newAvailablePlayers });
             ls.set("availablePlayers", newAvailablePlayers);
         } else {
-            this.setState({[name]: value});
+            this.setState({ [name]: value });
             ls.set(name, value);
         }
         switch (name) {
@@ -74,7 +74,7 @@ class App extends React.Component {
                     this.saveTournamentInCloud();
                     this.savePlayerDataToCloud(this.state.importedPlayers);
                     const intervalId = setInterval(this.updatePlayerStats, 5000);
-                    this.setState({updateStatsIntervalId: intervalId});
+                    this.setState({ updateStatsIntervalId: intervalId });
                     setTimeout(() => {
                         clearInterval(intervalId);
                         console.log("Player stats updating stopped, reload to resume.");
@@ -101,9 +101,9 @@ class App extends React.Component {
     onPlayerActiveChange = (playerId, active) => {
         const newAvailablePlayers = [...this.state.availablePlayers];
         newAvailablePlayers[playerId - 1] = active;
-        this.setState({availablePlayers: newAvailablePlayers});
+        this.setState({ availablePlayers: newAvailablePlayers });
         ls.set("availablePlayers", newAvailablePlayers);
-        savePlayer(ls.get("tournamentId"), playerId, {active: active});
+        savePlayer(ls.get("tournamentId"), playerId, { active: active });
     };
 
     onCourtsToUseChange = (e) => {
@@ -115,7 +115,7 @@ class App extends React.Component {
             courtsToUseCopy.splice(courtsToUseCopy.indexOf(courtName), 1);
         }
         courtsToUseCopy.sort((a, b) => a - b);
-        this.setState({courtsToUse: courtsToUseCopy});
+        this.setState({ courtsToUse: courtsToUseCopy });
         ls.set("courtsToUse", courtsToUseCopy);
         ls.set("updatePresentation", true);
     };
@@ -129,7 +129,7 @@ class App extends React.Component {
         if (pressIndex >= roundsCopy.length) {
             pressIndex = pressIndex >= 0 ? pressIndex - 1 : -1;
         }
-        this.setState({rounds: roundsCopy, presentationRoundIndex: pressIndex});
+        this.setState({ rounds: roundsCopy, presentationRoundIndex: pressIndex });
         ls.set("lastPlayerInRounds", lastPlayerInRounds);
         ls.set("updatePresentation", true);
         ls.set("rounds", roundsCopy);
@@ -144,7 +144,7 @@ class App extends React.Component {
         if (this.state.presentationRoundIndex === roundIndex) {
             roundIndex = -1;
         }
-        this.setState({presentationRoundIndex: roundIndex});
+        this.setState({ presentationRoundIndex: roundIndex });
         ls.set("presentationRoundIndex", roundIndex);
         this.saveTournamentInCloud();
     };
@@ -160,29 +160,29 @@ class App extends React.Component {
     };
 
     onAutoPresentNewRoundChange = (value) => {
-        this.setState({autoPresentNewRound: value});
+        this.setState({ autoPresentNewRound: value });
     };
 
     onStartRound = () => {
         const created = Date.now();
-        this.setState({secondLastRoundCreationDate: this.state.lastRoundCreationDate});
+        this.setState({ secondLastRoundCreationDate: this.state.lastRoundCreationDate });
         ls.set("secondLastRoundCreationDate", this.state.lastRoundCreationDate);
-        this.setState({lastRoundCreationDate: created});
+        this.setState({ lastRoundCreationDate: created });
         ls.set("lastRoundCreationDate", created);
         this.saveTournamentInCloud();
     }
 
     onParadiseModeChange = (e) => {
-        this.setState({paradiseMode: e.target.checked});
+        this.setState({ paradiseMode: e.target.checked });
         ls.set("paradiseMode", e.target.checked);
     };
 
     showLoadingSpinner = (show) => {
-        this.setState({showLoadingSpinner: show});
+        this.setState({ showLoadingSpinner: show });
     }
 
     draw = async (predefinedPlayers) => {
-        this.setState({errors: [], showLoadingSpinner: true});
+        this.setState({ errors: [], showLoadingSpinner: true });
 
         setTimeout(async () => {
             try {
@@ -210,9 +210,9 @@ class App extends React.Component {
                 }
             } catch (error) {
                 console.error("Error creating round:", error);
-                this.setState({errors: [error.message]});
+                this.setState({ errors: [error.message] });
             } finally {
-                this.setState({showLoadingSpinner: false});
+                this.setState({ showLoadingSpinner: false });
             }
         }, 100);
     };
@@ -256,9 +256,15 @@ class App extends React.Component {
     }
 
     async createPredefinedRound(predefinedRound) {
-        const courts = predefinedRound.map(row => row[0]);
-        const round = predefinedRound.map(row => row.slice(1));
-        this.setState({courtsToUse: courts, noCourts: courts.length});
+        const courts = [...new Set(predefinedRound.map(row => row[0]))];
+        const round = courts.map(court => 
+            predefinedRound
+                .filter(row => row[0] === court)
+                .map(row => row.slice(1))
+                .flat()
+            )
+            .filter(row => row.length > 0)
+        this.setState({ courtsToUse: courts, noCourts: courts.length });
         ls.set("courtsToUse", courts);
         ls.set("noCourts", courts.length);
         return Round.createPredefinedRound(
@@ -279,7 +285,7 @@ class App extends React.Component {
 
     logError = (message) => {
         const newErrors = [...this.state.errors, message];
-        this.setState({errors: newErrors});
+        this.setState({ errors: newErrors });
         ls.set("errors", newErrors);
     };
 
@@ -316,11 +322,11 @@ class App extends React.Component {
             newAvailablePlayers[playerIndex] = importedPlayerData[index].active;
             importedPlayers[playerNumber] = importedPlayerData[index];
         });
-        this.setState({availablePlayers: newAvailablePlayers});
+        this.setState({ availablePlayers: newAvailablePlayers });
         if (this.state.playerViewEnabled) {
             this.savePlayerDataToCloud(importedPlayers);
         }
-        this.setState({importedPlayers: importedPlayers});
+        this.setState({ importedPlayers: importedPlayers });
         ls.set("importedPlayers", importedPlayers);
         ls.set("playerStats", playerStats);
         ls.set("availablePlayers", newAvailablePlayers);
@@ -340,7 +346,7 @@ class App extends React.Component {
                 gender: newGender,
             };
         }
-        this.setState({importedPlayers: newImportedPlayers});
+        this.setState({ importedPlayers: newImportedPlayers });
         ls.set("importedPlayers", newImportedPlayers);
     }
 
@@ -354,17 +360,17 @@ class App extends React.Component {
             }
             playerStats[playerNumber].displayName = importedPlayers[index].displayName;
             newImportedPlayers[playerNumber].displayName = importedPlayers[index].displayName;
-            
+
             playerStats[playerNumber].name = importedPlayers[index].name;
             newImportedPlayers[playerNumber].name = importedPlayers[index].name;
-            
+
             playerStats[playerNumber].gender = importedPlayers[index].gender;
             newImportedPlayers[playerNumber].gender = importedPlayers[index].gender;
         });
         if (this.state.playerViewEnabled) {
             this.savePlayerDataToCloud(newImportedPlayers, playerStats);
         }
-        this.setState({importedPlayers: newImportedPlayers});
+        this.setState({ importedPlayers: newImportedPlayers });
         ls.set("importedPlayers", newImportedPlayers);
         ls.set("playerStats", playerStats);
         ls.set("updatePresentation", true);
@@ -396,7 +402,7 @@ class App extends React.Component {
 
             if (cloudPlayerRounds) {
                 cloudPlayerRounds.forEach(cloudPlayer => {
-                    newAvailablePlayers[cloudPlayer.playerId-1] = cloudPlayer.active;
+                    newAvailablePlayers[cloudPlayer.playerId - 1] = cloudPlayer.active;
                     if (!playerStats[cloudPlayer.playerId]) {
                         playerStats[cloudPlayer.playerId] = App.emptyPlayerStats(cloudPlayer.playerId);
                     }
@@ -424,9 +430,9 @@ class App extends React.Component {
         }
 
         ls.set("playerStats", playerStats);
-        this.setState({playerStats: playerStats});
+        this.setState({ playerStats: playerStats });
         ls.set("availablePlayers", newAvailablePlayers);
-        this.setState({availablePlayers: newAvailablePlayers});
+        this.setState({ availablePlayers: newAvailablePlayers });
         console.log('Player stats updated successfully');
     }
 
@@ -443,7 +449,7 @@ class App extends React.Component {
                 ...player[round],
                 result: newResult
             }
-        } : {[round]: {result: newResult}};
+        } : { [round]: { result: newResult } };
 
         await savePlayer(ls.get("tournamentId"), playerId, newPlayer);
         this.updatePlayerStats();
@@ -478,25 +484,25 @@ class App extends React.Component {
                 className="dryRun"
                 showTenCourts={this.state.showTenCourts}
                 courtsToUse={this.state.courtsToUse}
-                importedPlayers={this.state.importedPlayers}/>;
+                importedPlayers={this.state.importedPlayers} />;
         }
 
         const rounds = [];
         for (let index = this.state.rounds.length - 1; index >= 0; index--) {
             rounds.push(
                 <Round courts={this.state.rounds[index]}
-                       key={index}
-                       roundName={`Round ${index + 1}`}
-                       roundIndex={index}
-                       onDeleteRound={this.onDeleteRound}
-                       onShowOnPresentation={this.onShowOnPresentation}
-                       isShown={this.state.presentationRoundIndex === index}
-                       courtClass="courtSize1"
-                       showTenCourts={this.state.showTenCourts}
-                       courtsToUse={this.state.courtsToUse}
-                       importedPlayers={this.state.importedPlayers}
-                       playerStats={this.state.playerStats}
-                       onPlayerClick={this.togglePlayerResult}/>
+                    key={index}
+                    roundName={`Round ${index + 1}`}
+                    roundIndex={index}
+                    onDeleteRound={this.onDeleteRound}
+                    onShowOnPresentation={this.onShowOnPresentation}
+                    isShown={this.state.presentationRoundIndex === index}
+                    courtClass="courtSize1"
+                    showTenCourts={this.state.showTenCourts}
+                    courtsToUse={this.state.courtsToUse}
+                    importedPlayers={this.state.importedPlayers}
+                    playerStats={this.state.playerStats}
+                    onPlayerClick={this.togglePlayerResult} />
             );
         }
 
@@ -509,40 +515,40 @@ class App extends React.Component {
                 <img src={logo} alt="Tournament Logo" className="logo" />
                 <div id="config">
                     <Settings noCourts={this.state.noCourts}
-                              teamsPerCourt={this.state.teamsPerCourt}
-                              playersPerTeam={this.state.playersPerTeam}
-                              useAllPlayers={this.state.useAllPlayers}
-                              players={this.state.availablePlayers}
-                              onSettingChange={this.onSettingChange}
-                              onPlayerActiveChange={this.onPlayerActiveChange}
-                              onSubmit={this.draw}
-                              onResetState={this.onResetState}
-                              autoPesentNewRound={this.state.autoPresentNewRound}
-                              onAutoPresentNewRoundChange={this.onAutoPresentNewRoundChange}
-                              showTenCourts={this.state.showTenCourts}
-                              hideUnusedCourts={this.state.hideUnusedCourts}
-                              courtsToUse={this.state.courtsToUse}
-                              onCourtsToUseChange={this.onCourtsToUseChange}
-                              setImportedPlayers={this.setImportedPlayers}
-                              updateImportedPlayers={this.updateImportedPlayers}
-                              importedPlayers={this.state.importedPlayers}
-                              updateGender={this.updateGender}
-                              lastRoundCreationDate={this.state.lastRoundCreationDate}
-                              secondLastRoundCreationDate={this.state.secondLastRoundCreationDate}
-                              onStartRound={this.onStartRound}
-                              paradiseMode={this.state.paradiseMode}
-                              onParadiseModeChange={this.onParadiseModeChange}
-                              paradisePlayersPerCourt={this.state.paradisePlayersPerCourt}
-                              paradisePlayersPerRound={this.state.paradisePlayersPerRound}
-                              playerViewEnabled={this.state.playerViewEnabled}
-                              tournamentId={ls.get("tournamentId")}
-                              playerStats={this.state.playerStats}
-                              showLoadingSpinner={this.showLoadingSpinner}
-                              importNextRound={this.importNextRound}
-                              noOnLeaderboard={this.state.noOnLeaderboard}
-                              playerInstructions={this.state.playerInstructions}
-                              groupId={this.state.groupId}
-                              tournamentName={this.state.tournamentName}
+                        teamsPerCourt={this.state.teamsPerCourt}
+                        playersPerTeam={this.state.playersPerTeam}
+                        useAllPlayers={this.state.useAllPlayers}
+                        players={this.state.availablePlayers}
+                        onSettingChange={this.onSettingChange}
+                        onPlayerActiveChange={this.onPlayerActiveChange}
+                        onSubmit={this.draw}
+                        onResetState={this.onResetState}
+                        autoPesentNewRound={this.state.autoPresentNewRound}
+                        onAutoPresentNewRoundChange={this.onAutoPresentNewRoundChange}
+                        showTenCourts={this.state.showTenCourts}
+                        hideUnusedCourts={this.state.hideUnusedCourts}
+                        courtsToUse={this.state.courtsToUse}
+                        onCourtsToUseChange={this.onCourtsToUseChange}
+                        setImportedPlayers={this.setImportedPlayers}
+                        updateImportedPlayers={this.updateImportedPlayers}
+                        importedPlayers={this.state.importedPlayers}
+                        updateGender={this.updateGender}
+                        lastRoundCreationDate={this.state.lastRoundCreationDate}
+                        secondLastRoundCreationDate={this.state.secondLastRoundCreationDate}
+                        onStartRound={this.onStartRound}
+                        paradiseMode={this.state.paradiseMode}
+                        onParadiseModeChange={this.onParadiseModeChange}
+                        paradisePlayersPerCourt={this.state.paradisePlayersPerCourt}
+                        paradisePlayersPerRound={this.state.paradisePlayersPerRound}
+                        playerViewEnabled={this.state.playerViewEnabled}
+                        tournamentId={ls.get("tournamentId")}
+                        playerStats={this.state.playerStats}
+                        showLoadingSpinner={this.showLoadingSpinner}
+                        importNextRound={this.importNextRound}
+                        noOnLeaderboard={this.state.noOnLeaderboard}
+                        playerInstructions={this.state.playerInstructions}
+                        groupId={this.state.groupId}
+                        tournamentName={this.state.tournamentName}
                     />
                     <ul className="clear">
                         {errors}
@@ -560,7 +566,7 @@ class App extends React.Component {
 
                 {this.state.showLoadingSpinner &&
                     <div className="loadingSpinner">
-                        <img alt="Loading spinner" src={loadingSpinner}/>
+                        <img alt="Loading spinner" src={loadingSpinner} />
                     </div>
                 }
 
