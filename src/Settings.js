@@ -386,6 +386,7 @@ class Settings extends React.Component {
                                         onChange={this.handleChange} />
                                     <button onClick={e => this.removeLeaderboardPlayer(e)}>-</button>
                                     <button onClick={e => this.addLeaderboardPlayer(e)}>+</button>
+                                    <span className="labelDetails">The leaderboard only shows players that have reported a result in at least one match.</span>
                                 </label>
                                 <Link to="/presentation" target="_blank">Open presentation</Link><br />
                                 <Link to="/leaderboard" target="_blank">Open leaderboard (local)</Link><br />

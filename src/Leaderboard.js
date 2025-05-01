@@ -84,7 +84,7 @@ const Leaderboard = () => {
     }, [tournamentId]);
 
     const sortedPlayers = Object.values(leaderboard)
-        .filter((p) => p !== null && p.wins >= 0)
+        .filter((p) => p !== null && p.playedMatches >= 1)
         .sort((a, b) => (b.wins !== a.wins ? b.wins - a.wins : b.playedMatches - a.playedMatches))
         .slice(0, noOnLeaderboard);
 
