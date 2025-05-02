@@ -1,14 +1,14 @@
-import React, {useEffect, useState, useRef} from 'react';
-import {useParams, Link} from 'react-router-dom';
+import React, { useEffect, useState, useRef } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import './PlayerView.css';
-import {getTournament, savePlayer, getPlayer} from './api.js';
+import { getTournament, savePlayer, getPlayer } from './api.js';
 import ls from 'local-storage';
 import Court from "./Court";
 import logo from './img/2025/BT-logga-med-vit-kant.webp';
 
 const PlayerView = () => {
 
-    const {tournamentId} = useParams();
+    const { tournamentId } = useParams();
     const [tournament, setTournament] = useState(null);
     const [currentRoundIndex, setCurrentRoundIndex] = useState(null);
     const [nextRoundIndex, setNextRoundIndex] = useState(null);
@@ -16,6 +16,7 @@ const PlayerView = () => {
     const [allPlayerRounds, setAllPlayerRounds] = useState(null);
     const [playerName, setPlayerName] = useState(null);
     const [active, setActive] = useState(true);
+    const [version, setVersion] = useState(1);
     const [error, setError] = useState(null);
     const [updateServer, setUpdateServer] = useState(false);
     const [debounceTimer, setDebounceTimer] = useState(null)
@@ -104,7 +105,9 @@ const PlayerView = () => {
             setAllPlayerRounds(playerRounds);
             setPlayerName((cloudPlayer && cloudPlayer.displayName) ? cloudPlayer.displayName : "");
             setActive(cloudPlayer ? cloudPlayer.active : true);
+            setVersion(cloudPlayer ? cloudPlayer.version : 1);
         }
+        return version
     };
 
     useEffect(() => {
@@ -112,8 +115,11 @@ const PlayerView = () => {
             if (debounceTimer) {
                 clearTimeout(debounceTimer);
             }
-            const timer = setTimeout(() => {
-                savePlayer(tournamentId, player, allPlayerRounds);
+            const timer = setTimeout(async () => {
+                const playerData = structuredClone(allPlayerRounds);
+                playerData.version = version;
+                await savePlayer(tournamentId, player, playerData);
+                await updatePlayerData();
             }, 1000);
             setDebounceTimer(timer);
         }
@@ -179,7 +185,8 @@ const PlayerView = () => {
         setActive(false);
 
         try {
-            await savePlayer(tournamentId, player, {active: false});
+            await savePlayer(tournamentId, player, { active: false, version: version });
+            await updatePlayerData();
         } catch (error) {
             console.error("Failed to deactivate player:", error);
         }
@@ -192,7 +199,8 @@ const PlayerView = () => {
         setActive(true);
 
         try {
-            await savePlayer(tournamentId, player, {active: true});
+            await savePlayer(tournamentId, player, { active: true, version: version });
+            await updatePlayerData();
         } catch (error) {
             console.error("Failed to activate player:", error);
         }
@@ -229,9 +237,9 @@ const PlayerView = () => {
                                 className="courtInfo">Court {getCourtName(allPlayerRounds[nextRoundIndex].courtIndex)}</span>
                             </p>
                             <Court teams={allPlayerRounds[nextRoundIndex].courtPlayers}
-                                   key={allPlayerRounds[nextRoundIndex].courtIndex}
-                                   courtNumber={allPlayerRounds[nextRoundIndex].courtIndex + 1}
-                                   courtClass="courtSize3"/>
+                                key={allPlayerRounds[nextRoundIndex].courtIndex}
+                                courtNumber={allPlayerRounds[nextRoundIndex].courtIndex + 1}
+                                courtClass="courtSize3" />
                         </>
                     }
                     {allPlayerRounds && allPlayerRounds[currentRoundIndex] && !allPlayerRounds[nextRoundIndex] &&
@@ -240,9 +248,9 @@ const PlayerView = () => {
                                 className="courtInfo">Court {getCourtName(allPlayerRounds[currentRoundIndex].courtIndex)}</span>
                             </p>
                             <Court teams={allPlayerRounds[currentRoundIndex].courtPlayers}
-                                   key={allPlayerRounds[currentRoundIndex].courtIndex}
-                                   courtNumber={allPlayerRounds[currentRoundIndex].courtIndex + 1}
-                                   courtClass="courtSize3"/>
+                                key={allPlayerRounds[currentRoundIndex].courtIndex}
+                                courtNumber={allPlayerRounds[currentRoundIndex].courtIndex + 1}
+                                courtClass="courtSize3" />
                         </>
                     }
                     {noCourtMessage !== null &&
@@ -260,10 +268,10 @@ const PlayerView = () => {
                             <ul id="allRounds">
                                 {Object.entries(allPlayerRounds)
                                     .sort(([roundIndexA], [roundIndexB]) => parseInt(roundIndexB) - parseInt(roundIndexA))
-                                    .map(([roundIndex, {courtIndex, courtPlayers, result}]) => (
+                                    .map(([roundIndex, { courtIndex, courtPlayers, result }]) => (
                                         <li key={roundIndex}>
                                             <div onClick={() => toggleResult(roundIndex)}
-                                                 className={`circle ${result === null ? "neutral" : (result === "W" ? "win" : "lose")}`}>{result === null ? "?" : (result === "W" ? "W" : "L")}</div>
+                                                className={`circle ${result === null ? "neutral" : (result === "W" ? "win" : "lose")}`}>{result === null ? "?" : (result === "W" ? "W" : "L")}</div>
                                             <strong>Round {parseInt(roundIndex, 10) + 1}:&nbsp;</strong>
                                             {tournament.paradiseMode ? courtPlayers.map(team => team.join(", ")).join(", ") : courtPlayers.map(team => team.join(" & ")).join(" vs ")}
                                             &nbsp;on

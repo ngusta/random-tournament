@@ -47,12 +47,10 @@ const GoogleSheets = ({setImportedPlayers, updateImportedPlayers, showLoadingSpi
                             break;
                     }
                 }
-                showLoadingSpinner(false);
             })
             .catch(err => {
                 console.error('Error fetching data:', err);
                 setError('Failed to load data.');
-                showLoadingSpinner(false);
             });
     };
 
@@ -65,12 +63,10 @@ const GoogleSheets = ({setImportedPlayers, updateImportedPlayers, showLoadingSpi
             .then(response => response.json())
             .then(data => {
                 importNextRound(data.values.map(row => row.map(Number)));
-                showLoadingSpinner(false);
             })
             .catch(err => {
                 console.error('Error fetching data:', err);
                 setError('Failed to load data.');
-                showLoadingSpinner(false);
             });
     }
 

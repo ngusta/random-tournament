@@ -74,12 +74,30 @@ export async function getPlayers(tournamentId) {
 
 export async function savePlayer(tournamentId, playerId, playerData) {
     try {
+        if (!playerData.version) {
+            console.error("Player " + playerId + " has no version. Cannot save to cloud.");
+            return;
+        }
         const response = await fetch(`https://ztx5ai37rj.execute-api.eu-north-1.amazonaws.com/prod/random-partner/${tournamentId}/player/${playerId}`, {
             method: 'PUT',
             headers: getHeaders(),
             body: JSON.stringify(playerData)
         });
         console.log(`Saved player ${playerId} in cloud.`);
+        return response;
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+export async function createPlayers(tournamentId, playerData) {
+    try {
+        const response = await fetch(`https://ztx5ai37rj.execute-api.eu-north-1.amazonaws.com/prod/random-partner/${tournamentId}/players`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify(playerData)
+        });
+        console.log(`Saved new players in cloud.`);
         return response;
     } catch (err) {
         console.error(err);
