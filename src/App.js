@@ -50,6 +50,7 @@ class App extends React.Component {
             clearInterval(this.state.updateStatsIntervalId);
             console.log("Player stats updating stopped, reload to continue.");
         }, 5 * 60 * 60 * 1000);
+        ls.set("co")
         ls.set("updatePresentation", true);
     }
 
@@ -105,15 +106,18 @@ class App extends React.Component {
         newAvailablePlayers[playerId - 1] = active;
         this.setState({ availablePlayers: newAvailablePlayers });
         ls.set("availablePlayers", newAvailablePlayers);
-        const response = await savePlayer(ls.get("tournamentId"), playerId, { active: active, version: this.state.playerStats[playerId].version });
-        if (response.status == 200) {
-            toast.success("Player active state saved.");
-        } else if (response.status == 409) {
-            toast.error("Sync error. Try again.");
-        } else {
-            toast.error("Error saving the player active state.");
+        if (this.state.playerViewEnabled) {
+            const response = await savePlayer(ls.get("tournamentId"), playerId, { active: active, version: this.state.playerStats[playerId] ? this.state.playerStats[playerId].version : 1 });
+            if (response.status === 200) {
+                toast.success("Player active state saved.");
+            } else if (response.status === 409) {
+                toast.error("Sync error. Try again.");
+            } else {
+                toast.error("Error saving the player active state.");
+            }
+
+            await this.updatePlayerStats();
         }
-        await this.updatePlayerStats();
     };
 
     onCourtsToUseChange = (e) => {
@@ -145,7 +149,7 @@ class App extends React.Component {
         ls.set("rounds", roundsCopy);
         ls.set("presentationRoundIndex", pressIndex);
 
-        ls.set("playerStats", {});
+        ls.set("playerStats", []);
         roundsCopy.forEach(round => Round.updatePlayerStats(round));
         this.saveTournamentInCloud();
     };
@@ -191,14 +195,14 @@ class App extends React.Component {
         this.setState({ showLoadingSpinner: show });
     }
 
-    draw = async (predefinedPlayers) => {
+    draw = async (predefinedRound) => {
         this.setState({ errors: [], showLoadingSpinner: true });
 
         setTimeout(async () => {
             try {
                 ls.set("errors", []);
 
-                const round = predefinedPlayers ? await this.createPredefinedRound(predefinedPlayers) : await this.createRound();
+                const round = predefinedRound ? await this.createPredefinedRound(predefinedRound) : await this.createRound();
                 if (round) {
                     const newRounds = [...this.state.rounds, round];
                     let pressIndex = this.state.presentationRoundIndex;
@@ -320,7 +324,7 @@ class App extends React.Component {
 
     setImportedPlayers = async (importedPlayerData) => {
         ls.set("importInProgress", true);
-        this.showLoadingSpinner(true);  
+        this.showLoadingSpinner(true);
         const importedPlayers = {};
         const playerStats = ls.get("playerStats") || [];
         const newAvailablePlayers = [...this.state.availablePlayers];
@@ -337,10 +341,11 @@ class App extends React.Component {
             newAvailablePlayers[playerIndex] = importedPlayerData[index].active;
             importedPlayers[playerNumber] = importedPlayerData[index];
         });
-        this.setState({ availablePlayers: newAvailablePlayers });
         this.setState({ importedPlayers: importedPlayers });
         ls.set("importedPlayers", importedPlayers);
+        this.setState({ playerStats: playerStats });
         ls.set("playerStats", playerStats);
+        this.setState({ availablePlayers: newAvailablePlayers });
         ls.set("availablePlayers", newAvailablePlayers);
         if (this.state.playerViewEnabled) {
             await this.savePlayerDataToCloud();
@@ -369,7 +374,7 @@ class App extends React.Component {
 
     updateImportedPlayers = async (importedPlayers) => {
         ls.set("importInProgress", true);
-        this.showLoadingSpinner(true);  
+        this.showLoadingSpinner(true);
         const newImportedPlayers = Object.assign({}, this.state.importedPlayers);
         const playerStats = ls.get("playerStats") || [];
         Object.keys(importedPlayers).forEach(index => {
@@ -388,6 +393,7 @@ class App extends React.Component {
         });
         this.setState({ importedPlayers: newImportedPlayers });
         ls.set("importedPlayers", newImportedPlayers);
+        this.setState({ playerStats: playerStats });
         ls.set("playerStats", playerStats);
         if (this.state.playerViewEnabled) {
             await this.savePlayerDataToCloud();
@@ -405,16 +411,18 @@ class App extends React.Component {
         if (!ls.get("playerStats")) {
             const playerStats = [];
             this.state.availablePlayers.forEach((active, index) => {
+                console.log(index);
                 const playerId = index + 1;
                 playerStats[playerId] = App.emptyPlayerStats(playerId);
                 playerStats[playerId].active = active;
             });
             ls.set("playerStats", playerStats);
         }
-
         const playersWithData = [];
-        for (let playerId = 1; playerId < ls.get("playerStats").length; playerId++) {
-            const player = ls.get("playerStats")[playerId];
+        const lenPlayerStats = this.state.availablePlayers.length + 1;
+
+        for (let playerId = 1; playerId < lenPlayerStats; playerId++) {
+            const player = ls.get("playerStats")[playerId] ? ls.get("playerStats")[playerId] : App.emptyPlayerStats(playerId);
             playersWithData.push({
                 active: this.state.availablePlayers[playerId - 1],
                 playerId: String(playerId),
@@ -426,9 +434,9 @@ class App extends React.Component {
         }
         const response = await createPlayers(ls.get("tournamentId"), playersWithData);
 
-        if (response.status == 200) {
+        if (response.status === 201) {
             toast.success("Import completed and player data saved in the cloud.");
-        } else if (response.status == 409) {
+        } else if (response.status === 409) {
             toast.error("Player save sync error. Try import again.");
         } else {
             toast.error("Error saving the imported state.");
@@ -451,9 +459,9 @@ class App extends React.Component {
         const response = await savePlayers(ls.get("tournamentId"), playersWithData);
         await this.updatePlayerStats();
 
-        if (response.status == 200) {
+        if (response.status === 200) {
             toast.success("Player data saved in the cloud.");
-        } else if (response.status == 409) {
+        } else if (response.status === 409) {
             toast.error("Player save sync error. Try import again.");
         } else {
             toast.error("Error saving the imported state.");
@@ -461,7 +469,7 @@ class App extends React.Component {
     }
 
     updatePlayerStats = async () => {
-        if (this.state.showLoadingSpinner) {
+        if (this.state.showLoadingSpinner || !this.state.playerViewEnabled) {
             //Skip updating while e.g. import or round creation ongoing
             return;
         }
@@ -511,6 +519,10 @@ class App extends React.Component {
     }
 
     togglePlayerResult = async (playerId, round) => {
+        if (!this.state.playerViewEnabled) {
+            toast.error("Player view is disabled. Please enable it to change the result.");
+            return;
+        }
         const player = await getPlayer(ls.get("tournamentId"), playerId);
 
         const lastResult = player && player[round] ? player[round].result : null;

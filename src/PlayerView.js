@@ -5,6 +5,8 @@ import { getTournament, savePlayer, getPlayer } from './api.js';
 import ls from 'local-storage';
 import Court from "./Court";
 import logo from './img/2025/BT-logga-med-vit-kant.webp';
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const PlayerView = () => {
 
@@ -118,8 +120,13 @@ const PlayerView = () => {
             const timer = setTimeout(async () => {
                 const playerData = structuredClone(allPlayerRounds);
                 playerData.version = version;
-                await savePlayer(tournamentId, player, playerData);
+                const response = await savePlayer(tournamentId, player, playerData);
                 await updatePlayerData();
+                if (response.status === 200) {
+                    toast.success("Result saved!");
+                } else {
+                    toast.error("Failed to save result. Please try again.");
+                }
             }, 1000);
             setDebounceTimer(timer);
         }
@@ -179,7 +186,7 @@ const PlayerView = () => {
     }
 
     const deactivatePlayer = async () => {
-        const confirmDeactivation = window.confirm(`Are you sure you want to withdraw player ${player} ${playerName}? This removes you from future rounds, but you can rejoin later.`);
+        const confirmDeactivation = window.confirm(`Are you sure you want to withdraw player ${player} ${playerName}? This removes you from future rounds, but you can rejoin later. Please play any round already created/started as you will only be removed from future rounds.`);
         if (!confirmDeactivation) return;
 
         setActive(false);
@@ -212,6 +219,7 @@ const PlayerView = () => {
 
     return (
         <div id="playerView">
+            <ToastContainer />
             <img src={logo} alt="Tournament Logo" className="logo" />
             {error && <p>{error}</p>}
             {!error &&

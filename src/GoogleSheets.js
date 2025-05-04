@@ -34,7 +34,6 @@ const GoogleSheets = ({setImportedPlayers, updateImportedPlayers, showLoadingSpi
                         }
                         return null;
                     }).filter(player => player !== null);
-
                     switch (type) {
                         case IMPORT_ALL:
                             setImportedPlayers(playerData);
