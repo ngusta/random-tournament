@@ -73,8 +73,8 @@ class Presentation extends React.Component {
 		if (!this.state.roundToShow) {
 			return;
 		}
-		const noCourts = Math.max(this.state.courtsToUse.length, this.state.roundToShow.length); //TODO: Consider showTenCourts and/or hideUnsuedCourts here
-		console.log(this.state.courtsToUse.length);
+		const noCourts = Math.max((this.state.courtsToUse && this.state.courtsToUse.length), (this.state.roundToShow && this.state.roundToShow.length)); //TODO: Consider showTenCourts and/or hideUnsuedCourts here
+		//console.log(this.state.courtsToUse.length);
 		const availableCourtWidths = [50, 100, 150, 200, 220, 300, 400, 500, 600];
 		const availableCourtHeights = [82, 166, 248, 332, 365, 498, 663, 830, 945];
 
