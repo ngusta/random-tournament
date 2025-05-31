@@ -193,10 +193,16 @@ class Settings extends React.Component {
 
         const baseUrl = `${window.location.protocol}//${window.location.host}`;
 
+        const handleKeyDown = (e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+            }
+          };
+
         return (
             <div>
                 <React.Fragment>
-                    <form>
+                    <form onKeyDown={handleKeyDown}>
                         <div className="col">
                             <fieldset className="googleImport">
                                 <legend>Import player data</legend>

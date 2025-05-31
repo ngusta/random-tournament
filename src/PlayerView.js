@@ -279,7 +279,7 @@ const PlayerView = () => {
                                     .map(([roundIndex, { courtIndex, courtPlayers, result }]) => (
                                         <li key={roundIndex}>
                                             <div onClick={() => toggleResult(roundIndex)}
-                                                className={`circle ${result === null ? "neutral" : (result === "W" ? "win" : "lose")}`}>{result === null ? "?" : (result === "W" ? "W" : "L")}</div>
+                                                className={`circle ${result === null ? "neutral" : (result === "W" ? "win" : "lose")}`}>{result === null ? "W/L?" : (result === "W" ? "W" : "L")}</div>
                                             <strong>Round {parseInt(roundIndex, 10) + 1}:&nbsp;</strong>
                                             {tournament.paradiseMode ? courtPlayers.map(team => team.join(", ")).join(", ") : courtPlayers.map(team => team.join(" & ")).join(" vs ")}
                                             &nbsp;on
