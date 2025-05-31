@@ -12,6 +12,10 @@ const GoogleSheets = ({setImportedPlayers, updateImportedPlayers, showLoadingSpi
 
     const handleImportPlayerData = (e, type) => {
         e.preventDefault();
+        const confirm = window.confirm(type === IMPORT_ALL ? "Are you sure you want to import players? This will overwrite all existing player data (including active state)." : "Are you sure you want to import static data (Name, Alias, Gender)? This will overwrite existing player data.");
+        if (!confirm) {
+            return;
+        }
         showLoadingSpinner(true);
         const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${playersSheetRange}?key=AIzaSyANb2sSxomytVZ7OSM5lVFas3HuAQj2mD8`;
 
