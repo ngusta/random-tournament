@@ -7,6 +7,7 @@ import loadingSpinner from './img/loading-spinner.svg';
 import logo from './img/2025/BT-logga-med-vit-kant.webp';
 import { deleteTournament, saveTournament, getPlayers, getPlayer, savePlayer, savePlayers, createPlayers } from './api.js';
 import { ToastContainer, toast } from "react-toastify";
+import { createSwissTournament, createSwissRound } from './SwissTournament';
 import 'react-toastify/dist/ReactToastify.css';
 
 class App extends React.Component {
@@ -44,7 +45,8 @@ class App extends React.Component {
             noOnLeaderboard: ls.get("noOnLeaderboard") === null ? 20 : ls.get("noOnLeaderboard"),
             playerInstructions: ls.get("playerInstructions") || "",
             groupId: ls.get("groupId") || "",
-            tournamentName: ls.get("tournamentName") || ""
+            tournamentName: ls.get("tournamentName") || "",
+            swissTournaments: ls.get("swissTournaments") || [],
         };
         setTimeout(() => {
             clearInterval(this.state.updateStatsIntervalId);
@@ -560,6 +562,35 @@ class App extends React.Component {
         }
     }
 
+    createSwissTournament = async (teams, courts) => {
+        let swissTournament = createSwissTournament(teams, courts);
+        swissTournament = createSwissRound(swissTournament);
+        const newSwissTournaments = [...this.state.swissTournaments, swissTournament];
+        this.setState({ swissTournaments: newSwissTournaments });
+        ls.set("swissTournaments", newSwissTournaments);
+        console.log(swissTournament);
+
+        let index = 0;
+        const matches = swissTournament.pairings[0]
+            .filter(pairing => !pairing.bye)
+            .map(pairing => {
+                return [...swissTournament.courts[index++ % swissTournament.courts.length], ...swissTournament.teams[pairing.home].players, ...swissTournament.teams[pairing.away].players];
+            });
+
+        console.log(matches);
+
+        for (let i = 0; i < matches.length / swissTournament.courts.length; i++) {
+            const round = matches.slice(i * swissTournament.courts.length, (i + 1) * swissTournament.courts.length);
+            
+            await this.draw(round);
+            
+            // Add sleep to prevent race condition in draw
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+
+        this.showLoadingSpinner(false);
+    }
+
     render() {
         let dryRunRound;
         const dryRunRoundDraw = this.createDryRound();
@@ -637,6 +668,7 @@ class App extends React.Component {
                         playerInstructions={this.state.playerInstructions}
                         groupId={this.state.groupId}
                         tournamentName={this.state.tournamentName}
+                        createSwissTournament={this.createSwissTournament}
                     />
                     <ul className="clear">
                         {errors}

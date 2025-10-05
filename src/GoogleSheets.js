@@ -1,10 +1,12 @@
 import React, {useState} from 'react';
 import ls from 'local-storage';
 
-const GoogleSheets = ({setImportedPlayers, updateImportedPlayers, showLoadingSpinner, importNextRound}) => {
+const GoogleSheets = ({setImportedPlayers, updateImportedPlayers, showLoadingSpinner, importNextRound, createSwissTournament}) => {
     const [sheetId, setSheetId] = useState(ls.get("sheetId") || '1uci8khgGfqnpKtkyQ4mSYIroeHmXfZd8ColINEwyP2I');
     const [playersSheetRange, setPlayersSheetRange] = useState(ls.get("playersSheetRange") || "'lördag'!A2:F");
     const [predefinedRoundSheetRange, setPredefinedRoundSheetRange] = useState(ls.get("predefinedRoundSheetRange") || "'start games'!A2:E");
+    const [swissTeamsSheetRange, setSwissTeamsSheetRange] = useState(ls.get("swissTeamsSheetRange") || "'swiss'!A8:B21");
+    const [swissCourtsSheetRange, setSwissCourtsSheetRange] = useState(ls.get("swissCourtsSheetRange") || "'swiss'!U3:U5");
     const [error, setError] = useState(null);
     const NUMBER_OF_COLUMNS = 6;
     const IMPORT_ALL = 1;
@@ -73,6 +75,30 @@ const GoogleSheets = ({setImportedPlayers, updateImportedPlayers, showLoadingSpi
             });
     }
 
+    const handleCreateSwissTournament = (e) => {
+        e.preventDefault();
+        showLoadingSpinner(true);
+        const teamsUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${swissTeamsSheetRange}?key=AIzaSyANb2sSxomytVZ7OSM5lVFas3HuAQj2mD8`;
+        fetch(teamsUrl)
+            .then(response => response.json())
+            .then(teams => {
+                const courtsUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${swissCourtsSheetRange}?key=AIzaSyANb2sSxomytVZ7OSM5lVFas3HuAQj2mD8`;
+                fetch(courtsUrl)
+                    .then(response => response.json())
+                    .then(courts => {
+                        createSwissTournament(teams.values.map(row => row.map(Number)), courts.values.map(row => row.map(Number)));
+                    })
+                    .catch(err => {
+                        console.error('Error fetching courts data:', err);
+                        setError('Failed to load courts data.');
+                    });
+            })
+            .catch(err => {
+                console.error('Error fetching teams data:', err);
+                setError('Failed to load teams data.');
+            });
+    }
+
     return (
         <div>
             <label>
@@ -96,8 +122,19 @@ const GoogleSheets = ({setImportedPlayers, updateImportedPlayers, showLoadingSpi
                 The first column should be the courts and remaining columns should be the players (No. of courts and Courts to use below will be updated).<br/>
                 The tournament settings below will be ignored, the sheet is king.</span>
             </label>
-            {error && <p>{error}</p>}
             <button className="import-button" onClick={(event) => handleImportNextRound(event)}>Create predefined round</button>
+            <label>
+                <span>Swiss tournament teams:</span>
+                <input type="text" value={swissTeamsSheetRange} onChange={(e) => {setSwissTeamsSheetRange(e.target.value); ls.set("swissTeamsSheetRange", e.target.value)}}/>
+                <span className="labelDetails">Teams that will participate in the Swiss tournament. Each team is one row and consists of 2 or more players.<br/>
+                </span>
+                <span>Swiss tournament courts:</span>
+                <input type="text" value={swissCourtsSheetRange} onChange={(e) => {setSwissCourtsSheetRange(e.target.value); ls.set("swissCourtsSheetRange", e.target.value)}}/>
+                <span className="labelDetails">Courts that will be used in the Swiss tournament. One court per row.<br/>
+                </span>
+            </label>
+            <button className="import-button" onClick={(event) => handleCreateSwissTournament(event)}>Create Swiss tournament</button>
+            {error && <p>{error}</p>}
         </div>
     );
 }
