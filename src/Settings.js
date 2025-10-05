@@ -8,6 +8,7 @@ import Round from './Round.js';
 import Stats from "./Stats";
 import './Settings.css';
 import { QRCodeCanvas } from 'qrcode.react';
+import { TOURNAMENT_TYPES } from './App.js';
 
 class Settings extends React.Component {
     constructor(props) {
@@ -108,7 +109,6 @@ class Settings extends React.Component {
         this.props.onSettingChange("noOnLeaderboard", this.props.noOnLeaderboard - 1);
     };
 
-
     handleSubmit = (e) => {
         this.props.onSubmit();
         e.preventDefault();
@@ -171,6 +171,22 @@ class Settings extends React.Component {
         ls.set("updatePresentation", true);
     };
 
+    onTournamentTypeChange = (e) => {
+        this.props.onTournamentTypeChange(e.target.value);
+    };
+
+    onCreateSwissRound = (e) => {
+        e.preventDefault();
+        this.props.onCreateSwissRound();
+    };
+
+    onStartLatestRound = (e) => {
+        e.preventDefault();
+        ls.set("isLatestRoundStarted", true);
+        ls.set("updatePresentation", true);
+        this.props.onStartRound();
+    };
+
     render() {
         const players = this.props.players.map((playing, index) =>
             <label key={index}
@@ -193,115 +209,41 @@ class Settings extends React.Component {
 
         const baseUrl = `${window.location.protocol}//${window.location.host}`;
 
+        const swissTournaments = Object.values(this.props.swissTournaments).map(tournament =>
+            <li key={tournament.id}>{tournament.id}</li>
+        );
+
         const handleKeyDown = (e) => {
             if (e.key === 'Enter') {
-              e.preventDefault();
+                e.preventDefault();
             }
-          };
+        };
 
         return (
             <div>
                 <React.Fragment>
                     <form onKeyDown={handleKeyDown}>
                         <div className="col">
-                            <fieldset className="googleImport">
-                                <legend>Import player data</legend>
-                                <GoogleSheets setImportedPlayers={this.props.setImportedPlayers}
-                                    updateImportedPlayers={this.props.updateImportedPlayers}
-                                    showLoadingSpinner={this.props.showLoadingSpinner}
-                                    importNextRound={this.props.importNextRound}
-                                    createSwissTournament={this.props.createSwissTournament} />
-                            </fieldset>
-                            <fieldset className="tournamentSettings">
-                                <legend>Tournament settings</legend>
+                            <fieldset className="tournamentType">
+                                <legend>Tournament Type</legend>
                                 <label>
-                                    <span>Paradise mode</span>
-                                    <input type="checkbox" name="paradiseMode" checked={this.props.paradiseMode}
-                                        onChange={this.props.onParadiseModeChange} />
+                                    <input type="radio" name="tournamentType" value="random" checked={this.props.tournamentType === TOURNAMENT_TYPES.RANDOM}
+                                        onChange={this.props.onTournamentTypeChange} />
+                                    <span>Random Partner</span>
+                                    <span className="labelDetails">Each player will be randomly paired with another player for each round.</span>
                                 </label>
                                 <label>
-                                    <span>Number of players</span>
-                                    <input type="text" name="noPlayers"
-                                        value={this.props.players.length === 0 ? "" : this.props.players.length}
-                                        onChange={this.handleChange} />
-                                    <button onClick={e => this.removePlayer(e)}>-</button>
-                                    <button onClick={e => this.addPlayer(e)}>+</button>
+                                    <input type="radio" name="tournamentType" value="predefined" checked={this.props.tournamentType === TOURNAMENT_TYPES.PREDEFINED}
+                                        onChange={this.props.onTournamentTypeChange} />
+                                    <span>Predefined round</span>
+                                    <span className="labelDetails">Used for starting e.g. King of the court or Winner's court tournaments.</span>
                                 </label>
                                 <label>
-                                    <span>Number of courts</span>
-                                    <input type="text" name="noCourts"
-                                        value={this.props.noCourts === 0 ? "" : this.props.noCourts}
-                                        onChange={this.handleChange} />
-                                    <button onClick={e => this.removeCourt(e)}>-</button>
-                                    <button onClick={e => this.addCourt(e)}>+</button>
+                                    <input type="radio" name="tournamentType" value="swiss" checked={this.props.tournamentType === TOURNAMENT_TYPES.SWISS}
+                                        onChange={this.props.onTournamentTypeChange} />
+                                    <span>Swiss system</span>
+                                    <span className="labelDetails">Will create a tournament for teams, where all teams play an equal amount of matches. Used for e.g. Midweek.</span>
                                 </label>
-                                {!this.props.paradiseMode &&
-                                    <label>
-                                        <span>Number of teams per court</span>
-                                        <input type="text" name="teamsPerCourt"
-                                            value={this.props.teamsPerCourt === 0 ? "" : this.props.teamsPerCourt}
-                                            onChange={this.handleChange} />
-                                        <button onClick={e => this.removeTeamPerCourt(e)}>-</button>
-                                        <button onClick={e => this.addTeamPerCourt(e)}>+</button>
-                                    </label>
-                                }
-                                <label>
-                                    <span>Let all players play every round</span>
-                                    <input type="checkbox" name="useAllPlayers" checked={this.props.useAllPlayers}
-                                        onChange={this.handleChange} />
-                                </label>
-                                {!this.props.useAllPlayers && !this.props.paradiseMode &&
-                                    <label>
-                                        <span>Number of players per team</span>
-                                        <input type="text" name="playersPerTeam"
-                                            value={this.props.playersPerTeam === 0 ? "" : this.props.playersPerTeam}
-                                            onChange={this.handleChange} />
-                                        <button onClick={e => this.removePlayerPerTeam(e)}>-</button>
-                                        <button onClick={e => this.addPlayerPerTeam(e)}>+</button>
-                                    </label>
-                                }
-
-                                {!this.props.useAllPlayers && this.props.paradiseMode &&
-                                    <>
-                                        <label>
-                                            <span>Max number of players per round</span>
-                                            <input type="text" name="paradisePlayersPerRound"
-                                                value={this.props.paradisePlayersPerRound === 0 ? "" : this.props.paradisePlayersPerRound}
-                                                onChange={this.handleChange} />
-                                            <button onClick={e => this.removeParadisePlayersPerRound(e)}>-</button>
-                                            <button onClick={e => this.addParadisePlayersPerRound(e)}>+</button>
-                                        </label>
-                                        <label>
-                                            <span>Max number of players per court</span>
-                                            <input type="text" name="paradisePlayersPerCourt"
-                                                value={this.props.paradisePlayersPerCourt === 0 ? "" : this.props.paradisePlayersPerCourt}
-                                                onChange={this.handleChange} />
-                                            <button onClick={e => this.removeParadisePlayersPerCourt(e)}>-</button>
-                                            <button onClick={e => this.addParadisePlayersPerCourt(e)}>+</button>
-                                        </label>
-                                    </>
-                                }
-                                <div className="players">
-                                    <span>Players ({numberOfActivePlayers} currently active)</span>
-                                    <span>
-                                        <label className="clearLeft">Edit gender
-                                            <input type="checkbox" name="editGender" checked={this.state.editGender}
-                                                onChange={this.onEditGenderChange} />
-                                        </label>
-                                    </span>
-                                    {players}
-                                </div>
-
-                                <button className="createNewRound" onClick={this.handleSubmit}>Create new round</button>
-                                <button className="createNewRound" onClick=
-                                    {e => {
-                                        e.preventDefault();
-                                        ls.set("isLatestRoundStarted", true);
-                                        ls.set("updatePresentation", true);
-                                        this.props.onStartRound();
-                                    }}>
-                                    Start latest round
-                                </button>
                                 <button className="clearData" onClick=
                                     {e => {
                                         e.preventDefault();
@@ -311,10 +253,119 @@ class Settings extends React.Component {
                                     <img alt="Clear data" src={deleteIcon} />Clear data
                                 </button>
                             </fieldset>
+                            <fieldset className="googleImport">
+                                <legend>Import Tournament Data</legend>
+                                <GoogleSheets setImportedPlayers={this.props.setImportedPlayers}
+                                    updateImportedPlayers={this.props.updateImportedPlayers}
+                                    showLoadingSpinner={this.props.showLoadingSpinner}
+                                    importNextRound={this.props.importNextRound}
+                                    createSwissTournament={this.props.createSwissTournament}
+                                    tournamentType={this.props.tournamentType} />
+                            </fieldset>
+                            {this.props.tournamentType === TOURNAMENT_TYPES.RANDOM && (
+                                <fieldset className="tournamentSettings">
+                                    <legend>Random Partner Tournament Settings</legend>
+                                    <label>
+                                        <span>Paradise mode</span>
+                                        <input type="checkbox" name="paradiseMode" checked={this.props.paradiseMode}
+                                            onChange={this.props.onParadiseModeChange} />
+                                    </label>
+                                    <label>
+                                        <span>Number of players</span>
+                                        <input type="text" name="noPlayers"
+                                            value={this.props.players.length === 0 ? "" : this.props.players.length}
+                                            onChange={this.handleChange} />
+                                        <button onClick={e => this.removePlayer(e)}>-</button>
+                                        <button onClick={e => this.addPlayer(e)}>+</button>
+                                    </label>
+                                    <label>
+                                        <span>Number of courts</span>
+                                        <input type="text" name="noCourts"
+                                            value={this.props.noCourts === 0 ? "" : this.props.noCourts}
+                                            onChange={this.handleChange} />
+                                        <button onClick={e => this.removeCourt(e)}>-</button>
+                                        <button onClick={e => this.addCourt(e)}>+</button>
+                                    </label>
+                                    {!this.props.paradiseMode &&
+                                        <label>
+                                            <span>Number of teams per court</span>
+                                            <input type="text" name="teamsPerCourt"
+                                                value={this.props.teamsPerCourt === 0 ? "" : this.props.teamsPerCourt}
+                                                onChange={this.handleChange} />
+                                            <button onClick={e => this.removeTeamPerCourt(e)}>-</button>
+                                            <button onClick={e => this.addTeamPerCourt(e)}>+</button>
+                                        </label>
+                                    }
+                                    <label>
+                                        <span>Let all players play every round</span>
+                                        <input type="checkbox" name="useAllPlayers" checked={this.props.useAllPlayers}
+                                            onChange={this.handleChange} />
+                                    </label>
+                                    {!this.props.useAllPlayers && !this.props.paradiseMode &&
+                                        <label>
+                                            <span>Number of players per team</span>
+                                            <input type="text" name="playersPerTeam"
+                                                value={this.props.playersPerTeam === 0 ? "" : this.props.playersPerTeam}
+                                                onChange={this.handleChange} />
+                                            <button onClick={e => this.removePlayerPerTeam(e)}>-</button>
+                                            <button onClick={e => this.addPlayerPerTeam(e)}>+</button>
+                                        </label>
+                                    }
+
+                                    {!this.props.useAllPlayers && this.props.paradiseMode &&
+                                        <>
+                                            <label>
+                                                <span>Max number of players per round</span>
+                                                <input type="text" name="paradisePlayersPerRound"
+                                                    value={this.props.paradisePlayersPerRound === 0 ? "" : this.props.paradisePlayersPerRound}
+                                                    onChange={this.handleChange} />
+                                                <button onClick={e => this.removeParadisePlayersPerRound(e)}>-</button>
+                                                <button onClick={e => this.addParadisePlayersPerRound(e)}>+</button>
+                                            </label>
+                                            <label>
+                                                <span>Max number of players per court</span>
+                                                <input type="text" name="paradisePlayersPerCourt"
+                                                    value={this.props.paradisePlayersPerCourt === 0 ? "" : this.props.paradisePlayersPerCourt}
+                                                    onChange={this.handleChange} />
+                                                <button onClick={e => this.removeParadisePlayersPerCourt(e)}>-</button>
+                                                <button onClick={e => this.addParadisePlayersPerCourt(e)}>+</button>
+                                            </label>
+                                        </>
+                                    }
+                                    <div className="players">
+                                        <span>Players ({numberOfActivePlayers} currently active)</span>
+                                        <span>
+                                            <label className="clearLeft">Edit gender
+                                                <input type="checkbox" name="editGender" checked={this.state.editGender}
+                                                    onChange={this.onEditGenderChange} />
+                                            </label>
+                                        </span>
+                                        {players}
+                                    </div>
+
+                                    <button className="mainButton" onClick={this.handleSubmit}>Create new round</button>
+                                    <button className="mainButton" onClick={this.onStartLatestRound}>Start latest round</button>
+                                </fieldset>
+                            )}
+                            {this.props.tournamentType === TOURNAMENT_TYPES.PREDEFINED && (
+                                <fieldset className="tournamentSettings">
+                                    <legend>Predefined round settings</legend>
+                                </fieldset>
+                            )}
+                            {this.props.tournamentType === TOURNAMENT_TYPES.SWISS && (
+                                <fieldset className="tournamentSettings">
+                                    <legend>Swiss Tournament Settings</legend>
+                                    <ul>
+                                        {swissTournaments}
+                                    </ul>
+                                    <button className="mainButton" onClick={this.onCreateSwissRound}>Create new round(s)</button>
+                                    <button className="mainButton" onClick={this.onStartLatestRound}>Start latest round</button>
+                                </fieldset>
+                            )}
                         </div>
                         <div className="col">
                             <fieldset className="presentationSettings">
-                                <legend>Presentation settings</legend>
+                                <legend>Presentation Settings</legend>
                                 <label>
                                     <span>Automatically present new round on creation</span>
                                     <input type="checkbox" checked={this.props.autoPesentNewRound}

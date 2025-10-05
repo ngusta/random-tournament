@@ -180,12 +180,12 @@ body:has(#app) {
     width: 12em;
 }
 
-#config .googleImport label span.labelDetails {
+#config label span.labelDetails {
     font-size: 0.7em;
     width: 100%;
 }
 
-#config .googleImport label span.labelDetails .highlight {
+#config label span.labelDetails .highlight {
     font-size: inherit;
     display: inline;
     color: green;
@@ -224,11 +224,11 @@ button {
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-button.clearData, button.createNewRound, button.import-button {
+button.clearData, button.mainButton, button.import-button {
     padding: 5px 10px;
 }
 
-.createNewRound {
+.mainButton {
     font-size: 1em;
 }
 

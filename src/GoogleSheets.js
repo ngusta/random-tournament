@@ -1,12 +1,13 @@
 import React, {useState} from 'react';
 import ls from 'local-storage';
+import { TOURNAMENT_TYPES } from './App.js';
 
-const GoogleSheets = ({setImportedPlayers, updateImportedPlayers, showLoadingSpinner, importNextRound, createSwissTournament}) => {
+const GoogleSheets = ({setImportedPlayers, updateImportedPlayers, showLoadingSpinner, importNextRound, createSwissTournament, tournamentType}) => {
     const [sheetId, setSheetId] = useState(ls.get("sheetId") || '1uci8khgGfqnpKtkyQ4mSYIroeHmXfZd8ColINEwyP2I');
     const [playersSheetRange, setPlayersSheetRange] = useState(ls.get("playersSheetRange") || "'lördag'!A2:F");
     const [predefinedRoundSheetRange, setPredefinedRoundSheetRange] = useState(ls.get("predefinedRoundSheetRange") || "'start games'!A2:E");
-    const [swissTeamsSheetRange, setSwissTeamsSheetRange] = useState(ls.get("swissTeamsSheetRange") || "'swiss'!A8:B21");
-    const [swissCourtsSheetRange, setSwissCourtsSheetRange] = useState(ls.get("swissCourtsSheetRange") || "'swiss'!U3:U5");
+    const [swissTeamsSheetRange, setSwissTeamsSheetRange] = useState(ls.get("swissTeamsSheetRange") || "'swiss'!A8:C21");
+    const [swissCourtsSheetRange, setSwissCourtsSheetRange] = useState(ls.get("swissCourtsSheetRange") || "'swiss'!V3:V9");
     const [error, setError] = useState(null);
     const NUMBER_OF_COLUMNS = 6;
     const IMPORT_ALL = 1;
@@ -86,7 +87,10 @@ const GoogleSheets = ({setImportedPlayers, updateImportedPlayers, showLoadingSpi
                 fetch(courtsUrl)
                     .then(response => response.json())
                     .then(courts => {
-                        createSwissTournament(teams.values.map(row => row.map(Number)), courts.values.map(row => row.map(Number)));
+                        //TODO import multiple tournaments
+                        const id = teams.values[0][0];
+                        const players = teams.values.map(row => row.slice(1).map(Number));
+                        createSwissTournament(id, players, courts.values.map(row => row.map(Number)));
                     })
                     .catch(err => {
                         console.error('Error fetching courts data:', err);
@@ -108,6 +112,7 @@ const GoogleSheets = ({setImportedPlayers, updateImportedPlayers, showLoadingSpi
                                                              href="https://docs.google.com/spreadsheets/d/1uci8khgGfqnpKtkyQ4mSYIroeHmXfZd8ColINEwyP2I/edit#gid=0">https://docs.google.com/spreadsheets/d/<span
                     className="highlight">1uci8khgGfqnpKtkyQ4mSYIroeHmXfZd8ColINEwyP2I</span>/edit#gid=0</a><br/>The sheet needs "Anyone with the link can view" access.</span>
             </label>
+            {tournamentType === TOURNAMENT_TYPES.RANDOM && (<>
             <label>
                 <span>Player range:</span>
                 <input type="text" value={playersSheetRange} onChange={(e) =>   {setPlayersSheetRange(e.target.value); ls.set("playersSheetRange", e.target.value)}}/>
@@ -115,14 +120,17 @@ const GoogleSheets = ({setImportedPlayers, updateImportedPlayers, showLoadingSpi
             </label>
             <button className="import-button" onClick={(event) => handleImportPlayerData(event, IMPORT_ALL)}>Import player data</button>
             <button className="import-button" onClick={(event) => handleImportPlayerData(event, IMPORT_UPDATE_ONLY)}>Only import static data (Name, Alias, Gender)</button>
+            </>)}
+            {tournamentType === TOURNAMENT_TYPES.PREDEFINED && (<>
             <label>
                 <span>Predefined round range:</span>
                 <input type="text" value={predefinedRoundSheetRange} onChange={(e) => {setPredefinedRoundSheetRange(e.target.value); ls.set("predefinedRoundSheetRange", e.target.value)}}/>
-                <span className="labelDetails">Sheet with players in columns and courts in rows.<br/>
-                The first column should be the courts and remaining columns should be the players (No. of courts and Courts to use below will be updated).<br/>
-                The tournament settings below will be ignored, the sheet is king.</span>
+                <span className="labelDetails">Sheet with players in columns and courts in rows. Several rows with the same court number will be merged.<br/>
+                The first column should be the court and remaining columns should be players ids.</span>
             </label>
             <button className="import-button" onClick={(event) => handleImportNextRound(event)}>Create predefined round</button>
+            </>)}
+            {tournamentType === TOURNAMENT_TYPES.SWISS && (<>
             <label>
                 <span>Swiss tournament teams:</span>
                 <input type="text" value={swissTeamsSheetRange} onChange={(e) => {setSwissTeamsSheetRange(e.target.value); ls.set("swissTeamsSheetRange", e.target.value)}}/>
@@ -134,6 +142,7 @@ const GoogleSheets = ({setImportedPlayers, updateImportedPlayers, showLoadingSpi
                 </span>
             </label>
             <button className="import-button" onClick={(event) => handleCreateSwissTournament(event)}>Create Swiss tournament</button>
+            </>)}
             {error && <p>{error}</p>}
         </div>
     );

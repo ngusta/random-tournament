@@ -7,8 +7,14 @@ import loadingSpinner from './img/loading-spinner.svg';
 import logo from './img/2025/BT-logga-med-vit-kant.webp';
 import { deleteTournament, saveTournament, getPlayers, getPlayer, savePlayer, savePlayers, createPlayers } from './api.js';
 import { ToastContainer, toast } from "react-toastify";
-import { createSwissTournament, createSwissRound } from './SwissTournament';
+import { createSwissTournament, createSwissRound, registerSwissResults } from './SwissTournament';
 import 'react-toastify/dist/ReactToastify.css';
+
+export const TOURNAMENT_TYPES = {
+    RANDOM: 'random',
+    PREDEFINED: 'predefined',
+    SWISS: 'swiss'
+};
 
 class App extends React.Component {
     constructor(props) {
@@ -46,13 +52,13 @@ class App extends React.Component {
             playerInstructions: ls.get("playerInstructions") || "",
             groupId: ls.get("groupId") || "",
             tournamentName: ls.get("tournamentName") || "",
-            swissTournaments: ls.get("swissTournaments") || [],
+            swissTournaments: ls.get("swissTournaments") || {},
+            tournamentType: ls.get("tournamentType") || TOURNAMENT_TYPES.RANDOM,
         };
         setTimeout(() => {
             clearInterval(this.state.updateStatsIntervalId);
             console.log("Player stats updating stopped, reload to continue.");
         }, 5 * 60 * 60 * 1000);
-        ls.set("co")
         ls.set("updatePresentation", true);
     }
 
@@ -191,6 +197,11 @@ class App extends React.Component {
     onParadiseModeChange = (e) => {
         this.setState({ paradiseMode: e.target.checked });
         ls.set("paradiseMode", e.target.checked);
+    };
+
+    onTournamentTypeChange = (e) => {
+        this.setState({ tournamentType: e.target.value });
+        ls.set("tournamentType", e.target.value);
     };
 
     showLoadingSpinner = (show) => {
@@ -562,33 +573,66 @@ class App extends React.Component {
         }
     }
 
-    createSwissTournament = async (teams, courts) => {
-        let swissTournament = createSwissTournament(teams, courts);
-        swissTournament = createSwissRound(swissTournament);
-        const newSwissTournaments = [...this.state.swissTournaments, swissTournament];
+    createSwissTournament = async (id, teams, courts) => {
+        this.showLoadingSpinner(true);
+        let swissTournament = createSwissTournament(id, teams, courts);
+        this.saveSwissTournament(swissTournament);
+        this.showLoadingSpinner(false);
+
+        console.log(swissTournament);
+    }
+
+    saveSwissTournament = (swissTournament) => {
+        console.log("saving swiss tournament");
+        const newSwissTournaments = ls.get("swissTournaments") || {};
+        newSwissTournaments[swissTournament.id] = swissTournament;
         this.setState({ swissTournaments: newSwissTournaments });
         ls.set("swissTournaments", newSwissTournaments);
-        console.log(swissTournament);
+        console.log(ls.get("swissTournaments"));
+        console.log("done saving swiss tournament");
+    }
 
-        let index = 0;
-        const matches = swissTournament.pairings[0]
+    onCreateSwissRound = async () => {
+        this.showLoadingSpinner(true);
+        //TODO: Handle multiple tournaments
+
+        const swissTournament = Object.values(this.state.swissTournaments)[0];
+        
+        if (swissTournament.pairings.length > 0) {
+            this.createSwissResults(swissTournament);
+        }
+
+        createSwissRound(swissTournament);
+        this.saveSwissTournament(swissTournament);
+
+        let courtIndex = 0;
+        const matches = swissTournament.pairings[swissTournament.pairings.length - 1]
             .filter(pairing => !pairing.bye)
             .map(pairing => {
-                return [...swissTournament.courts[index++ % swissTournament.courts.length], ...swissTournament.teams[pairing.home].players, ...swissTournament.teams[pairing.away].players];
+                return [...swissTournament.courts[courtIndex++ % swissTournament.courts.length], ...swissTournament.teams[pairing.home].players, ...swissTournament.teams[pairing.away].players];
             });
-
-        console.log(matches);
 
         for (let i = 0; i < matches.length / swissTournament.courts.length; i++) {
             const round = matches.slice(i * swissTournament.courts.length, (i + 1) * swissTournament.courts.length);
-            
-            await this.draw(round);
-            
+            this.draw(round);
+
             // Add sleep to prevent race condition in draw
             await new Promise(resolve => setTimeout(resolve, 1000));
         }
+    }
 
-        this.showLoadingSpinner(false);
+    createSwissResults = (swissTournament) => {
+        const latestPairing = swissTournament.pairings[swissTournament.pairings.length - 1];
+        const results = latestPairing.map(pairing => {
+            return {
+                home: pairing.home,
+                away: pairing.away,
+                scoreHome: 1,
+                scoreAway: 0
+            };
+        });
+        registerSwissResults(swissTournament, results);
+        this.saveSwissTournament(swissTournament);
     }
 
     render() {
@@ -668,7 +712,11 @@ class App extends React.Component {
                         playerInstructions={this.state.playerInstructions}
                         groupId={this.state.groupId}
                         tournamentName={this.state.tournamentName}
+                        swissTournaments={this.state.swissTournaments}
                         createSwissTournament={this.createSwissTournament}
+                        tournamentType={this.state.tournamentType}
+                        onTournamentTypeChange={this.onTournamentTypeChange}
+                        onCreateSwissRound={this.onCreateSwissRound}
                     />
                     <ul className="clear">
                         {errors}

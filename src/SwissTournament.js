@@ -1,5 +1,5 @@
 
-export const createSwissTournament = (teams, courts) => {
+export const createSwissTournament = (tournamentId, teams, courts) => {
     let seed = 1;
     const teamsDict = {};
     teams.forEach(players => {
@@ -9,13 +9,14 @@ export const createSwissTournament = (teams, courts) => {
             id: id,
             seed: seed++,
             score: 0,
-            opponents: new Set(),
+            opponents: [],
             hadBye: false,
             buchholz: 0,
         };
     });
 
     const swissTournament = {
+        id: tournamentId,
         teams: teamsDict,
         courts: courts,
         pairings: []
@@ -25,14 +26,17 @@ export const createSwissTournament = (teams, courts) => {
 
 export const createSwissRound = (swissTournament) => {
     const pairings = pairRound(swissTournament.teams);
-
     swissTournament.pairings.push(pairings);
-    return swissTournament;
+}
+
+export const registerSwissResults = (swissTournament, results) => {
+    applyResults(swissTournament, results);
 }
 
 function pairRound(teams) {
     // Convert teams dict to array and sort by score descending, then seed ascending
     const pool = Object.values(teams).sort((a, b) => b.score - a.score || a.seed - b.seed);
+    console.log("pool:", pool);
     const pairings = [];
     let bye = null;
 
@@ -59,7 +63,7 @@ function pairRound(teams) {
                 b =>
                     b.id !== a.id &&
                     !used.has(b.id) &&
-                    !a.opponents.has(b.id)
+                    !a.opponents.includes(b.id)
             )
             // sort by score difference min, then seed closest to a
             .sort((x, y) => {
@@ -85,7 +89,6 @@ function pairRound(teams) {
             used.add(b.id);
         }
     }
-
     return pairings;
 }
 
@@ -93,7 +96,7 @@ function pickBye(teams) {
     const candidates = teams
         .filter(t => !t.hadBye)
         .sort((a, b) =>
-            a.score - b.score || b.seed - a.seed // minst poäng först, sämre seed först
+            a.score - b.score || b.seed - a.seed // least points, then worse seed
         );
     return candidates[0] || null;
 }
@@ -101,25 +104,29 @@ function pickBye(teams) {
 // Register results for a round
 // results: Array of {home, away, scoreHome, scoreAway}
 // Scoring: win=1, draw=0.5, loss=0. Bye gives 1 point.
-function applyResults(teams, pairings, results) {
-    // teams is now a dict, so we can access directly by id
+function applyResults(tournament, results) {
+    const latestPairing = tournament.pairings[tournament.pairings.length - 1];
 
     // Bye matches: give 1 point
-    for (const p of pairings) {
+    for (const p of latestPairing) {
         if (p.bye) {
-            teams[p.home].score += 1;
+            tournament.teams[p.home].score += 1;
         }
     }
 
     // Regular matches
     for (const r of results) {
-        const A = teams[r.home];
-        const B = teams[r.away];
+        const A = tournament.teams[r.home];
+        const B = tournament.teams[r.away];
         if (!A || !B) continue;
 
         // Mark opponents for tiebreak
-        A.opponents.add(B.id);
-        B.opponents.add(A.id);
+        if (!A.opponents.includes(B.id)) {
+            A.opponents.push(B.id);
+        }
+        if (!B.opponents.includes(A.id)) {
+            B.opponents.push(A.id);
+        }
 
         if (r.scoreHome > r.scoreAway) {
             A.score += 1;
@@ -132,20 +139,19 @@ function applyResults(teams, pairings, results) {
     }
 
     // Update Buchholz
-    updateBuchholz(teams);
+    updateBuchholz(tournament.teams);
 }
 
 function updateBuchholz(teams) {
-    // teams is now a dict, so we can access directly by id
     for (const teamId in teams) {
-        const t = teams[teamId];
+        const team = teams[teamId];
         let sum = 0;
-        for (const oid of t.opponents) {
+        for (const oid of team.opponents) {
             if (teams[oid]) {
                 sum += teams[oid].score;
             }
         }
-        t.buchholz = sum;
+        team.buchholz = sum;
     }
 }
 
