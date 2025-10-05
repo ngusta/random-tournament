@@ -33,6 +33,10 @@ export const registerSwissResults = (swissTournament, results) => {
     applyResults(swissTournament, results);
 }
 
+export const getStandings = (swissTournament) => {
+    return standings(swissTournament.teams);
+}
+
 function pairRound(teams) {
     // Convert teams dict to array and sort by score descending, then seed ascending
     const pool = Object.values(teams).sort((a, b) => b.score - a.score || a.seed - b.seed);

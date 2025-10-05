@@ -331,6 +331,8 @@ class App extends React.Component {
             data.playerInstructions = ls.get("playerInstructions") || this.state.playerInstructions;
             data.groupId = ls.get("groupId") || this.state.groupId;
             data.tournamentName = ls.get("tournamentName") || this.state.tournamentName;
+            data.tournamentType = ls.get("tournamentType") || this.state.tournamentType;
+            data.swissTournaments = ls.get("swissTournaments") || this.state.swissTournaments;
             saveTournament(ls.get("tournamentId"), data);
         }
     };
