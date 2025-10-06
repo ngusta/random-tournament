@@ -7,6 +7,7 @@ import Court from "./Court";
 import logo from './img/2025/BT-logga-med-vit-kant.webp';
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { TOURNAMENT_TYPES } from './App.js';
 
 const PlayerView = () => {
 
@@ -151,20 +152,11 @@ const PlayerView = () => {
     };
 
     const toggleResult = (roundIndex) => {
-        let nextResult = null;
-        switch (allPlayerRounds[roundIndex].result) {
-            case null:
-                nextResult = "W";
-                break;
-            case "W":
-                nextResult = "L";
-                break;
-            case "L":
-                nextResult = null;
-                break;
-            default:
-                throw new Error("Result should only be null, W, L - something's wrong.");
-        }
+
+        const allResults = ["W", "L", null];
+        const nextResult = allResults[(allResults.indexOf(allPlayerRounds[roundIndex].result) + 1) % allResults.length];
+        console.log("Next result: ", nextResult);
+        console.log("All rounds: ", allPlayerRounds);
         setAllPlayerRounds((prevValue) => ({
             ...prevValue,
             [roundIndex]: {
@@ -172,7 +164,37 @@ const PlayerView = () => {
                 result: nextResult
             }
         }));
+        updateSwissResults(roundIndex, nextResult);
         setUpdateServer(true);
+    }
+
+    const updateSwissResults = async (roundIndex, newResult) => {
+        if (tournament.tournamentType !== TOURNAMENT_TYPES.SWISS) {
+            return;
+        }
+        let teamMates, playersOnCourt;
+        allPlayerRounds[roundIndex].courtPlayers.forEach((team, _) => {
+            if (team.includes(player)) {
+                teamMates = team.filter(p => p !== player);
+            }
+        });
+        playersOnCourt = allPlayerRounds[roundIndex].courtPlayers.flat().filter(p => p !== player);
+
+        const opponentsResult = newResult === "W" ? "L" : (newResult === "L" ? "W" : null);
+
+        for (const courtPlayer of playersOnCourt) {
+            await updateOtherPlayerResults(courtPlayer, roundIndex, teamMates.includes(courtPlayer) ? newResult : opponentsResult);
+        }
+    }
+
+    const updateOtherPlayerResults = async (playerId, roundIndex, result) => {
+        getPlayer(tournamentId, playerId).then(player => {
+            const newPlayer = player ? {
+                ...player,
+                [roundIndex]: { ...player[roundIndex], result: result }
+            } : { [roundIndex]: { result: result } };
+            savePlayer(tournamentId, playerId, newPlayer);
+        });
     }
 
     const noCourtMessage = player === "" ? "Enter your player number above." : (allPlayerRounds && !allPlayerRounds[currentRoundIndex] && !allPlayerRounds[nextRoundIndex] ? "You are not playing this round." : null);
