@@ -31,7 +31,7 @@ const GoogleSheets = ({setImportedPlayers, updateImportedPlayers, showLoadingSpi
                             //Keep same as Settings.emptyImportedPlayer
                             return {
                                 active: player[0] !== "No" && player[0] !== "Nej" && player[0] !== false && player[0] !== "N" && player[0] !== "",
-                                id: player[1],
+                                playerId: player[1],
                                 name: player[2] + ' ' + player[3],
                                 displayName: player[4] ? player[4] : player[2] + ' ' + player[3],
                                 gender: (player[5] === 'Tjej' || player[5] === 'W' || player[5] === 'Female' || player[5] === 'F' || player[5] === 'female') ? 'W' : 'M',
@@ -134,11 +134,11 @@ const GoogleSheets = ({setImportedPlayers, updateImportedPlayers, showLoadingSpi
             <label>
                 <span>Swiss tournament teams:</span>
                 <input type="text" value={swissTeamsSheetRange} onChange={(e) => {setSwissTeamsSheetRange(e.target.value); ls.set("swissTeamsSheetRange", e.target.value)}}/>
-                <span className="labelDetails">Teams that will participate in the Swiss tournament. Each team is one row and consists of 2 or more players.<br/>
+                <span className="labelDetails">Teams that will participate in the Swiss tournament. Needs three or more columns; the first column is the division name (e.g. Men's Gold), and the following columns are player ids. Seed and sort them from best to worst.<br/>
                 </span>
                 <span>Swiss tournament courts:</span>
                 <input type="text" value={swissCourtsSheetRange} onChange={(e) => {setSwissCourtsSheetRange(e.target.value); ls.set("swissCourtsSheetRange", e.target.value)}}/>
-                <span className="labelDetails">Courts that will be used in the Swiss tournament. One court per row.<br/>
+                <span className="labelDetails">Courts that will be used in the Swiss tournament. One column and one court per row.<br/>
                 </span>
             </label>
             <button className="import-button" onClick={(event) => handleCreateSwissTournament(event)}>Create Swiss tournament</button>

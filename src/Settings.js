@@ -187,6 +187,11 @@ class Settings extends React.Component {
         this.props.onStartRound();
     };
 
+    onUpdateSwissResults = (e) => {
+        e.preventDefault();
+        this.props.onUpdateSwissResults();
+    };
+
     render() {
         const players = this.props.players.map((playing, index) =>
             <label key={index}
@@ -360,6 +365,7 @@ class Settings extends React.Component {
                                     </ul>
                                     <button className="mainButton" onClick={this.onCreateSwissRound}>Create new round(s)</button>
                                     <button className="mainButton" onClick={this.onStartLatestRound}>Start latest round</button>
+                                    <button className="mainButton" onClick={this.onUpdateSwissResults}>Update leaderboard</button>
                                 </fieldset>
                             )}
                         </div>

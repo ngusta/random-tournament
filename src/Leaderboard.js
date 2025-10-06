@@ -60,7 +60,6 @@ const Leaderboard = () => {
         setTournament(tournament);
         setNoOnLeaderBoard(tournament.noOnLeaderboard);
         setTournamentType(tournament.tournamentType);
-        const players = await getPlayers(tournamentId);
 
         switch (tournament.tournamentType) {
             case TOURNAMENT_TYPES.SWISS:
@@ -73,6 +72,7 @@ const Leaderboard = () => {
                 })));
                 break;
             default:
+                const players = await getPlayers(tournamentId);
                 setLeaderboard(players.map(player => ({
                     id: player.playerId,
                     displayName: player.displayName ? player.displayName : player.name,
@@ -91,6 +91,9 @@ const Leaderboard = () => {
             switch (tournamentType) {
                 case TOURNAMENT_TYPES.SWISS:
                     //TODO: Handle multiple tournaments
+                    if (!ls.get("swissTournaments")) {
+                        return;
+                    }
                     const swissTournament = Object.values(ls.get("swissTournaments"))[0];
                     setLeaderboard(getStandings(swissTournament).map(team => ({
                         id: team.id,
@@ -115,7 +118,7 @@ const Leaderboard = () => {
     }, [tournamentId]);
 
     const sortedLeaderboard = Object.values(leaderboard)
-        .filter((p) => p !== null && p.secondaryScore >= 1)
+        .filter((p) => p !== null && (p.secondaryScore + p.primaryScore) >= 1)
         .sort((a, b) => (b.primaryScore !== a.primaryScore ? b.primaryScore - a.primaryScore : b.secondaryScore - a.secondaryScore))
         .slice(0, noOnLeaderboard);
 

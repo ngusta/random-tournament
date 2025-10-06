@@ -82,7 +82,7 @@ class App extends React.Component {
         switch (name) {
             case "playerViewEnabled":
                 if (ls.get("playerViewEnabled")) {
-                    this.saveTournamentInCloud();;
+                    this.saveTournamentInCloud();
                     this.createPlayersInCloud();
                     const intervalId = setInterval(this.updatePlayerStats, 5000);
                     this.setState({ updateStatsIntervalId: intervalId });
@@ -338,13 +338,14 @@ class App extends React.Component {
     };
 
     setImportedPlayers = async (importedPlayerData) => {
+        console.log("importedPlayerData:", importedPlayerData);
         ls.set("importInProgress", true);
         this.showLoadingSpinner(true);
         const importedPlayers = {};
         const playerStats = ls.get("playerStats") || [];
         const newAvailablePlayers = [...this.state.availablePlayers];
         Object.keys(importedPlayerData).forEach(index => {
-            const playerNumber = importedPlayerData[index].id;
+            const playerNumber = importedPlayerData[index].playerId;
             const playerIndex = playerNumber - 1;
             if (!playerStats[playerNumber]) {
                 playerStats[playerNumber] = App.emptyPlayerStats(playerNumber);
@@ -362,7 +363,7 @@ class App extends React.Component {
         ls.set("playerStats", playerStats);
         this.setState({ availablePlayers: newAvailablePlayers });
         ls.set("availablePlayers", newAvailablePlayers);
-        if (this.state.playerViewEnabled) {
+        if (ls.get("playerViewEnabled")) {
             await this.savePlayerDataToCloud();
         }
         ls.set("updatePresentation", true);
@@ -377,7 +378,7 @@ class App extends React.Component {
         } else {
             newImportedPlayers[playerNumber] = {
                 active: null,
-                id: playerNumber,
+                playerId: playerNumber,
                 name: null,
                 displayName: null,
                 gender: newGender,
@@ -419,14 +420,29 @@ class App extends React.Component {
     }
 
     importNextRound = (importedRound) => {
+        this.activateAllPlayers();
         this.draw(importedRound);
+    }
+
+    activateAllPlayers = async () => {
+        //Activate all players in case they will be needed 
+        if (this.state.availablePlayers.length >= 500) {
+            return;
+        }
+        const players = Array.from({ length: 500 }, (_, i) => ({
+            active: true,
+            playerId: String(i + 1),
+            name: "Player " + (i + 1),
+            displayName: "Player " + (i + 1),
+            gender: "M",
+        }));
+        await this.setImportedPlayers(players);
     }
 
     createPlayersInCloud = async () => {
         if (!ls.get("playerStats")) {
             const playerStats = [];
-            this.state.availablePlayers.forEach((active, index) => {
-                console.log(index);
+            ls.get("availablePlayers").forEach((active, index) => {
                 const playerId = index + 1;
                 playerStats[playerId] = App.emptyPlayerStats(playerId);
                 playerStats[playerId].active = active;
@@ -434,12 +450,12 @@ class App extends React.Component {
             ls.set("playerStats", playerStats);
         }
         const playersWithData = [];
-        const lenPlayerStats = this.state.availablePlayers.length + 1;
+        const lenPlayerStats = ls.get("availablePlayers").length + 1;
 
         for (let playerId = 1; playerId < lenPlayerStats; playerId++) {
             const player = ls.get("playerStats")[playerId] ? ls.get("playerStats")[playerId] : App.emptyPlayerStats(playerId);
             playersWithData.push({
-                active: this.state.availablePlayers[playerId - 1],
+                active: ls.get("availablePlayers")[playerId - 1],
                 playerId: String(playerId),
                 name: player.name,
                 displayName: player.displayName,
@@ -544,16 +560,41 @@ class App extends React.Component {
         const allResults = ["W", "L", null];
         const newResult = allResults[(allResults.indexOf(lastResult) + 1) % allResults.length];
 
-        const newPlayer = player ? {
-            ...player,
-            [round]: {
-                ...player[round],
-                result: newResult
-            }
-        } : { [round]: { result: newResult } };
+        await this.updatePlayerResults(playerId, round, newResult);
 
-        await savePlayer(ls.get("tournamentId"), playerId, newPlayer);
+        if (this.state.tournamentType === TOURNAMENT_TYPES.SWISS) {
+            let teamMates, playersOnCourt;
+            if (this.state.rounds[round]) {
+                this.state.rounds[round].forEach((court, _) => {
+                    court.forEach((team, _) => {
+                        team.forEach((p, _) => {
+                            if (p === playerId) {
+                                teamMates = team;
+                                playersOnCourt = court.flat().filter(p => p !== playerId);
+                            }
+                        });
+                    });
+                });
+            }
+
+            const opponentsResult = newResult === "W" ? "L" : (newResult === "L" ? "W" : null);
+
+            for (const courtPlayer of playersOnCourt) {
+                await this.updatePlayerResults(courtPlayer, round, teamMates.includes(courtPlayer) ? newResult : opponentsResult);
+            }
+        }
+
         this.updatePlayerStats();
+    }
+
+    updatePlayerResults = async (playerId, round, result) => {
+        getPlayer(ls.get("tournamentId"), playerId).then(player => {
+            const newPlayer = player ? {
+                ...player,
+                [round]: { ...player[round], result: result }
+            } : { [round]: { result: result } };
+            savePlayer(ls.get("tournamentId"), playerId, newPlayer);
+        });
     }
 
     static emptyPlayerStats(player) {
@@ -577,42 +618,46 @@ class App extends React.Component {
 
     createSwissTournament = async (id, teams, courts) => {
         this.showLoadingSpinner(true);
+        this.activateAllPlayers();
         let swissTournament = createSwissTournament(id, teams, courts);
         this.saveSwissTournament(swissTournament);
+        this.onSettingChange("playerViewEnabled", true);
         this.showLoadingSpinner(false);
-
-        console.log(swissTournament);
     }
 
     saveSwissTournament = (swissTournament) => {
-        console.log("saving swiss tournament");
         const newSwissTournaments = ls.get("swissTournaments") || {};
         newSwissTournaments[swissTournament.id] = swissTournament;
         this.setState({ swissTournaments: newSwissTournaments });
         ls.set("swissTournaments", newSwissTournaments);
-        console.log(ls.get("swissTournaments"));
-        console.log("done saving swiss tournament");
+        console.log("Saved Swiss tournaments", ls.get("swissTournaments"));
     }
 
     onCreateSwissRound = async () => {
         this.showLoadingSpinner(true);
         //TODO: Handle multiple tournaments
-
         const swissTournament = Object.values(this.state.swissTournaments)[0];
-        
-        if (swissTournament.pairings.length > 0) {
-            this.createSwissResults(swissTournament);
-        }
 
+        if (swissTournament.pairings.length > 0) {
+            if (!await this.updateSwissResults(swissTournament)) {
+                this.showLoadingSpinner(false);
+                return;
+            }
+        }
         createSwissRound(swissTournament);
-        this.saveSwissTournament(swissTournament);
+
+        const nextRoundIndex = this.state.rounds.length;
 
         let courtIndex = 0;
         const matches = swissTournament.pairings[swissTournament.pairings.length - 1]
             .filter(pairing => !pairing.bye)
             .map(pairing => {
-                return [...swissTournament.courts[courtIndex++ % swissTournament.courts.length], ...swissTournament.teams[pairing.home].players, ...swissTournament.teams[pairing.away].players];
+                pairing.courtIndex = courtIndex;
+                pairing.roundIndex = nextRoundIndex + Math.floor(courtIndex / swissTournament.courts.length);
+                const court = swissTournament.courts[courtIndex++ % swissTournament.courts.length][0];
+                return [court, ...swissTournament.teams[pairing.home].players, ...swissTournament.teams[pairing.away].players];
             });
+        this.saveSwissTournament(swissTournament);
 
         for (let i = 0; i < matches.length / swissTournament.courts.length; i++) {
             const round = matches.slice(i * swissTournament.courts.length, (i + 1) * swissTournament.courts.length);
@@ -623,18 +668,49 @@ class App extends React.Component {
         }
     }
 
-    createSwissResults = (swissTournament) => {
+    updateSwissResults = async (swissTournament) => {
+
         const latestPairing = swissTournament.pairings[swissTournament.pairings.length - 1];
+        if (!latestPairing) {
+            toast.error("You must create at least one round before updating results.");
+            return false;
+        }
+        const players = await getPlayers(ls.get("tournamentId"))
+
+        const playersDict = {};
+        players.forEach(player => {
+            playersDict[player.playerId] = player;
+        });
+
+        let allPairingsReported = true;
         const results = latestPairing.map(pairing => {
+            const result = playersDict[swissTournament.teams[pairing.home].players[0]][pairing.roundIndex] ? playersDict[swissTournament.teams[pairing.home].players[0]][pairing.roundIndex].result : null;
+            if (!result) {
+                allPairingsReported = false;
+            }
+            //const outcome = Math.floor(Math.random() * 2);
+            const homeTeamScore = result === "W" ? 1 : 0;
             return {
                 home: pairing.home,
                 away: pairing.away,
-                scoreHome: 1,
-                scoreAway: 0
+                scoreHome: homeTeamScore,
+                scoreAway: 1 - homeTeamScore
             };
         });
-        registerSwissResults(swissTournament, results);
-        this.saveSwissTournament(swissTournament);
+        if (allPairingsReported) {
+            registerSwissResults(swissTournament, results);
+            this.saveSwissTournament(swissTournament);
+            return true;
+        } else {
+            toast.error("Report results for all existing matches, then try again.");
+            return false;
+        }
+    }
+
+    onUpdateSwissResults = () => {
+        //TODO: Handle multiple tournaments
+        const swissTournament = Object.values(this.state.swissTournaments)[0];
+        this.updateSwissResults(swissTournament);
     }
 
     render() {
@@ -719,6 +795,7 @@ class App extends React.Component {
                         tournamentType={this.state.tournamentType}
                         onTournamentTypeChange={this.onTournamentTypeChange}
                         onCreateSwissRound={this.onCreateSwissRound}
+                        onUpdateSwissResults={this.onUpdateSwissResults}
                     />
                     <ul className="clear">
                         {errors}
