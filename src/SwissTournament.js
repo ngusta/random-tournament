@@ -85,10 +85,16 @@ function pairRound(teams) {
                 .sort((x, y) => Math.abs(x.seed - a.seed) - Math.abs(y.seed - a.seed))[0];
             if (!fallback) throw new Error("Parning misslyckades.");
             pairings.push({ home: a.id, away: fallback.id, bye: false });
+            
+            if (!a.opponents.includes(fallback.id)) a.opponents.push(fallback.id);
+            if (!fallback.opponents.includes(a.id)) fallback.opponents.push(a.id);
             used.add(a.id);
             used.add(fallback.id);
         } else {
             pairings.push({ home: a.id, away: b.id, bye: false });
+            
+            if (!a.opponents.includes(b.id)) a.opponents.push(b.id);
+            if (!b.opponents.includes(a.id)) b.opponents.push(a.id);
             used.add(a.id);
             used.add(b.id);
         }

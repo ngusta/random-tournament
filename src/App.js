@@ -638,8 +638,12 @@ class App extends React.Component {
         //TODO: Handle multiple tournaments
         const swissTournament = Object.values(this.state.swissTournaments)[0];
 
-        if (swissTournament.pairings.length > 0) {
-            if (!await this.updateSwissResults(swissTournament)) {
+        // Only require the second-last round to be fully reported
+        const roundsCount = swissTournament.pairings.length;
+        if (roundsCount > 1) {
+            const secondLastIndex = roundsCount - 2;
+            const ok = await this.updateSwissResults(swissTournament, secondLastIndex);
+            if (!ok) {
                 this.showLoadingSpinner(false);
                 return;
             }
@@ -668,11 +672,11 @@ class App extends React.Component {
         }
     }
 
-    updateSwissResults = async (swissTournament) => {
-
-        const latestPairing = swissTournament.pairings[swissTournament.pairings.length - 1];
-        if (!latestPairing) {
-            toast.error("You must create at least one round before updating results.");
+    updateSwissResults = async (swissTournament, roundIndexToCheck = null) => {
+        const indexToCheck = (roundIndexToCheck === null) ? (swissTournament.pairings.length - 1) : roundIndexToCheck;
+        const pairingsToEvaluate = swissTournament.pairings[indexToCheck];
+        if (!pairingsToEvaluate) {
+            toast.error("No such round to update results for.");
             return false;
         }
         const players = await getPlayers(ls.get("tournamentId"))
@@ -683,12 +687,13 @@ class App extends React.Component {
         });
 
         let allPairingsReported = true;
-        const results = latestPairing.map(pairing => {
-            const result = playersDict[swissTournament.teams[pairing.home].players[0]][pairing.roundIndex] ? playersDict[swissTournament.teams[pairing.home].players[0]][pairing.roundIndex].result : null;
+        const results = pairingsToEvaluate.map(pairing => {
+            const result = playersDict[swissTournament.teams[pairing.home].players[0]][pairing.roundIndex]
+                ? playersDict[swissTournament.teams[pairing.home].players[0]][pairing.roundIndex].result
+                : null;
             if (!result) {
                 allPairingsReported = false;
             }
-            //const outcome = Math.floor(Math.random() * 2);
             const homeTeamScore = result === "W" ? 1 : 0;
             return {
                 home: pairing.home,
@@ -702,7 +707,7 @@ class App extends React.Component {
             this.saveSwissTournament(swissTournament);
             return true;
         } else {
-            toast.error("Report results for all existing matches, then try again.");
+            toast.error("Report all results for Round " + (indexToCheck + 1) + ", then try again.");
             return false;
         }
     }

@@ -8,3 +8,32 @@
     color: #666;
     font-style: italic;
 }
+
+.swissStats {
+    width: 100%;
+    margin-top: 0.5em;
+    border-collapse: collapse;
+}
+
+.swissStats th,
+.swissStats td {
+    text-align: left;
+    padding: 4px 6px;
+}
+
+.swissStats thead tr {
+    border-bottom: 1px solid #ddd;
+}
+
+.swissStats tbody tr:nth-child(even) {
+    background: #fafafa;
+}
+
+.swissStatsBlock {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.swissTournamentHeader {
+    margin: 0;
+}

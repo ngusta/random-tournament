@@ -214,10 +214,6 @@ class Settings extends React.Component {
 
         const baseUrl = `${window.location.protocol}//${window.location.host}`;
 
-        const swissTournaments = Object.values(this.props.swissTournaments).map(tournament =>
-            <li key={tournament.id}>{tournament.id}</li>
-        );
-
         const handleKeyDown = (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -360,9 +356,65 @@ class Settings extends React.Component {
                             {this.props.tournamentType === TOURNAMENT_TYPES.SWISS && (
                                 <fieldset className="tournamentSettings">
                                     <legend>Swiss Tournament Settings</legend>
-                                    <ul>
-                                        {swissTournaments}
-                                    </ul>
+                                    
+
+                                    {Object.values(this.props.swissTournaments).length > 0 && (
+                                        <div className="swissStatsBlock">
+                                            
+                                            {Object.values(this.props.swissTournaments).map(tournament => {
+                                                const pairings = tournament.pairings || [];
+                                                if (pairings.length === 0) {
+                                                    return (
+                                                        <div key={`${tournament.id}-empty`} className="swissStatsBlock">
+                                                            <h4 className="swissTournamentHeader">{tournament.id}</h4>
+                                                            <p>No rounds created yet.</p>
+                                                        </div>
+                                                    );
+                                                }
+                                                return (
+                                                    <div key={`${tournament.id}-stats`} className="swissStatsBlock">
+                                                        <h4 className="swissTournamentHeader">{tournament.id}</h4>
+                                                        <table className="swissStats">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Round</th>
+                                                                    <th>Reported matches</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {pairings.map((roundPairings, roundIndex) => {
+                                                                    const totalMatches = roundPairings.filter(p => !p.bye).length;
+                                                                    let reported = 0;
+                                                                    roundPairings.forEach(p => {
+                                                                        if (p.bye) return;
+                                                                        const rIdx = p.roundIndex;
+                                                                        if (rIdx === undefined || rIdx === null) return;
+                                                                        const home = tournament.teams[p.home];
+                                                                        const away = tournament.teams[p.away];
+                                                                        if (!home || !away) return;
+                                                                        const playersOnCourt = [...home.players, ...away.players];
+                                                                        const hasReport = playersOnCourt.some(pid => (
+                                                                            this.props.playerStats &&
+                                                                            this.props.playerStats[pid] &&
+                                                                            this.props.playerStats[pid].results &&
+                                                                            (this.props.playerStats[pid].results[rIdx] === 'W' || this.props.playerStats[pid].results[rIdx] === 'L')
+                                                                        ));
+                                                                        if (hasReport) reported++;
+                                                                    });
+                                                                    return (
+                                                                        <tr key={`${tournament.id}-${roundIndex}`}>
+                                                                            <td>Round {roundIndex + 1}</td>
+                                                                            <td>{reported} / {totalMatches}</td>
+                                                                        </tr>
+                                                                    );
+                                                                })}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
                                     <button className="mainButton" onClick={this.onCreateSwissRound}>Create new round(s)</button>
                                     <button className="mainButton" onClick={this.onStartLatestRound}>Start latest round</button>
                                     <button className="mainButton" onClick={this.onUpdateSwissResults}>Update leaderboard</button>
